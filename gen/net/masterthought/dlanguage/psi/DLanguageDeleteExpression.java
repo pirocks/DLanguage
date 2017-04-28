@@ -7,10 +7,34 @@ import com.intellij.psi.PsiElement;
 
 public interface DLanguageDeleteExpression extends PsiElement {
 
-  @NotNull
-  DLanguageUnaryExpression getUnaryExpression();
+  @Nullable
+  DLanguageCastExpression getCastExpression();
+
+  @Nullable
+  DLanguageDeleteExpression getDeleteExpression();
+
+  @Nullable
+  DLanguageIdentifier getIdentifier();
+
+  @Nullable
+  DLanguagePowExpression getPowExpression();
+
+  @Nullable
+  DLanguageTemplateInstance getTemplateInstance();
+
+  @Nullable
+  DLanguageType getType();
 
   @NotNull
   PsiElement getKwDelete();
+
+  @Nullable
+  PsiElement getOpDot();
+
+  @Nullable
+  PsiElement getOpParLeft();
+
+  @Nullable
+  PsiElement getOpParRight();
 
 }

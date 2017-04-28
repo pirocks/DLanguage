@@ -4,26 +4,22 @@ package net.masterthought.dlanguage.psi;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiElement;
-import net.masterthought.dlanguage.psi.interfaces.DNamedElement;
 import net.masterthought.dlanguage.psi.interfaces.containers.StatementContainer;
-import net.masterthought.dlanguage.psi.interfaces.containers.GlobalDeclarationContainer;
-import net.masterthought.dlanguage.psi.interfaces.HasVisibility;
-import net.masterthought.dlanguage.psi.interfaces.Declaration;
-import net.masterthought.dlanguage.psi.interfaces.HasTemplateArguments;
-import net.masterthought.dlanguage.psi.interfaces.HasArguments;
+import net.masterthought.dlanguage.psi.interfaces.DNamedElement;
 import net.masterthought.dlanguage.psi.interfaces.containers.MixinContainer;
-import net.masterthought.dlanguage.psi.interfaces.HasProperty;
-import net.masterthought.dlanguage.psi.interfaces.Mixin;
-import net.masterthought.dlanguage.psi.interfaces.VariableDeclaration;
+import net.masterthought.dlanguage.psi.interfaces.HasVisibility;
+import net.masterthought.dlanguage.psi.interfaces.HasTemplateArguments;
 import net.masterthought.dlanguage.psi.interfaces.CanInherit;
+import net.masterthought.dlanguage.psi.interfaces.Declaration;
+import net.masterthought.dlanguage.psi.interfaces.HasProperty;
+import net.masterthought.dlanguage.psi.interfaces.HasArguments;
+import net.masterthought.dlanguage.psi.interfaces.containers.GlobalDeclarationContainer;
+import net.masterthought.dlanguage.psi.interfaces.Mixin;
 import net.masterthought.dlanguage.psi.interfaces.Mixinable;
+import net.masterthought.dlanguage.psi.interfaces.VariableDeclaration;
 import net.masterthought.dlanguage.psi.interfaces.DCompositeElement;
 
 public class DLanguageVisitor extends PsiElementVisitor {
-
-  public void visitAddExpression(@NotNull DLanguageAddExpression o) {
-    visitPsiElement(o);
-  }
 
   public void visitAggregateBody(@NotNull DLanguageAggregateBody o) {
     visitPsiElement(o);
@@ -84,14 +80,6 @@ public class DLanguageVisitor extends PsiElementVisitor {
   }
 
   public void visitAltFuncDeclaratorSuffix(@NotNull DLanguageAltFuncDeclaratorSuffix o) {
-    visitPsiElement(o);
-  }
-
-  public void visitAndAndExpression(@NotNull DLanguageAndAndExpression o) {
-    visitPsiElement(o);
-  }
-
-  public void visitAndExpression(@NotNull DLanguageAndExpression o) {
     visitPsiElement(o);
   }
 
@@ -307,10 +295,6 @@ public class DLanguageVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitCmpExpression(@NotNull DLanguageCmpExpression o) {
-    visitPsiElement(o);
-  }
-
   public void visitCommaExpression(@NotNull DLanguageCommaExpression o) {
     visitPsiElement(o);
   }
@@ -320,10 +304,6 @@ public class DLanguageVisitor extends PsiElementVisitor {
   }
 
   public void visitConditionalDeclaration(@NotNull DLanguageConditionalDeclaration o) {
-    visitPsiElement(o);
-  }
-
-  public void visitConditionalExpression(@NotNull DLanguageConditionalExpression o) {
     visitPsiElement(o);
   }
 
@@ -459,10 +439,6 @@ public class DLanguageVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitEqualExpression(@NotNull DLanguageEqualExpression o) {
-    visitPsiElement(o);
-  }
-
   public void visitExpression(@NotNull DLanguageExpression o) {
     visitPsiElement(o);
   }
@@ -569,10 +545,6 @@ public class DLanguageVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitIdentityExpression(@NotNull DLanguageIdentityExpression o) {
-    visitPsiElement(o);
-  }
-
   public void visitIfCondition(@NotNull DLanguageIfCondition o) {
     visitPsiElement(o);
   }
@@ -603,10 +575,6 @@ public class DLanguageVisitor extends PsiElementVisitor {
   }
 
   public void visitImportList(@NotNull DLanguageImportList o) {
-    visitPsiElement(o);
-  }
-
-  public void visitInExpression(@NotNull DLanguageInExpression o) {
     visitPsiElement(o);
   }
 
@@ -744,10 +712,6 @@ public class DLanguageVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitMulExpression(@NotNull DLanguageMulExpression o) {
-    visitPsiElement(o);
-  }
-
   public void visitMultipleAssign(@NotNull DLanguageMultipleAssign o) {
     visitPsiElement(o);
   }
@@ -785,14 +749,6 @@ public class DLanguageVisitor extends PsiElementVisitor {
   }
 
   public void visitOperands(@NotNull DLanguageOperands o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOrExpression(@NotNull DLanguageOrExpression o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOrOrExpression(@NotNull DLanguageOrOrExpression o) {
     visitPsiElement(o);
   }
 
@@ -868,10 +824,6 @@ public class DLanguageVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitRelExpression(@NotNull DLanguageRelExpression o) {
-    visitPsiElement(o);
-  }
-
   public void visitReturnStatement(@NotNull DLanguageReturnStatement o) {
     visitPsiElement(o);
   }
@@ -900,10 +852,6 @@ public class DLanguageVisitor extends PsiElementVisitor {
     // visitDNamedElement(o);
     // visitHasVisibility(o);
     // visitDeclaration(o);
-  }
-
-  public void visitShiftExpression(@NotNull DLanguageShiftExpression o) {
-    visitPsiElement(o);
   }
 
   public void visitSliceExpression(@NotNull DLanguageSliceExpression o) {
@@ -1147,10 +1095,6 @@ public class DLanguageVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitUnaryExpression(@NotNull DLanguageUnaryExpression o) {
-    visitPsiElement(o);
-  }
-
   public void visitUnionDeclaration(@NotNull DLanguageUnionDeclaration o) {
     visitStatementContainer(o);
     // visitDNamedElement(o);
@@ -1204,10 +1148,6 @@ public class DLanguageVisitor extends PsiElementVisitor {
   }
 
   public void visitWithStatement(@NotNull DLanguageWithStatement o) {
-    visitPsiElement(o);
-  }
-
-  public void visitXorExpression(@NotNull DLanguageXorExpression o) {
     visitPsiElement(o);
   }
 

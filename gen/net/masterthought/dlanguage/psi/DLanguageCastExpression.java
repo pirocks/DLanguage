@@ -8,21 +8,30 @@ import com.intellij.psi.PsiElement;
 public interface DLanguageCastExpression extends PsiElement {
 
   @Nullable
-  DLanguageType getType();
+  DLanguageCastExpression getCastExpression();
+
+  @Nullable
+  DLanguageDeleteExpression getDeleteExpression();
+
+  @Nullable
+  DLanguageIdentifier getIdentifier();
+
+  @Nullable
+  DLanguagePowExpression getPowExpression();
+
+  @Nullable
+  DLanguageTemplateInstance getTemplateInstance();
+
+  @NotNull
+  List<DLanguageType> getTypeList();
 
   @Nullable
   DLanguageTypeCtors getTypeCtors();
 
   @NotNull
-  DLanguageUnaryExpression getUnaryExpression();
-
-  @NotNull
   PsiElement getKwCast();
 
-  @NotNull
-  PsiElement getOpParLeft();
-
-  @NotNull
-  PsiElement getOpParRight();
+  @Nullable
+  PsiElement getOpDot();
 
 }

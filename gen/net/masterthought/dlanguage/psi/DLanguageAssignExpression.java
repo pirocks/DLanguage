@@ -11,7 +11,25 @@ public interface DLanguageAssignExpression extends PsiElement {
   DLanguageAssignExpression getAssignExpression();
 
   @NotNull
-  DLanguageConditionalExpression getConditionalExpression();
+  List<DLanguageCastExpression> getCastExpressionList();
+
+  @NotNull
+  List<DLanguageDeleteExpression> getDeleteExpressionList();
+
+  @NotNull
+  List<DLanguageExpression> getExpressionList();
+
+  @NotNull
+  List<DLanguageIdentifier> getIdentifierList();
+
+  @NotNull
+  List<DLanguagePowExpression> getPowExpressionList();
+
+  @NotNull
+  List<DLanguageTemplateInstance> getTemplateInstanceList();
+
+  @NotNull
+  List<DLanguageType> getTypeList();
 
   @Nullable
   PsiElement getOpAndEq();

@@ -1,5 +1,6 @@
 {
-
+    //14 secs 356 ms
+    //lots of private 7s 986 ms
   parserClass="net.masterthought.dlanguage.parser.DLanguageParser"
 
   extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
@@ -402,35 +403,35 @@ AssignExpression ::=
                               | '>>>='
                               | '^^=') AssignExpression]
 
-ConditionalExpression ::=
+private ConditionalExpression ::=
    OrOrExpression ['?' Expression ':' ConditionalExpression]
 
-OrOrExpression ::= AndAndExpression [ '||' OrOrExpression]
+private OrOrExpression ::= AndAndExpression [ '||' OrOrExpression]
 
-AndAndExpression ::=
+private AndAndExpression ::=
     ('&&')? ( OrExpression | CmpExpression ) [ AndAndExpression ]
 
-OrExpression ::=
+private OrExpression ::=
     XorExpression [OrExpression]
 
-XorExpression ::= AndExpression [ '^' XorExpression ]
+private XorExpression ::= AndExpression [ '^' XorExpression ]
 
-AndExpression ::= ShiftExpression [ '&' AndExpression ]
+private AndExpression ::= ShiftExpression [ '&' AndExpression ]
 
-CmpExpression ::=
+private CmpExpression ::=
     ShiftExpression
     | EqualExpression
     | IdentityExpression
     | RelExpression
     | InExpression
 
-EqualExpression ::=
+private EqualExpression ::=
      ('==' | '!=') [ShiftExpression]
 
-IdentityExpression ::=
+private IdentityExpression ::=
      ('is'|'!is') ShiftExpression
 
-RelExpression ::=
+private RelExpression ::=
     ('<'
     | '<='
     | '>'
@@ -444,17 +445,17 @@ RelExpression ::=
     | '!<'
     | '!<=') ShiftExpression
 
-InExpression ::=
+private InExpression ::=
     ('in'| '!in') ShiftExpression
 
-ShiftExpression ::= AddExpression [('<<' | '>>' | '>>>') ShiftExpression]
+private ShiftExpression ::= AddExpression [('<<' | '>>' | '>>>') ShiftExpression]
 
-AddExpression ::=
+private AddExpression ::=
     MulExpression [ ('+' | '-' | '~') AddExpression]
 
-MulExpression ::= UnaryExpression [ ('*' | '/' | '%') MulExpression]
+private MulExpression ::= UnaryExpression [ ('*' | '/' | '%') MulExpression]
 
-UnaryExpression ::=
+private UnaryExpression ::=
      ('&'
     | '++'
     | '|'
@@ -1781,9 +1782,9 @@ VoidInitializer ::=
     'void'
 
 NonVoidInitializer ::=
-    AssignExpression
-    | ArrayInitializer
+    ArrayInitializer
     | StructInitializer
+    | AssignExpression
 
 ArrayInitializer ::=
     '[' ArrayMemberInitializations? ','? ']'

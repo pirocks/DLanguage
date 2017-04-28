@@ -34,8 +34,44 @@ public class DLanguageAssignExpressionImpl extends ASTWrapperPsiElement implemen
 
   @Override
   @NotNull
-  public DLanguageConditionalExpression getConditionalExpression() {
-    return notNullChild(PsiTreeUtil.getChildOfType(this, DLanguageConditionalExpression.class));
+  public List<DLanguageCastExpression> getCastExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DLanguageCastExpression.class);
+  }
+
+  @Override
+  @NotNull
+  public List<DLanguageDeleteExpression> getDeleteExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DLanguageDeleteExpression.class);
+  }
+
+  @Override
+  @NotNull
+  public List<DLanguageExpression> getExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DLanguageExpression.class);
+  }
+
+  @Override
+  @NotNull
+  public List<DLanguageIdentifier> getIdentifierList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DLanguageIdentifier.class);
+  }
+
+  @Override
+  @NotNull
+  public List<DLanguagePowExpression> getPowExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DLanguagePowExpression.class);
+  }
+
+  @Override
+  @NotNull
+  public List<DLanguageTemplateInstance> getTemplateInstanceList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DLanguageTemplateInstance.class);
+  }
+
+  @Override
+  @NotNull
+  public List<DLanguageType> getTypeList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DLanguageType.class);
   }
 
   @Override

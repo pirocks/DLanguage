@@ -27,27 +27,63 @@ public class DLanguagePowExpressionImpl extends ASTWrapperPsiElement implements 
   }
 
   @Override
+  @Nullable
+  public DLanguageCastExpression getCastExpression() {
+    return PsiTreeUtil.getChildOfType(this, DLanguageCastExpression.class);
+  }
+
+  @Override
+  @Nullable
+  public DLanguageDeleteExpression getDeleteExpression() {
+    return PsiTreeUtil.getChildOfType(this, DLanguageDeleteExpression.class);
+  }
+
+  @Override
+  @Nullable
+  public DLanguageIdentifier getIdentifier() {
+    return PsiTreeUtil.getChildOfType(this, DLanguageIdentifier.class);
+  }
+
+  @Override
   @NotNull
   public DLanguagePostfixExpression getPostfixExpression() {
     return notNullChild(PsiTreeUtil.getChildOfType(this, DLanguagePostfixExpression.class));
   }
 
   @Override
-  @Nullable
-  public DLanguagePowExpression getPowExpression() {
-    return PsiTreeUtil.getChildOfType(this, DLanguagePowExpression.class);
+  @NotNull
+  public List<DLanguagePowExpression> getPowExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DLanguagePowExpression.class);
   }
 
   @Override
   @Nullable
-  public DLanguageUnaryExpression getUnaryExpression() {
-    return PsiTreeUtil.getChildOfType(this, DLanguageUnaryExpression.class);
+  public DLanguageTemplateInstance getTemplateInstance() {
+    return PsiTreeUtil.getChildOfType(this, DLanguageTemplateInstance.class);
   }
 
   @Override
   @Nullable
-  public PsiElement getOpPow() {
-    return findChildByType(OP_POW);
+  public DLanguageType getType() {
+    return PsiTreeUtil.getChildOfType(this, DLanguageType.class);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getOpDot() {
+    return findChildByType(OP_DOT);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getOpParLeft() {
+    return findChildByType(OP_PAR_LEFT);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getOpParRight() {
+    return findChildByType(OP_PAR_RIGHT);
   }
 
 }

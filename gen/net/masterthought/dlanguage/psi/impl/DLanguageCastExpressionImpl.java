@@ -28,8 +28,38 @@ public class DLanguageCastExpressionImpl extends ASTWrapperPsiElement implements
 
   @Override
   @Nullable
-  public DLanguageType getType() {
-    return PsiTreeUtil.getChildOfType(this, DLanguageType.class);
+  public DLanguageCastExpression getCastExpression() {
+    return PsiTreeUtil.getChildOfType(this, DLanguageCastExpression.class);
+  }
+
+  @Override
+  @Nullable
+  public DLanguageDeleteExpression getDeleteExpression() {
+    return PsiTreeUtil.getChildOfType(this, DLanguageDeleteExpression.class);
+  }
+
+  @Override
+  @Nullable
+  public DLanguageIdentifier getIdentifier() {
+    return PsiTreeUtil.getChildOfType(this, DLanguageIdentifier.class);
+  }
+
+  @Override
+  @Nullable
+  public DLanguagePowExpression getPowExpression() {
+    return PsiTreeUtil.getChildOfType(this, DLanguagePowExpression.class);
+  }
+
+  @Override
+  @Nullable
+  public DLanguageTemplateInstance getTemplateInstance() {
+    return PsiTreeUtil.getChildOfType(this, DLanguageTemplateInstance.class);
+  }
+
+  @Override
+  @NotNull
+  public List<DLanguageType> getTypeList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DLanguageType.class);
   }
 
   @Override
@@ -40,26 +70,14 @@ public class DLanguageCastExpressionImpl extends ASTWrapperPsiElement implements
 
   @Override
   @NotNull
-  public DLanguageUnaryExpression getUnaryExpression() {
-    return notNullChild(PsiTreeUtil.getChildOfType(this, DLanguageUnaryExpression.class));
-  }
-
-  @Override
-  @NotNull
   public PsiElement getKwCast() {
     return notNullChild(findChildByType(KW_CAST));
   }
 
   @Override
-  @NotNull
-  public PsiElement getOpParLeft() {
-    return notNullChild(findChildByType(OP_PAR_LEFT));
-  }
-
-  @Override
-  @NotNull
-  public PsiElement getOpParRight() {
-    return notNullChild(findChildByType(OP_PAR_RIGHT));
+  @Nullable
+  public PsiElement getOpDot() {
+    return findChildByType(OP_DOT);
   }
 
 }
