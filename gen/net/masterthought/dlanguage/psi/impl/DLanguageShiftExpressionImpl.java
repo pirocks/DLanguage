@@ -28,14 +28,38 @@ public class DLanguageShiftExpressionImpl extends ASTWrapperPsiElement implement
 
   @Override
   @NotNull
-  public DLanguageAddExpression getAddExpression() {
-    return notNullChild(PsiTreeUtil.getChildOfType(this, DLanguageAddExpression.class));
+  public List<DLanguageAddExpression> getAddExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DLanguageAddExpression.class);
+  }
+
+  @Override
+  @Nullable
+  public DLanguageMulExpression getMulExpression() {
+    return PsiTreeUtil.getChildOfType(this, DLanguageMulExpression.class);
+  }
+
+  @Override
+  @Nullable
+  public DLanguagePostfixExpression getPostfixExpression() {
+    return PsiTreeUtil.getChildOfType(this, DLanguagePostfixExpression.class);
+  }
+
+  @Override
+  @Nullable
+  public DLanguagePowExpression getPowExpression() {
+    return PsiTreeUtil.getChildOfType(this, DLanguagePowExpression.class);
   }
 
   @Override
   @Nullable
   public DLanguageShiftExpression getShiftExpression() {
     return PsiTreeUtil.getChildOfType(this, DLanguageShiftExpression.class);
+  }
+
+  @Override
+  @Nullable
+  public DLanguageUnaryExpression getUnaryExpression() {
+    return PsiTreeUtil.getChildOfType(this, DLanguageUnaryExpression.class);
   }
 
   @Override

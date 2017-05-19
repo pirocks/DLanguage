@@ -14,7 +14,7 @@ public interface DLanguageNewAnonClassExpression extends PsiElement {
   DLanguageAllocatorArguments getAllocatorArguments();
 
   @Nullable
-  DLanguageClassArguments getClassArguments();
+  DLanguageArgumentList getArgumentList();
 
   @Nullable
   DLanguageInterfaces getInterfaces();
@@ -27,5 +27,11 @@ public interface DLanguageNewAnonClassExpression extends PsiElement {
 
   @NotNull
   PsiElement getKwNew();
+
+  @Nullable
+  PsiElement getOpParLeft();
+
+  @Nullable
+  PsiElement getOpParRight();
 
 }

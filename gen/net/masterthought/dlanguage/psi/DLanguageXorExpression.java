@@ -8,7 +8,25 @@ import com.intellij.psi.PsiElement;
 public interface DLanguageXorExpression extends PsiElement {
 
   @NotNull
-  DLanguageAndExpression getAndExpression();
+  List<DLanguageAddExpression> getAddExpressionList();
+
+  @NotNull
+  List<DLanguageAndExpression> getAndExpressionList();
+
+  @NotNull
+  List<DLanguageMulExpression> getMulExpressionList();
+
+  @NotNull
+  List<DLanguagePostfixExpression> getPostfixExpressionList();
+
+  @NotNull
+  List<DLanguagePowExpression> getPowExpressionList();
+
+  @NotNull
+  List<DLanguageShiftExpression> getShiftExpressionList();
+
+  @NotNull
+  List<DLanguageUnaryExpression> getUnaryExpressionList();
 
   @Nullable
   DLanguageXorExpression getXorExpression();

@@ -33,9 +33,21 @@ public class DLanguageMulExpressionImpl extends ASTWrapperPsiElement implements 
   }
 
   @Override
+  @Nullable
+  public DLanguagePostfixExpression getPostfixExpression() {
+    return PsiTreeUtil.getChildOfType(this, DLanguagePostfixExpression.class);
+  }
+
+  @Override
+  @Nullable
+  public DLanguagePowExpression getPowExpression() {
+    return PsiTreeUtil.getChildOfType(this, DLanguagePowExpression.class);
+  }
+
+  @Override
   @NotNull
-  public DLanguageUnaryExpression getUnaryExpression() {
-    return notNullChild(PsiTreeUtil.getChildOfType(this, DLanguageUnaryExpression.class));
+  public List<DLanguageUnaryExpression> getUnaryExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DLanguageUnaryExpression.class);
   }
 
   @Override

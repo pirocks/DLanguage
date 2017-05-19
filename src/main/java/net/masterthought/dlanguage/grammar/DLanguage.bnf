@@ -400,56 +400,91 @@ Expression ::=
 CommaExpression ::=
     AssignExpression (',' CommaExpression)?
 
+// the below wrappers are to make expressions more compact
+private AssignExpressionWrapper ::=
+    ConditionalExpressionWrapper
+    | AssignExpression
+
 AssignExpression ::=
-   ConditionalExpression [ ( '='
-                              | '+='
-                              | '-='
-                              | '*='
-                              | '/='
-                              | '%='
-                              | '&='
-                              | '|='
-                              | '^='
-                              | '~='
-                              | '<<='
-                              | '>>='
-                              | '>>>='
-                              | '^^=') AssignExpression]{
-//                              recoverWhile = assign_recover
-                            }
-//private assign_recover ::= !(')' | ']' | '..' | ','| ':' | ';' | )
+    UnaryExpressionWrapper
+   | AddExpressionWrapper
+   | XorExpressionWrapper
+   | OrExpressionWrapper
+   | CmpExpressionWrapper
+   | AndAndExpressionWrapper
+   | OrOrExpressionWrapper
+   | ConditionalExpressionWrapper [ ( '=' | '+=' | '-=' | '*=' | '/=' | '%=' | '&=' | '|=' | '^=' | '~=' | '<<=' | '>>=' | '>>>=' | '^^=') AssignExpressionWrapper]
+
+private ConditionalExpressionWrapper ::=
+    OrOrExpressionWrapper
+    | ConditionalExpression
 
 ConditionalExpression ::=
-   OrOrExpression ['?' Expression ':' ConditionalExpression]
+   OrOrExpressionWrapper ['?' Expression ':' ConditionalExpression]
 
-OrOrExpression ::= AndAndExpression [ '||' OrOrExpression]
+private OrOrExpressionWrapper ::=
+    AndAndExpressionWrapper
+    | OrOrExpression
+
+OrOrExpression ::= AndAndExpressionWrapper [ '||' OrOrExpression]
+
+private AndAndExpressionWrapper ::=
+    OrExpressionWrapper
+    | CmpExpressionWrapper
+    | AndAndExpression
 
 AndAndExpression ::=
-    ('&&')? ( OrExpression | CmpExpression ) [ AndAndExpression ]
+    ('&&')? ( OrExpressionWrapper | CmpExpressionWrapper ) [ AndAndExpressionWrapper ]
+
+private OrExpressionWrapper ::=
+    XorExpressionWrapper
+    | OrExpression
 
 OrExpression ::=
-    XorExpression [OrExpression]
+    XorExpressionWrapper [OrExpressionWrapper]
 
-XorExpression ::= AndExpression [ '^' XorExpression ]
+private XorExpressionWrapper ::=
+    AndExpressionWrapper
+    | XorExpression
 
-AndExpression ::= ShiftExpression [ '&' AndExpression ]
+XorExpression ::= AndExpressionWrapper [ '^' XorExpressionWrapper ]
+
+private AndExpressionWrapper ::=
+    ShiftExpressionWrapper
+    | AndExpression
+
+AndExpression ::= ShiftExpressionWrapper [ '&' AndExpressionWrapper ]
+
+private CmpExpressionWrapper ::=
+    CmpExpression
 
 CmpExpression ::=
-    ShiftExpression
+    ShiftExpressionWrapper
+    | EqualExpressionWrapper
+    | IdentityExpressionWrapper
+    | RelExpressionWrapper
+    | InExpressionWrapper
+
+private EqualExpressionWrapper ::=
+    ShiftExpressionWrapper
     | EqualExpression
-    | IdentityExpression
-    | RelExpression
-    | InExpression
 
 EqualExpression ::=
-     ('==' | '!=') [ShiftExpression]{
+     ('==' | '!=') [ShiftExpressionWrapper]{
+     pin = 1
+     }
+private IdentityExpressionWrapper ::=
+    ShiftExpressionWrapper
+    | IdentityExpression
+
+IdentityExpression ::=
+     ('is'|'!is') ShiftExpressionWrapper{
      pin = 1
      }
 
-IdentityExpression ::=
-     ('is'|'!is') ShiftExpression{
-     pin = 1
-     }
+private RelExpressionWrapper ::=
+    ShiftExpressionWrapper
+    | RelExpression
 
 RelExpression ::=
     ('<'
@@ -463,21 +498,42 @@ RelExpression ::=
     | '!>'
     | '!>='
     | '!<'
-    | '!<=') ShiftExpression{
+    | '!<=') ShiftExpressionWrapper{
     pin = 1
     }
+
+private InExpressionWrapper ::=
+    ShiftExpressionWrapper
+    | InExpression
+
 
 InExpression ::=
-    ('in'| '!in') ShiftExpression{
+    ('in'| '!in') ShiftExpressionWrapper{
     pin = 1
     }
 
-ShiftExpression ::= AddExpression [('<<' | '>>' | '>>>') ShiftExpression]
+private ShiftExpressionWrapper ::=
+    AddExpressionWrapper
+    | ShiftExpression
+
+ShiftExpression ::= AddExpression [('<<' | '>>' | '>>>') ShiftExpressionWrapper]
+
+private AddExpressionWrapper ::=
+    MulExpressionWrapper
+    | AddExpression
 
 AddExpression ::=
     MulExpression [ ('+' | '-' | '~') AddExpression]
 
-MulExpression ::= UnaryExpression [ ('*' | '/' | '%') MulExpression]
+private MulExpressionWrapper ::=
+    UnaryExpressionWrapper
+    | MulExpression
+
+MulExpression ::= UnaryExpression [ ('*' | '/' | '%') MulExpressionWrapper]
+
+private UnaryExpressionWrapper ::=
+    PowExpressionWrapper
+    | UnaryExpression
 
 UnaryExpression ::=
      ('&'
@@ -489,12 +545,12 @@ UnaryExpression ::=
     | '-'
     | '+'
     | '!'
-    | '~') [UnaryExpression]
+    | '~') [UnaryExpressionWrapper]
     | TypeCtor? '(' Type ')' '.' Identifier
     | TypeCtor? '(' Type ')' '.' TemplateInstance
     | DeleteExpression
     | CastExpression
-    | PowExpression
+    | PowExpressionWrapper
 
 NewExpression ::=
     'new' AllocatorArguments? Type
@@ -519,7 +575,7 @@ NewAnonClassExpression ::=
     pin = 1
     }
 
-ClassArguments ::=
+private ClassArguments ::=
     '(' ArgumentList? ')'
 
 DeleteExpression ::=
@@ -533,7 +589,14 @@ CastExpression ::=
         //pin(".*") = 1
     }
 
-PowExpression ::= PostfixExpression ['^^' UnaryExpression PowExpression]
+private PowExpressionWrapper ::=
+    PostfixExpressionWrapper
+    | PowExpression
+
+PowExpression ::= PostfixExpressionWrapper ['^^' UnaryExpressionWrapper PowExpressionWrapper]
+
+private PostfixExpressionWrapper ::=
+    PostfixExpression
 
 PostfixExpression ::=
     PrimaryExpression
@@ -755,13 +818,13 @@ Statement ::=
     | NonEmptyStatement
     | BlockStatement
 
-NonEmptyStatement ::=
+private NonEmptyStatement ::=
     NonEmptyStatementNoCaseNoDefault
     | CaseRangeStatement//must be above case statement because pin on case statement will detect a case statement, where there is a case range statement
     | CaseStatement
     | DefaultStatement
 
-NonEmptyStatementNoCaseNoDefault ::=
+private NonEmptyStatementNoCaseNoDefault ::=
     LabeledStatement
     | DeclarationStatement
     | Declaration
@@ -814,7 +877,7 @@ StatementList ::=
 ExpressionStatement ::=
     Expression ';'?
 
-DeclarationStatement ::=
+private DeclarationStatement ::=
     StorageClasses? Declaration
 
 IfStatement ::=
@@ -1783,7 +1846,7 @@ Opcode ::=
 | 'pmulhrw'
 | 'pswapd'
 
-Declaration ::=
+private Declaration ::=
    EnumDeclaration
    | FuncDeclaration
    | VarDeclarations //must come before alias decleration

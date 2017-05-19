@@ -28,14 +28,14 @@ public class DLanguagePowExpressionImpl extends ASTWrapperPsiElement implements 
 
   @Override
   @NotNull
-  public DLanguagePostfixExpression getPostfixExpression() {
-    return notNullChild(PsiTreeUtil.getChildOfType(this, DLanguagePostfixExpression.class));
+  public List<DLanguagePostfixExpression> getPostfixExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DLanguagePostfixExpression.class);
   }
 
   @Override
-  @Nullable
-  public DLanguagePowExpression getPowExpression() {
-    return PsiTreeUtil.getChildOfType(this, DLanguagePowExpression.class);
+  @NotNull
+  public List<DLanguagePowExpression> getPowExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DLanguagePowExpression.class);
   }
 
   @Override

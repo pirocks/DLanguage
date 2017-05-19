@@ -8,10 +8,46 @@ import com.intellij.psi.PsiElement;
 public interface DLanguageAssignExpression extends PsiElement {
 
   @Nullable
+  DLanguageAddExpression getAddExpression();
+
+  @Nullable
+  DLanguageAndAndExpression getAndAndExpression();
+
+  @Nullable
+  DLanguageAndExpression getAndExpression();
+
+  @Nullable
   DLanguageAssignExpression getAssignExpression();
 
+  @Nullable
+  DLanguageCmpExpression getCmpExpression();
+
   @NotNull
-  DLanguageConditionalExpression getConditionalExpression();
+  List<DLanguageConditionalExpression> getConditionalExpressionList();
+
+  @Nullable
+  DLanguageMulExpression getMulExpression();
+
+  @Nullable
+  DLanguageOrExpression getOrExpression();
+
+  @Nullable
+  DLanguageOrOrExpression getOrOrExpression();
+
+  @Nullable
+  DLanguagePostfixExpression getPostfixExpression();
+
+  @Nullable
+  DLanguagePowExpression getPowExpression();
+
+  @Nullable
+  DLanguageShiftExpression getShiftExpression();
+
+  @Nullable
+  DLanguageUnaryExpression getUnaryExpression();
+
+  @Nullable
+  DLanguageXorExpression getXorExpression();
 
   @Nullable
   PsiElement getOpAndEq();

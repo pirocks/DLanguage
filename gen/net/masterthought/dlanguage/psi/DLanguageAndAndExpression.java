@@ -7,14 +7,38 @@ import com.intellij.psi.PsiElement;
 
 public interface DLanguageAndAndExpression extends PsiElement {
 
+  @NotNull
+  List<DLanguageAddExpression> getAddExpressionList();
+
   @Nullable
   DLanguageAndAndExpression getAndAndExpression();
 
-  @Nullable
-  DLanguageCmpExpression getCmpExpression();
+  @NotNull
+  List<DLanguageAndExpression> getAndExpressionList();
 
-  @Nullable
-  DLanguageOrExpression getOrExpression();
+  @NotNull
+  List<DLanguageCmpExpression> getCmpExpressionList();
+
+  @NotNull
+  List<DLanguageMulExpression> getMulExpressionList();
+
+  @NotNull
+  List<DLanguageOrExpression> getOrExpressionList();
+
+  @NotNull
+  List<DLanguagePostfixExpression> getPostfixExpressionList();
+
+  @NotNull
+  List<DLanguagePowExpression> getPowExpressionList();
+
+  @NotNull
+  List<DLanguageShiftExpression> getShiftExpressionList();
+
+  @NotNull
+  List<DLanguageUnaryExpression> getUnaryExpressionList();
+
+  @NotNull
+  List<DLanguageXorExpression> getXorExpressionList();
 
   @Nullable
   PsiElement getOpBoolAnd();

@@ -28,6 +28,30 @@ public class DLanguageConditionalExpressionImpl extends ASTWrapperPsiElement imp
 
   @Override
   @Nullable
+  public DLanguageAddExpression getAddExpression() {
+    return PsiTreeUtil.getChildOfType(this, DLanguageAddExpression.class);
+  }
+
+  @Override
+  @Nullable
+  public DLanguageAndAndExpression getAndAndExpression() {
+    return PsiTreeUtil.getChildOfType(this, DLanguageAndAndExpression.class);
+  }
+
+  @Override
+  @Nullable
+  public DLanguageAndExpression getAndExpression() {
+    return PsiTreeUtil.getChildOfType(this, DLanguageAndExpression.class);
+  }
+
+  @Override
+  @Nullable
+  public DLanguageCmpExpression getCmpExpression() {
+    return PsiTreeUtil.getChildOfType(this, DLanguageCmpExpression.class);
+  }
+
+  @Override
+  @Nullable
   public DLanguageConditionalExpression getConditionalExpression() {
     return PsiTreeUtil.getChildOfType(this, DLanguageConditionalExpression.class);
   }
@@ -39,9 +63,51 @@ public class DLanguageConditionalExpressionImpl extends ASTWrapperPsiElement imp
   }
 
   @Override
-  @NotNull
+  @Nullable
+  public DLanguageMulExpression getMulExpression() {
+    return PsiTreeUtil.getChildOfType(this, DLanguageMulExpression.class);
+  }
+
+  @Override
+  @Nullable
+  public DLanguageOrExpression getOrExpression() {
+    return PsiTreeUtil.getChildOfType(this, DLanguageOrExpression.class);
+  }
+
+  @Override
+  @Nullable
   public DLanguageOrOrExpression getOrOrExpression() {
-    return notNullChild(PsiTreeUtil.getChildOfType(this, DLanguageOrOrExpression.class));
+    return PsiTreeUtil.getChildOfType(this, DLanguageOrOrExpression.class);
+  }
+
+  @Override
+  @Nullable
+  public DLanguagePostfixExpression getPostfixExpression() {
+    return PsiTreeUtil.getChildOfType(this, DLanguagePostfixExpression.class);
+  }
+
+  @Override
+  @Nullable
+  public DLanguagePowExpression getPowExpression() {
+    return PsiTreeUtil.getChildOfType(this, DLanguagePowExpression.class);
+  }
+
+  @Override
+  @Nullable
+  public DLanguageShiftExpression getShiftExpression() {
+    return PsiTreeUtil.getChildOfType(this, DLanguageShiftExpression.class);
+  }
+
+  @Override
+  @Nullable
+  public DLanguageUnaryExpression getUnaryExpression() {
+    return PsiTreeUtil.getChildOfType(this, DLanguageUnaryExpression.class);
+  }
+
+  @Override
+  @Nullable
+  public DLanguageXorExpression getXorExpression() {
+    return PsiTreeUtil.getChildOfType(this, DLanguageXorExpression.class);
   }
 
   @Override

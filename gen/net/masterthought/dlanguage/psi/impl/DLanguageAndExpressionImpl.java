@@ -27,6 +27,12 @@ public class DLanguageAndExpressionImpl extends ASTWrapperPsiElement implements 
   }
 
   @Override
+  @NotNull
+  public List<DLanguageAddExpression> getAddExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DLanguageAddExpression.class);
+  }
+
+  @Override
   @Nullable
   public DLanguageAndExpression getAndExpression() {
     return PsiTreeUtil.getChildOfType(this, DLanguageAndExpression.class);
@@ -34,8 +40,32 @@ public class DLanguageAndExpressionImpl extends ASTWrapperPsiElement implements 
 
   @Override
   @NotNull
-  public DLanguageShiftExpression getShiftExpression() {
-    return notNullChild(PsiTreeUtil.getChildOfType(this, DLanguageShiftExpression.class));
+  public List<DLanguageMulExpression> getMulExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DLanguageMulExpression.class);
+  }
+
+  @Override
+  @NotNull
+  public List<DLanguagePostfixExpression> getPostfixExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DLanguagePostfixExpression.class);
+  }
+
+  @Override
+  @NotNull
+  public List<DLanguagePowExpression> getPowExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DLanguagePowExpression.class);
+  }
+
+  @Override
+  @NotNull
+  public List<DLanguageShiftExpression> getShiftExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DLanguageShiftExpression.class);
+  }
+
+  @Override
+  @NotNull
+  public List<DLanguageUnaryExpression> getUnaryExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DLanguageUnaryExpression.class);
   }
 
   @Override

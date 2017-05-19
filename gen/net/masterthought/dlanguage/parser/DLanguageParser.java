@@ -221,9 +221,6 @@ public class DLanguageParser implements PsiParser, LightPsiParser {
     else if (t == CATCHES) {
       r = Catches(b, 0);
     }
-    else if (t == CLASS_ARGUMENTS) {
-      r = ClassArguments(b, 0);
-    }
     else if (t == CLASS_DECLARATION) {
       r = ClassDeclaration(b, 0);
     }
@@ -275,14 +272,8 @@ public class DLanguageParser implements PsiParser, LightPsiParser {
     else if (t == DECL_DEFS) {
       r = DeclDefs(b, 0);
     }
-    else if (t == DECLARATION) {
-      r = Declaration(b, 0);
-    }
     else if (t == DECLARATION_BLOCK) {
       r = DeclarationBlock(b, 0);
-    }
-    else if (t == DECLARATION_STATEMENT) {
-      r = DeclarationStatement(b, 0);
     }
     else if (t == DECLARATOR) {
       r = Declarator(b, 0);
@@ -550,12 +541,6 @@ public class DLanguageParser implements PsiParser, LightPsiParser {
     }
     else if (t == NEW_EXPRESSION_WITH_ARGS) {
       r = NewExpressionWithArgs(b, 0);
-    }
-    else if (t == NON_EMPTY_STATEMENT) {
-      r = NonEmptyStatement(b, 0);
-    }
-    else if (t == NON_EMPTY_STATEMENT_NO_CASE_NO_DEFAULT) {
-      r = NonEmptyStatementNoCaseNoDefault(b, 0);
     }
     else if (t == NON_VOID_INITIALIZER) {
       r = NonVoidInitializer(b, 0);
@@ -908,6 +893,19 @@ public class DLanguageParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, OP_PLUS);
     if (!r) r = consumeToken(b, OP_MINUS);
     if (!r) r = consumeToken(b, OP_TILDA);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // MulExpressionWrapper
+  //     | AddExpression
+  static boolean AddExpressionWrapper(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "AddExpressionWrapper")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = MulExpressionWrapper(b, l + 1);
+    if (!r) r = AddExpression(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -1473,7 +1471,7 @@ public class DLanguageParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ('&&')? ( OrExpression | CmpExpression ) [ AndAndExpression ]
+  // ('&&')? ( OrExpressionWrapper | CmpExpressionWrapper ) [ AndAndExpressionWrapper ]
   public static boolean AndAndExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "AndAndExpression")) return false;
     boolean r;
@@ -1492,50 +1490,78 @@ public class DLanguageParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // OrExpression | CmpExpression
+  // OrExpressionWrapper | CmpExpressionWrapper
   private static boolean AndAndExpression_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "AndAndExpression_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = OrExpression(b, l + 1);
-    if (!r) r = CmpExpression(b, l + 1);
+    r = OrExpressionWrapper(b, l + 1);
+    if (!r) r = CmpExpressionWrapper(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
-  // [ AndAndExpression ]
+  // [ AndAndExpressionWrapper ]
   private static boolean AndAndExpression_2(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "AndAndExpression_2")) return false;
-    AndAndExpression(b, l + 1);
+    AndAndExpressionWrapper(b, l + 1);
     return true;
   }
 
   /* ********************************************************** */
-  // ShiftExpression [ '&' AndExpression ]
+  // OrExpressionWrapper
+  //     | CmpExpressionWrapper
+  //     | AndAndExpression
+  static boolean AndAndExpressionWrapper(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "AndAndExpressionWrapper")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = OrExpressionWrapper(b, l + 1);
+    if (!r) r = CmpExpressionWrapper(b, l + 1);
+    if (!r) r = AndAndExpression(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // ShiftExpressionWrapper [ '&' AndExpressionWrapper ]
   public static boolean AndExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "AndExpression")) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, AND_EXPRESSION, "<and expression>");
-    r = ShiftExpression(b, l + 1);
+    Marker m = enter_section_(b, l, _COLLAPSE_, AND_EXPRESSION, "<and expression>");
+    r = ShiftExpressionWrapper(b, l + 1);
     r = r && AndExpression_1(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
 
-  // [ '&' AndExpression ]
+  // [ '&' AndExpressionWrapper ]
   private static boolean AndExpression_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "AndExpression_1")) return false;
     AndExpression_1_0(b, l + 1);
     return true;
   }
 
-  // '&' AndExpression
+  // '&' AndExpressionWrapper
   private static boolean AndExpression_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "AndExpression_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, OP_AND);
-    r = r && AndExpression(b, l + 1);
+    r = r && AndExpressionWrapper(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // ShiftExpressionWrapper
+  //     | AndExpression
+  static boolean AndExpressionWrapper(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "AndExpressionWrapper")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = ShiftExpressionWrapper(b, l + 1);
+    if (!r) r = AndExpression(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -2812,93 +2838,62 @@ public class DLanguageParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ConditionalExpression [ ( '='
-  //                               | '+='
-  //                               | '-='
-  //                               | '*='
-  //                               | '/='
-  //                               | '%='
-  //                               | '&='
-  //                               | '|='
-  //                               | '^='
-  //                               | '~='
-  //                               | '<<='
-  //                               | '>>='
-  //                               | '>>>='
-  //                               | '^^=') AssignExpression]{
-  // //                              recoverWhile = assign_recover
-  //                             }
+  // UnaryExpressionWrapper
+  //    | AddExpressionWrapper
+  //    | XorExpressionWrapper
+  //    | OrExpressionWrapper
+  //    | CmpExpressionWrapper
+  //    | AndAndExpressionWrapper
+  //    | OrOrExpressionWrapper
+  //    | ConditionalExpressionWrapper [ ( '=' | '+=' | '-=' | '*=' | '/=' | '%=' | '&=' | '|=' | '^=' | '~=' | '<<=' | '>>=' | '>>>=' | '^^=') AssignExpressionWrapper]
   public static boolean AssignExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "AssignExpression")) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, ASSIGN_EXPRESSION, "<assign expression>");
-    r = ConditionalExpression(b, l + 1);
-    r = r && AssignExpression_1(b, l + 1);
-    r = r && AssignExpression_2(b, l + 1);
+    Marker m = enter_section_(b, l, _COLLAPSE_, ASSIGN_EXPRESSION, "<assign expression>");
+    r = UnaryExpressionWrapper(b, l + 1);
+    if (!r) r = AddExpressionWrapper(b, l + 1);
+    if (!r) r = XorExpressionWrapper(b, l + 1);
+    if (!r) r = OrExpressionWrapper(b, l + 1);
+    if (!r) r = CmpExpressionWrapper(b, l + 1);
+    if (!r) r = AndAndExpressionWrapper(b, l + 1);
+    if (!r) r = OrOrExpressionWrapper(b, l + 1);
+    if (!r) r = AssignExpression_7(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
 
-  // [ ( '='
-  //                               | '+='
-  //                               | '-='
-  //                               | '*='
-  //                               | '/='
-  //                               | '%='
-  //                               | '&='
-  //                               | '|='
-  //                               | '^='
-  //                               | '~='
-  //                               | '<<='
-  //                               | '>>='
-  //                               | '>>>='
-  //                               | '^^=') AssignExpression]
-  private static boolean AssignExpression_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "AssignExpression_1")) return false;
-    AssignExpression_1_0(b, l + 1);
-    return true;
-  }
-
-  // ( '='
-  //                               | '+='
-  //                               | '-='
-  //                               | '*='
-  //                               | '/='
-  //                               | '%='
-  //                               | '&='
-  //                               | '|='
-  //                               | '^='
-  //                               | '~='
-  //                               | '<<='
-  //                               | '>>='
-  //                               | '>>>='
-  //                               | '^^=') AssignExpression
-  private static boolean AssignExpression_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "AssignExpression_1_0")) return false;
+  // ConditionalExpressionWrapper [ ( '=' | '+=' | '-=' | '*=' | '/=' | '%=' | '&=' | '|=' | '^=' | '~=' | '<<=' | '>>=' | '>>>=' | '^^=') AssignExpressionWrapper]
+  private static boolean AssignExpression_7(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "AssignExpression_7")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = AssignExpression_1_0_0(b, l + 1);
-    r = r && AssignExpression(b, l + 1);
+    r = ConditionalExpressionWrapper(b, l + 1);
+    r = r && AssignExpression_7_1(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
-  // '='
-  //                               | '+='
-  //                               | '-='
-  //                               | '*='
-  //                               | '/='
-  //                               | '%='
-  //                               | '&='
-  //                               | '|='
-  //                               | '^='
-  //                               | '~='
-  //                               | '<<='
-  //                               | '>>='
-  //                               | '>>>='
-  //                               | '^^='
-  private static boolean AssignExpression_1_0_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "AssignExpression_1_0_0")) return false;
+  // [ ( '=' | '+=' | '-=' | '*=' | '/=' | '%=' | '&=' | '|=' | '^=' | '~=' | '<<=' | '>>=' | '>>>=' | '^^=') AssignExpressionWrapper]
+  private static boolean AssignExpression_7_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "AssignExpression_7_1")) return false;
+    AssignExpression_7_1_0(b, l + 1);
+    return true;
+  }
+
+  // ( '=' | '+=' | '-=' | '*=' | '/=' | '%=' | '&=' | '|=' | '^=' | '~=' | '<<=' | '>>=' | '>>>=' | '^^=') AssignExpressionWrapper
+  private static boolean AssignExpression_7_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "AssignExpression_7_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = AssignExpression_7_1_0_0(b, l + 1);
+    r = r && AssignExpressionWrapper(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // '=' | '+=' | '-=' | '*=' | '/=' | '%=' | '&=' | '|=' | '^=' | '~=' | '<<=' | '>>=' | '>>>=' | '^^='
+  private static boolean AssignExpression_7_1_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "AssignExpression_7_1_0_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, OP_EQ);
@@ -2919,11 +2914,17 @@ public class DLanguageParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // {
-  // //                              recoverWhile = assign_recover
-  //                             }
-  private static boolean AssignExpression_2(PsiBuilder b, int l) {
-    return true;
+  /* ********************************************************** */
+  // ConditionalExpressionWrapper
+  //     | AssignExpression
+  static boolean AssignExpressionWrapper(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "AssignExpressionWrapper")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = ConditionalExpressionWrapper(b, l + 1);
+    if (!r) r = AssignExpression(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
   }
 
   /* ********************************************************** */
@@ -3664,7 +3665,7 @@ public class DLanguageParser implements PsiParser, LightPsiParser {
 
   /* ********************************************************** */
   // '(' ArgumentList? ')'
-  public static boolean ClassArguments(PsiBuilder b, int l) {
+  static boolean ClassArguments(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "ClassArguments")) return false;
     if (!nextTokenIs(b, OP_PAR_LEFT)) return false;
     boolean r;
@@ -3672,7 +3673,7 @@ public class DLanguageParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, OP_PAR_LEFT);
     r = r && ClassArguments_1(b, l + 1);
     r = r && consumeToken(b, OP_PAR_RIGHT);
-    exit_section_(b, m, CLASS_ARGUMENTS, r);
+    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -3802,22 +3803,28 @@ public class DLanguageParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ShiftExpression
-  //     | EqualExpression
-  //     | IdentityExpression
-  //     | RelExpression
-  //     | InExpression
+  // ShiftExpressionWrapper
+  //     | EqualExpressionWrapper
+  //     | IdentityExpressionWrapper
+  //     | RelExpressionWrapper
+  //     | InExpressionWrapper
   public static boolean CmpExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "CmpExpression")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, CMP_EXPRESSION, "<cmp expression>");
-    r = ShiftExpression(b, l + 1);
-    if (!r) r = EqualExpression(b, l + 1);
-    if (!r) r = IdentityExpression(b, l + 1);
-    if (!r) r = RelExpression(b, l + 1);
-    if (!r) r = InExpression(b, l + 1);
+    r = ShiftExpressionWrapper(b, l + 1);
+    if (!r) r = EqualExpressionWrapper(b, l + 1);
+    if (!r) r = IdentityExpressionWrapper(b, l + 1);
+    if (!r) r = RelExpressionWrapper(b, l + 1);
+    if (!r) r = InExpressionWrapper(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
+  }
+
+  /* ********************************************************** */
+  // CmpExpression
+  static boolean CmpExpressionWrapper(PsiBuilder b, int l) {
+    return CmpExpression(b, l + 1);
   }
 
   /* ********************************************************** */
@@ -3950,12 +3957,12 @@ public class DLanguageParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // OrOrExpression ['?' Expression ':' ConditionalExpression]
+  // OrOrExpressionWrapper ['?' Expression ':' ConditionalExpression]
   public static boolean ConditionalExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "ConditionalExpression")) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, CONDITIONAL_EXPRESSION, "<conditional expression>");
-    r = OrOrExpression(b, l + 1);
+    Marker m = enter_section_(b, l, _COLLAPSE_, CONDITIONAL_EXPRESSION, "<conditional expression>");
+    r = OrOrExpressionWrapper(b, l + 1);
     r = r && ConditionalExpression_1(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
@@ -3977,6 +3984,19 @@ public class DLanguageParser implements PsiParser, LightPsiParser {
     r = r && Expression(b, l + 1);
     r = r && consumeToken(b, OP_COLON);
     r = r && ConditionalExpression(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // OrOrExpressionWrapper
+  //     | ConditionalExpression
+  static boolean ConditionalExpressionWrapper(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "ConditionalExpressionWrapper")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = OrOrExpressionWrapper(b, l + 1);
+    if (!r) r = ConditionalExpression(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -4400,10 +4420,10 @@ public class DLanguageParser implements PsiParser, LightPsiParser {
   //    | AggregateDeclaration
   //    | ImportDeclaration
   //    | TemplateDeclaration
-  public static boolean Declaration(PsiBuilder b, int l) {
+  static boolean Declaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "Declaration")) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, DECLARATION, "<declaration>");
+    Marker m = enter_section_(b);
     r = EnumDeclaration(b, l + 1);
     if (!r) r = FuncDeclaration(b, l + 1);
     if (!r) r = VarDeclarations(b, l + 1);
@@ -4411,7 +4431,7 @@ public class DLanguageParser implements PsiParser, LightPsiParser {
     if (!r) r = AggregateDeclaration(b, l + 1);
     if (!r) r = ImportDeclaration(b, l + 1);
     if (!r) r = TemplateDeclaration(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
+    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -4449,13 +4469,13 @@ public class DLanguageParser implements PsiParser, LightPsiParser {
 
   /* ********************************************************** */
   // StorageClasses? Declaration
-  public static boolean DeclarationStatement(PsiBuilder b, int l) {
+  static boolean DeclarationStatement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "DeclarationStatement")) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, DECLARATION_STATEMENT, "<declaration statement>");
+    Marker m = enter_section_(b);
     r = DeclarationStatement_0(b, l + 1);
     r = r && Declaration(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
+    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -4987,7 +5007,7 @@ public class DLanguageParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ('==' | '!=') [ShiftExpression]
+  // ('==' | '!=') [ShiftExpressionWrapper]
   public static boolean EqualExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "EqualExpression")) return false;
     if (!nextTokenIs(b, "<equal expression>", OP_NOT_EQ, OP_EQ_EQ)) return false;
@@ -5011,11 +5031,24 @@ public class DLanguageParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // [ShiftExpression]
+  // [ShiftExpressionWrapper]
   private static boolean EqualExpression_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "EqualExpression_1")) return false;
-    ShiftExpression(b, l + 1);
+    ShiftExpressionWrapper(b, l + 1);
     return true;
+  }
+
+  /* ********************************************************** */
+  // ShiftExpressionWrapper
+  //     | EqualExpression
+  static boolean EqualExpressionWrapper(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "EqualExpressionWrapper")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = ShiftExpressionWrapper(b, l + 1);
+    if (!r) r = EqualExpression(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
   }
 
   /* ********************************************************** */
@@ -5836,7 +5869,7 @@ public class DLanguageParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ('is'|'!is') ShiftExpression
+  // ('is'|'!is') ShiftExpressionWrapper
   public static boolean IdentityExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "IdentityExpression")) return false;
     if (!nextTokenIs(b, "<identity expression>", KW_NOT_IS, KW_IS)) return false;
@@ -5844,7 +5877,7 @@ public class DLanguageParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_, IDENTITY_EXPRESSION, "<identity expression>");
     r = IdentityExpression_0(b, l + 1);
     p = r; // pin = 1
-    r = r && ShiftExpression(b, l + 1);
+    r = r && ShiftExpressionWrapper(b, l + 1);
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -5856,6 +5889,19 @@ public class DLanguageParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b);
     r = consumeToken(b, KW_IS);
     if (!r) r = consumeToken(b, KW_NOT_IS);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // ShiftExpressionWrapper
+  //     | IdentityExpression
+  static boolean IdentityExpressionWrapper(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "IdentityExpressionWrapper")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = ShiftExpressionWrapper(b, l + 1);
+    if (!r) r = IdentityExpression(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -6135,7 +6181,7 @@ public class DLanguageParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ('in'| '!in') ShiftExpression
+  // ('in'| '!in') ShiftExpressionWrapper
   public static boolean InExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "InExpression")) return false;
     if (!nextTokenIs(b, "<in expression>", KW_NOT_IN, KW_IN)) return false;
@@ -6143,7 +6189,7 @@ public class DLanguageParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_, IN_EXPRESSION, "<in expression>");
     r = InExpression_0(b, l + 1);
     p = r; // pin = 1
-    r = r && ShiftExpression(b, l + 1);
+    r = r && ShiftExpressionWrapper(b, l + 1);
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -6155,6 +6201,19 @@ public class DLanguageParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b);
     r = consumeToken(b, KW_IN);
     if (!r) r = consumeToken(b, KW_NOT_IN);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // ShiftExpressionWrapper
+  //     | InExpression
+  static boolean InExpressionWrapper(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "InExpressionWrapper")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = ShiftExpressionWrapper(b, l + 1);
+    if (!r) r = InExpression(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -7184,7 +7243,7 @@ public class DLanguageParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // UnaryExpression [ ('*' | '/' | '%') MulExpression]
+  // UnaryExpression [ ('*' | '/' | '%') MulExpressionWrapper]
   public static boolean MulExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "MulExpression")) return false;
     boolean r;
@@ -7195,20 +7254,20 @@ public class DLanguageParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // [ ('*' | '/' | '%') MulExpression]
+  // [ ('*' | '/' | '%') MulExpressionWrapper]
   private static boolean MulExpression_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "MulExpression_1")) return false;
     MulExpression_1_0(b, l + 1);
     return true;
   }
 
-  // ('*' | '/' | '%') MulExpression
+  // ('*' | '/' | '%') MulExpressionWrapper
   private static boolean MulExpression_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "MulExpression_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = MulExpression_1_0_0(b, l + 1);
-    r = r && MulExpression(b, l + 1);
+    r = r && MulExpressionWrapper(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -7221,6 +7280,19 @@ public class DLanguageParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, OP_ASTERISK);
     if (!r) r = consumeToken(b, OP_DIV);
     if (!r) r = consumeToken(b, OP_MOD);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // UnaryExpressionWrapper
+  //     | MulExpression
+  static boolean MulExpressionWrapper(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "MulExpressionWrapper")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = UnaryExpressionWrapper(b, l + 1);
+    if (!r) r = MulExpression(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -7447,15 +7519,15 @@ public class DLanguageParser implements PsiParser, LightPsiParser {
   //     | CaseRangeStatement//must be above case statement because pin on case statement will detect a case statement, where there is a case range statement
   //     | CaseStatement
   //     | DefaultStatement
-  public static boolean NonEmptyStatement(PsiBuilder b, int l) {
+  static boolean NonEmptyStatement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "NonEmptyStatement")) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, NON_EMPTY_STATEMENT, "<non empty statement>");
+    Marker m = enter_section_(b);
     r = NonEmptyStatementNoCaseNoDefault(b, l + 1);
     if (!r) r = CaseRangeStatement(b, l + 1);
     if (!r) r = CaseStatement(b, l + 1);
     if (!r) r = DefaultStatement(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
+    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -7489,10 +7561,10 @@ public class DLanguageParser implements PsiParser, LightPsiParser {
   //     | StaticAssert
   //     | TemplateMixin
   //     | ImportDeclaration
-  public static boolean NonEmptyStatementNoCaseNoDefault(PsiBuilder b, int l) {
+  static boolean NonEmptyStatementNoCaseNoDefault(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "NonEmptyStatementNoCaseNoDefault")) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, NON_EMPTY_STATEMENT_NO_CASE_NO_DEFAULT, "<non empty statement no case no default>");
+    Marker m = enter_section_(b);
     r = LabeledStatement(b, l + 1);
     if (!r) r = DeclarationStatement(b, l + 1);
     if (!r) r = Declaration(b, l + 1);
@@ -7522,7 +7594,7 @@ public class DLanguageParser implements PsiParser, LightPsiParser {
     if (!r) r = StaticAssert(b, l + 1);
     if (!r) r = TemplateMixin(b, l + 1);
     if (!r) r = ImportDeclaration(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
+    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -8746,31 +8818,44 @@ public class DLanguageParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // XorExpression [OrExpression]
+  // XorExpressionWrapper [OrExpressionWrapper]
   public static boolean OrExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "OrExpression")) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, OR_EXPRESSION, "<or expression>");
-    r = XorExpression(b, l + 1);
+    Marker m = enter_section_(b, l, _COLLAPSE_, OR_EXPRESSION, "<or expression>");
+    r = XorExpressionWrapper(b, l + 1);
     r = r && OrExpression_1(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
 
-  // [OrExpression]
+  // [OrExpressionWrapper]
   private static boolean OrExpression_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "OrExpression_1")) return false;
-    OrExpression(b, l + 1);
+    OrExpressionWrapper(b, l + 1);
     return true;
   }
 
   /* ********************************************************** */
-  // AndAndExpression [ '||' OrOrExpression]
+  // XorExpressionWrapper
+  //     | OrExpression
+  static boolean OrExpressionWrapper(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "OrExpressionWrapper")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = XorExpressionWrapper(b, l + 1);
+    if (!r) r = OrExpression(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // AndAndExpressionWrapper [ '||' OrOrExpression]
   public static boolean OrOrExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "OrOrExpression")) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, OR_OR_EXPRESSION, "<or or expression>");
-    r = AndAndExpression(b, l + 1);
+    Marker m = enter_section_(b, l, _COLLAPSE_, OR_OR_EXPRESSION, "<or or expression>");
+    r = AndAndExpressionWrapper(b, l + 1);
     r = r && OrOrExpression_1(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
@@ -8790,6 +8875,19 @@ public class DLanguageParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b);
     r = consumeToken(b, OP_BOOL_OR);
     r = r && OrOrExpression(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // AndAndExpressionWrapper
+  //     | OrOrExpression
+  static boolean OrOrExpressionWrapper(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "OrOrExpressionWrapper")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = AndAndExpressionWrapper(b, l + 1);
+    if (!r) r = OrOrExpression(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -9292,32 +9390,51 @@ public class DLanguageParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // PostfixExpression ['^^' UnaryExpression PowExpression]
+  // PostfixExpression
+  static boolean PostfixExpressionWrapper(PsiBuilder b, int l) {
+    return PostfixExpression(b, l + 1);
+  }
+
+  /* ********************************************************** */
+  // PostfixExpressionWrapper ['^^' UnaryExpressionWrapper PowExpressionWrapper]
   public static boolean PowExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "PowExpression")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, POW_EXPRESSION, "<pow expression>");
-    r = PostfixExpression(b, l + 1);
+    r = PostfixExpressionWrapper(b, l + 1);
     r = r && PowExpression_1(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
 
-  // ['^^' UnaryExpression PowExpression]
+  // ['^^' UnaryExpressionWrapper PowExpressionWrapper]
   private static boolean PowExpression_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "PowExpression_1")) return false;
     PowExpression_1_0(b, l + 1);
     return true;
   }
 
-  // '^^' UnaryExpression PowExpression
+  // '^^' UnaryExpressionWrapper PowExpressionWrapper
   private static boolean PowExpression_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "PowExpression_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, OP_POW);
-    r = r && UnaryExpression(b, l + 1);
-    r = r && PowExpression(b, l + 1);
+    r = r && UnaryExpressionWrapper(b, l + 1);
+    r = r && PowExpressionWrapper(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // PostfixExpressionWrapper
+  //     | PowExpression
+  static boolean PowExpressionWrapper(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "PowExpressionWrapper")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = PostfixExpressionWrapper(b, l + 1);
+    if (!r) r = PowExpression(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -10193,14 +10310,14 @@ public class DLanguageParser implements PsiParser, LightPsiParser {
   //     | '!>'
   //     | '!>='
   //     | '!<'
-  //     | '!<=') ShiftExpression
+  //     | '!<=') ShiftExpressionWrapper
   public static boolean RelExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "RelExpression")) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, REL_EXPRESSION, "<rel expression>");
     r = RelExpression_0(b, l + 1);
     p = r; // pin = 1
-    r = r && ShiftExpression(b, l + 1);
+    r = r && ShiftExpressionWrapper(b, l + 1);
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -10233,6 +10350,19 @@ public class DLanguageParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, OP_NOT_GR_EQ);
     if (!r) r = consumeToken(b, OP_NOT_LESS);
     if (!r) r = consumeToken(b, OP_NOT_LESS_EQ);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // ShiftExpressionWrapper
+  //     | RelExpression
+  static boolean RelExpressionWrapper(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "RelExpressionWrapper")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = ShiftExpressionWrapper(b, l + 1);
+    if (!r) r = RelExpression(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -10438,7 +10568,7 @@ public class DLanguageParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // AddExpression [('<<' | '>>' | '>>>') ShiftExpression]
+  // AddExpression [('<<' | '>>' | '>>>') ShiftExpressionWrapper]
   public static boolean ShiftExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "ShiftExpression")) return false;
     boolean r;
@@ -10449,20 +10579,20 @@ public class DLanguageParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // [('<<' | '>>' | '>>>') ShiftExpression]
+  // [('<<' | '>>' | '>>>') ShiftExpressionWrapper]
   private static boolean ShiftExpression_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "ShiftExpression_1")) return false;
     ShiftExpression_1_0(b, l + 1);
     return true;
   }
 
-  // ('<<' | '>>' | '>>>') ShiftExpression
+  // ('<<' | '>>' | '>>>') ShiftExpressionWrapper
   private static boolean ShiftExpression_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "ShiftExpression_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = ShiftExpression_1_0_0(b, l + 1);
-    r = r && ShiftExpression(b, l + 1);
+    r = r && ShiftExpressionWrapper(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -10475,6 +10605,19 @@ public class DLanguageParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, OP_SH_LEFT);
     if (!r) r = consumeToken(b, OP_SH_RIGHT);
     if (!r) r = consumeToken(b, OP_USH_RIGHT);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // AddExpressionWrapper
+  //     | ShiftExpression
+  static boolean ShiftExpressionWrapper(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "ShiftExpressionWrapper")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = AddExpressionWrapper(b, l + 1);
+    if (!r) r = ShiftExpression(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -12186,12 +12329,12 @@ public class DLanguageParser implements PsiParser, LightPsiParser {
   //     | '-'
   //     | '+'
   //     | '!'
-  //     | '~') [UnaryExpression]
+  //     | '~') [UnaryExpressionWrapper]
   //     | TypeCtor? '(' Type ')' '.' Identifier
   //     | TypeCtor? '(' Type ')' '.' TemplateInstance
   //     | DeleteExpression
   //     | CastExpression
-  //     | PowExpression
+  //     | PowExpressionWrapper
   public static boolean UnaryExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "UnaryExpression")) return false;
     boolean r;
@@ -12201,7 +12344,7 @@ public class DLanguageParser implements PsiParser, LightPsiParser {
     if (!r) r = UnaryExpression_2(b, l + 1);
     if (!r) r = DeleteExpression(b, l + 1);
     if (!r) r = CastExpression(b, l + 1);
-    if (!r) r = PowExpression(b, l + 1);
+    if (!r) r = PowExpressionWrapper(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -12215,7 +12358,7 @@ public class DLanguageParser implements PsiParser, LightPsiParser {
   //     | '-'
   //     | '+'
   //     | '!'
-  //     | '~') [UnaryExpression]
+  //     | '~') [UnaryExpressionWrapper]
   private static boolean UnaryExpression_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "UnaryExpression_0")) return false;
     boolean r;
@@ -12254,10 +12397,10 @@ public class DLanguageParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // [UnaryExpression]
+  // [UnaryExpressionWrapper]
   private static boolean UnaryExpression_0_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "UnaryExpression_0_1")) return false;
-    UnaryExpression(b, l + 1);
+    UnaryExpressionWrapper(b, l + 1);
     return true;
   }
 
@@ -12301,6 +12444,19 @@ public class DLanguageParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "UnaryExpression_2_0")) return false;
     TypeCtor(b, l + 1);
     return true;
+  }
+
+  /* ********************************************************** */
+  // PowExpressionWrapper
+  //     | UnaryExpression
+  static boolean UnaryExpressionWrapper(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "UnaryExpressionWrapper")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = PowExpressionWrapper(b, l + 1);
+    if (!r) r = UnaryExpression(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
   }
 
   /* ********************************************************** */
@@ -12748,31 +12904,44 @@ public class DLanguageParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // AndExpression [ '^' XorExpression ]
+  // AndExpressionWrapper [ '^' XorExpressionWrapper ]
   public static boolean XorExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "XorExpression")) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, XOR_EXPRESSION, "<xor expression>");
-    r = AndExpression(b, l + 1);
+    Marker m = enter_section_(b, l, _COLLAPSE_, XOR_EXPRESSION, "<xor expression>");
+    r = AndExpressionWrapper(b, l + 1);
     r = r && XorExpression_1(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
 
-  // [ '^' XorExpression ]
+  // [ '^' XorExpressionWrapper ]
   private static boolean XorExpression_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "XorExpression_1")) return false;
     XorExpression_1_0(b, l + 1);
     return true;
   }
 
-  // '^' XorExpression
+  // '^' XorExpressionWrapper
   private static boolean XorExpression_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "XorExpression_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, OP_XOR);
-    r = r && XorExpression(b, l + 1);
+    r = r && XorExpressionWrapper(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // AndExpressionWrapper
+  //     | XorExpression
+  static boolean XorExpressionWrapper(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "XorExpressionWrapper")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = AndExpressionWrapper(b, l + 1);
+    if (!r) r = XorExpression(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }

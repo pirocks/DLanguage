@@ -12,12 +12,12 @@ import net.masterthought.dlanguage.psi.interfaces.Declaration;
 import net.masterthought.dlanguage.psi.interfaces.HasTemplateArguments;
 import net.masterthought.dlanguage.psi.interfaces.HasArguments;
 import net.masterthought.dlanguage.psi.interfaces.containers.MixinContainer;
+import net.masterthought.dlanguage.psi.interfaces.DCompositeElement;
 import net.masterthought.dlanguage.psi.interfaces.HasProperty;
 import net.masterthought.dlanguage.psi.interfaces.Mixin;
 import net.masterthought.dlanguage.psi.interfaces.VariableDeclaration;
 import net.masterthought.dlanguage.psi.interfaces.CanInherit;
 import net.masterthought.dlanguage.psi.interfaces.Mixinable;
-import net.masterthought.dlanguage.psi.interfaces.DCompositeElement;
 
 public class DLanguageVisitor extends PsiElementVisitor {
 
@@ -289,10 +289,6 @@ public class DLanguageVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitClassArguments(@NotNull DLanguageClassArguments o) {
-    visitPsiElement(o);
-  }
-
   public void visitClassDeclaration(@NotNull DLanguageClassDeclaration o) {
     visitStatementContainer(o);
     // visitMixinContainer(o);
@@ -372,15 +368,7 @@ public class DLanguageVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitDeclaration(@NotNull DLanguageDeclaration o) {
-    visitPsiElement(o);
-  }
-
   public void visitDeclarationBlock(@NotNull DLanguageDeclarationBlock o) {
-    visitPsiElement(o);
-  }
-
-  public void visitDeclarationStatement(@NotNull DLanguageDeclarationStatement o) {
     visitPsiElement(o);
   }
 
@@ -761,14 +749,6 @@ public class DLanguageVisitor extends PsiElementVisitor {
   }
 
   public void visitNewExpressionWithArgs(@NotNull DLanguageNewExpressionWithArgs o) {
-    visitPsiElement(o);
-  }
-
-  public void visitNonEmptyStatement(@NotNull DLanguageNonEmptyStatement o) {
-    visitPsiElement(o);
-  }
-
-  public void visitNonEmptyStatementNoCaseNoDefault(@NotNull DLanguageNonEmptyStatementNoCaseNoDefault o) {
     visitPsiElement(o);
   }
 

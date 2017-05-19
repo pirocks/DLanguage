@@ -40,8 +40,8 @@ public class DLanguageNewAnonClassExpressionImpl extends ASTWrapperPsiElement im
 
   @Override
   @Nullable
-  public DLanguageClassArguments getClassArguments() {
-    return PsiTreeUtil.getChildOfType(this, DLanguageClassArguments.class);
+  public DLanguageArgumentList getArgumentList() {
+    return PsiTreeUtil.getChildOfType(this, DLanguageArgumentList.class);
   }
 
   @Override
@@ -66,6 +66,18 @@ public class DLanguageNewAnonClassExpressionImpl extends ASTWrapperPsiElement im
   @NotNull
   public PsiElement getKwNew() {
     return notNullChild(findChildByType(KW_NEW));
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getOpParLeft() {
+    return findChildByType(OP_PAR_LEFT);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getOpParRight() {
+    return findChildByType(OP_PAR_RIGHT);
   }
 
 }

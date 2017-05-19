@@ -8,6 +8,12 @@ import com.intellij.psi.PsiElement;
 public interface DLanguageDeclDef extends PsiElement {
 
   @Nullable
+  DLanguageAggregateDeclaration getAggregateDeclaration();
+
+  @Nullable
+  DLanguageAliasDeclaration getAliasDeclaration();
+
+  @Nullable
   DLanguageAliasThis getAliasThis();
 
   @Nullable
@@ -29,10 +35,16 @@ public interface DLanguageDeclDef extends PsiElement {
   DLanguageDebugSpecification getDebugSpecification();
 
   @Nullable
-  DLanguageDeclaration getDeclaration();
+  DLanguageDestructor getDestructor();
 
   @Nullable
-  DLanguageDestructor getDestructor();
+  DLanguageEnumDeclaration getEnumDeclaration();
+
+  @Nullable
+  DLanguageFuncDeclaration getFuncDeclaration();
+
+  @Nullable
+  DLanguageImportDeclaration getImportDeclaration();
 
   @Nullable
   DLanguageInvariant getInvariant();
@@ -75,6 +87,9 @@ public interface DLanguageDeclDef extends PsiElement {
 
   @Nullable
   DLanguageUnitTesting getUnitTesting();
+
+  @Nullable
+  DLanguageVarDeclarations getVarDeclarations();
 
   @Nullable
   DLanguageVersionSpecification getVersionSpecification();

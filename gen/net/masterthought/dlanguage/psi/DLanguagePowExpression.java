@@ -8,10 +8,10 @@ import com.intellij.psi.PsiElement;
 public interface DLanguagePowExpression extends PsiElement {
 
   @NotNull
-  DLanguagePostfixExpression getPostfixExpression();
+  List<DLanguagePostfixExpression> getPostfixExpressionList();
 
-  @Nullable
-  DLanguagePowExpression getPowExpression();
+  @NotNull
+  List<DLanguagePowExpression> getPowExpressionList();
 
   @Nullable
   DLanguageUnaryExpression getUnaryExpression();

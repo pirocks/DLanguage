@@ -10,8 +10,14 @@ public interface DLanguageMulExpression extends PsiElement {
   @Nullable
   DLanguageMulExpression getMulExpression();
 
+  @Nullable
+  DLanguagePostfixExpression getPostfixExpression();
+
+  @Nullable
+  DLanguagePowExpression getPowExpression();
+
   @NotNull
-  DLanguageUnaryExpression getUnaryExpression();
+  List<DLanguageUnaryExpression> getUnaryExpressionList();
 
   @Nullable
   PsiElement getOpAsterisk();

@@ -8,10 +8,22 @@ import com.intellij.psi.PsiElement;
 public interface DLanguageShiftExpression extends PsiElement {
 
   @NotNull
-  DLanguageAddExpression getAddExpression();
+  List<DLanguageAddExpression> getAddExpressionList();
+
+  @Nullable
+  DLanguageMulExpression getMulExpression();
+
+  @Nullable
+  DLanguagePostfixExpression getPostfixExpression();
+
+  @Nullable
+  DLanguagePowExpression getPowExpression();
 
   @Nullable
   DLanguageShiftExpression getShiftExpression();
+
+  @Nullable
+  DLanguageUnaryExpression getUnaryExpression();
 
   @Nullable
   PsiElement getOpShLeft();

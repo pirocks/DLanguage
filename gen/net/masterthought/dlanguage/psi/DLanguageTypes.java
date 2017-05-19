@@ -8,18 +8,6 @@ import net.masterthought.dlanguage.psi.impl.DElementTypeFactory;
 import net.masterthought.dlanguage.psi.impl.*;
 
 public interface DLanguageTypes {
-    IElementType KEYWORD = new DLanguageElementType("KEYWORD");
-    IElementType OPERATOR = new DLanguageElementType("OPERATOR");
-    IElementType NUMBER = new DLanguageElementType("NUMBER");
-    IElementType STRING = new DLanguageElementType("STRING");
-    IElementType PARENTHESES = new DLanguageElementType("PARENTHESES");
-    IElementType BRACES = new DLanguageElementType("BRACES");
-    IElementType BRACKETS = new DLanguageElementType("BRACKETS");
-    IElementType COMMA = new DLanguageElementType("COMMA");
-    IElementType SEMICOLON = new DLanguageElementType("SEMICOLON");
-    IElementType DOT = new DLanguageElementType("DOT");
-    IElementType MODULE_DEFINITION = new DLanguageElementType("MODULE_DEFINITION");
-    IElementType FUNCTION_DEFINITION = new DLanguageElementType("FUNCTION_DEFINITION");
 
   IElementType ADD_EXPRESSION = new DLanguageElementType("ADD_EXPRESSION");
   IElementType AGGREGATE_BODY = new DLanguageElementType("AGGREGATE_BODY");
@@ -87,7 +75,6 @@ public interface DLanguageTypes {
   IElementType CATCH = new DLanguageElementType("CATCH");
   IElementType CATCHES = new DLanguageElementType("CATCHES");
   IElementType CATCH_PARAMETER = new DLanguageElementType("CATCH_PARAMETER");
-  IElementType CLASS_ARGUMENTS = new DLanguageElementType("CLASS_ARGUMENTS");
   IElementType CLASS_DECLARATION = DElementTypeFactory.factory("CLASS_DECLARATION");
   IElementType CLASS_TEMPLATE_DECLARATION = new DLanguageElementType("CLASS_TEMPLATE_DECLARATION");
   IElementType CMP_EXPRESSION = new DLanguageElementType("CMP_EXPRESSION");
@@ -103,9 +90,7 @@ public interface DLanguageTypes {
   IElementType DEALLOCATOR = new DLanguageElementType("DEALLOCATOR");
   IElementType DEBUG_CONDITION = new DLanguageElementType("DEBUG_CONDITION");
   IElementType DEBUG_SPECIFICATION = new DLanguageElementType("DEBUG_SPECIFICATION");
-  IElementType DECLARATION = new DLanguageElementType("DECLARATION");
   IElementType DECLARATION_BLOCK = new DLanguageElementType("DECLARATION_BLOCK");
-  IElementType DECLARATION_STATEMENT = new DLanguageElementType("DECLARATION_STATEMENT");
   IElementType DECLARATOR = new DLanguageElementType("DECLARATOR");
   IElementType DECLARATORS = new DLanguageElementType("DECLARATORS");
   IElementType DECLARATOR_IDENTIFIER = new DLanguageElementType("DECLARATOR_IDENTIFIER");
@@ -197,8 +182,6 @@ public interface DLanguageTypes {
   IElementType NEW_ANON_CLASS_EXPRESSION = new DLanguageElementType("NEW_ANON_CLASS_EXPRESSION");
   IElementType NEW_EXPRESSION = new DLanguageElementType("NEW_EXPRESSION");
   IElementType NEW_EXPRESSION_WITH_ARGS = new DLanguageElementType("NEW_EXPRESSION_WITH_ARGS");
-  IElementType NON_EMPTY_STATEMENT = new DLanguageElementType("NON_EMPTY_STATEMENT");
-  IElementType NON_EMPTY_STATEMENT_NO_CASE_NO_DEFAULT = new DLanguageElementType("NON_EMPTY_STATEMENT_NO_CASE_NO_DEFAULT");
   IElementType NON_VOID_INITIALIZER = new DLanguageElementType("NON_VOID_INITIALIZER");
   IElementType OPCODE = new DLanguageElementType("OPCODE");
   IElementType OPERAND = new DLanguageElementType("OPERAND");
@@ -686,9 +669,6 @@ public interface DLanguageTypes {
       else if (type == CATCH_PARAMETER) {
         return new DLanguageCatchParameterImpl(node);
       }
-      else if (type == CLASS_ARGUMENTS) {
-        return new DLanguageClassArgumentsImpl(node);
-      }
       else if (type == CLASS_DECLARATION) {
         return new DLanguageClassDeclarationImpl(node);
       }
@@ -734,14 +714,8 @@ public interface DLanguageTypes {
       else if (type == DEBUG_SPECIFICATION) {
         return new DLanguageDebugSpecificationImpl(node);
       }
-      else if (type == DECLARATION) {
-        return new DLanguageDeclarationImpl(node);
-      }
       else if (type == DECLARATION_BLOCK) {
         return new DLanguageDeclarationBlockImpl(node);
-      }
-      else if (type == DECLARATION_STATEMENT) {
-        return new DLanguageDeclarationStatementImpl(node);
       }
       else if (type == DECLARATOR) {
         return new DLanguageDeclaratorImpl(node);
@@ -1015,12 +989,6 @@ public interface DLanguageTypes {
       }
       else if (type == NEW_EXPRESSION_WITH_ARGS) {
         return new DLanguageNewExpressionWithArgsImpl(node);
-      }
-      else if (type == NON_EMPTY_STATEMENT) {
-        return new DLanguageNonEmptyStatementImpl(node);
-      }
-      else if (type == NON_EMPTY_STATEMENT_NO_CASE_NO_DEFAULT) {
-        return new DLanguageNonEmptyStatementNoCaseNoDefaultImpl(node);
       }
       else if (type == NON_VOID_INITIALIZER) {
         return new DLanguageNonVoidInitializerImpl(node);

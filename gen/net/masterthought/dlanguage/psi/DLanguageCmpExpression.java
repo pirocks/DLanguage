@@ -8,6 +8,9 @@ import com.intellij.psi.PsiElement;
 public interface DLanguageCmpExpression extends PsiElement {
 
   @Nullable
+  DLanguageAddExpression getAddExpression();
+
+  @Nullable
   DLanguageEqualExpression getEqualExpression();
 
   @Nullable
@@ -17,9 +20,21 @@ public interface DLanguageCmpExpression extends PsiElement {
   DLanguageInExpression getInExpression();
 
   @Nullable
+  DLanguageMulExpression getMulExpression();
+
+  @Nullable
+  DLanguagePostfixExpression getPostfixExpression();
+
+  @Nullable
+  DLanguagePowExpression getPowExpression();
+
+  @Nullable
   DLanguageRelExpression getRelExpression();
 
   @Nullable
   DLanguageShiftExpression getShiftExpression();
+
+  @Nullable
+  DLanguageUnaryExpression getUnaryExpression();
 
 }

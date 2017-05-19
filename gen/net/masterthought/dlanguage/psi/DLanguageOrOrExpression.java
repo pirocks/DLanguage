@@ -7,11 +7,41 @@ import com.intellij.psi.PsiElement;
 
 public interface DLanguageOrOrExpression extends PsiElement {
 
-  @NotNull
+  @Nullable
+  DLanguageAddExpression getAddExpression();
+
+  @Nullable
   DLanguageAndAndExpression getAndAndExpression();
 
   @Nullable
+  DLanguageAndExpression getAndExpression();
+
+  @Nullable
+  DLanguageCmpExpression getCmpExpression();
+
+  @Nullable
+  DLanguageMulExpression getMulExpression();
+
+  @Nullable
+  DLanguageOrExpression getOrExpression();
+
+  @Nullable
   DLanguageOrOrExpression getOrOrExpression();
+
+  @Nullable
+  DLanguagePostfixExpression getPostfixExpression();
+
+  @Nullable
+  DLanguagePowExpression getPowExpression();
+
+  @Nullable
+  DLanguageShiftExpression getShiftExpression();
+
+  @Nullable
+  DLanguageUnaryExpression getUnaryExpression();
+
+  @Nullable
+  DLanguageXorExpression getXorExpression();
 
   @Nullable
   PsiElement getOpBoolOr();

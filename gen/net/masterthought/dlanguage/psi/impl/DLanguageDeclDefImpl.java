@@ -28,6 +28,18 @@ public class DLanguageDeclDefImpl extends ASTWrapperPsiElement implements DLangu
 
   @Override
   @Nullable
+  public DLanguageAggregateDeclaration getAggregateDeclaration() {
+    return PsiTreeUtil.getChildOfType(this, DLanguageAggregateDeclaration.class);
+  }
+
+  @Override
+  @Nullable
+  public DLanguageAliasDeclaration getAliasDeclaration() {
+    return PsiTreeUtil.getChildOfType(this, DLanguageAliasDeclaration.class);
+  }
+
+  @Override
+  @Nullable
   public DLanguageAliasThis getAliasThis() {
     return PsiTreeUtil.getChildOfType(this, DLanguageAliasThis.class);
   }
@@ -70,14 +82,26 @@ public class DLanguageDeclDefImpl extends ASTWrapperPsiElement implements DLangu
 
   @Override
   @Nullable
-  public DLanguageDeclaration getDeclaration() {
-    return PsiTreeUtil.getChildOfType(this, DLanguageDeclaration.class);
+  public DLanguageDestructor getDestructor() {
+    return PsiTreeUtil.getChildOfType(this, DLanguageDestructor.class);
   }
 
   @Override
   @Nullable
-  public DLanguageDestructor getDestructor() {
-    return PsiTreeUtil.getChildOfType(this, DLanguageDestructor.class);
+  public DLanguageEnumDeclaration getEnumDeclaration() {
+    return PsiTreeUtil.getChildOfType(this, DLanguageEnumDeclaration.class);
+  }
+
+  @Override
+  @Nullable
+  public DLanguageFuncDeclaration getFuncDeclaration() {
+    return PsiTreeUtil.getChildOfType(this, DLanguageFuncDeclaration.class);
+  }
+
+  @Override
+  @Nullable
+  public DLanguageImportDeclaration getImportDeclaration() {
+    return PsiTreeUtil.getChildOfType(this, DLanguageImportDeclaration.class);
   }
 
   @Override
@@ -162,6 +186,12 @@ public class DLanguageDeclDefImpl extends ASTWrapperPsiElement implements DLangu
   @Nullable
   public DLanguageUnitTesting getUnitTesting() {
     return PsiTreeUtil.getChildOfType(this, DLanguageUnitTesting.class);
+  }
+
+  @Override
+  @Nullable
+  public DLanguageVarDeclarations getVarDeclarations() {
+    return PsiTreeUtil.getChildOfType(this, DLanguageVarDeclarations.class);
   }
 
   @Override

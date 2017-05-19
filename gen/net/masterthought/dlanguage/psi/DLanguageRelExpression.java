@@ -8,7 +8,22 @@ import com.intellij.psi.PsiElement;
 public interface DLanguageRelExpression extends PsiElement {
 
   @Nullable
+  DLanguageAddExpression getAddExpression();
+
+  @Nullable
+  DLanguageMulExpression getMulExpression();
+
+  @Nullable
+  DLanguagePostfixExpression getPostfixExpression();
+
+  @Nullable
+  DLanguagePowExpression getPowExpression();
+
+  @Nullable
   DLanguageShiftExpression getShiftExpression();
+
+  @Nullable
+  DLanguageUnaryExpression getUnaryExpression();
 
   @Nullable
   PsiElement getOpGt();

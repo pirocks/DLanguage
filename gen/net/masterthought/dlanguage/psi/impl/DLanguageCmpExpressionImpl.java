@@ -28,6 +28,12 @@ public class DLanguageCmpExpressionImpl extends ASTWrapperPsiElement implements 
 
   @Override
   @Nullable
+  public DLanguageAddExpression getAddExpression() {
+    return PsiTreeUtil.getChildOfType(this, DLanguageAddExpression.class);
+  }
+
+  @Override
+  @Nullable
   public DLanguageEqualExpression getEqualExpression() {
     return PsiTreeUtil.getChildOfType(this, DLanguageEqualExpression.class);
   }
@@ -46,6 +52,24 @@ public class DLanguageCmpExpressionImpl extends ASTWrapperPsiElement implements 
 
   @Override
   @Nullable
+  public DLanguageMulExpression getMulExpression() {
+    return PsiTreeUtil.getChildOfType(this, DLanguageMulExpression.class);
+  }
+
+  @Override
+  @Nullable
+  public DLanguagePostfixExpression getPostfixExpression() {
+    return PsiTreeUtil.getChildOfType(this, DLanguagePostfixExpression.class);
+  }
+
+  @Override
+  @Nullable
+  public DLanguagePowExpression getPowExpression() {
+    return PsiTreeUtil.getChildOfType(this, DLanguagePowExpression.class);
+  }
+
+  @Override
+  @Nullable
   public DLanguageRelExpression getRelExpression() {
     return PsiTreeUtil.getChildOfType(this, DLanguageRelExpression.class);
   }
@@ -54,6 +78,12 @@ public class DLanguageCmpExpressionImpl extends ASTWrapperPsiElement implements 
   @Nullable
   public DLanguageShiftExpression getShiftExpression() {
     return PsiTreeUtil.getChildOfType(this, DLanguageShiftExpression.class);
+  }
+
+  @Override
+  @Nullable
+  public DLanguageUnaryExpression getUnaryExpression() {
+    return PsiTreeUtil.getChildOfType(this, DLanguageUnaryExpression.class);
   }
 
 }

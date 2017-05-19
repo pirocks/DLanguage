@@ -46,6 +46,12 @@ public class DLanguageUnaryExpressionImpl extends ASTWrapperPsiElement implement
 
   @Override
   @Nullable
+  public DLanguagePostfixExpression getPostfixExpression() {
+    return PsiTreeUtil.getChildOfType(this, DLanguagePostfixExpression.class);
+  }
+
+  @Override
+  @Nullable
   public DLanguagePowExpression getPowExpression() {
     return PsiTreeUtil.getChildOfType(this, DLanguagePowExpression.class);
   }
