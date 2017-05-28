@@ -33,6 +33,12 @@ public class DLanguageConstraintImpl extends ASTWrapperPsiElement implements DLa
   }
 
   @Override
+  @Nullable
+  public DLanguageTemplateInstance getTemplateInstance() {
+    return PsiTreeUtil.getChildOfType(this, DLanguageTemplateInstance.class);
+  }
+
+  @Override
   @NotNull
   public PsiElement getKwIf() {
     return notNullChild(findChildByType(KW_IF));

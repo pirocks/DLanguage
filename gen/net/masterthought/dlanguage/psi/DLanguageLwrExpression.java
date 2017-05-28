@@ -7,7 +7,10 @@ import com.intellij.psi.PsiElement;
 
 public interface DLanguageLwrExpression extends PsiElement {
 
-  @NotNull
+  @Nullable
   DLanguageCommaExpression getCommaExpression();
+
+  @Nullable
+  DLanguageTemplateInstance getTemplateInstance();
 
 }

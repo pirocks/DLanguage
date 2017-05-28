@@ -42,10 +42,11 @@ D Language File
                                 IDENTIFIER
                                   PsiElement(DLanguageTokenType.ID)('Foo')
                             DLanguageDeclaratorsImpl(DECLARATORS)
-                              DECLARATOR_INITIALIZER
-                                DLanguageVarDeclaratorImpl(VAR_DECLARATOR)
-                                  IDENTIFIER
-                                    PsiElement(DLanguageTokenType.ID)('f')
+                              DLanguageDeclaratorInitializerImpl(DECLARATOR_INITIALIZER)
+                                DECLARATOR
+                                  DLanguageVarDeclaratorImpl(VAR_DECLARATOR)
+                                    IDENTIFIER
+                                      PsiElement(DLanguageTokenType.ID)('f')
                             PsiElement(DLanguageTokenType.;)(';')
                 PsiComment(DLanguageTokenType.LINE_COMMENT)('// error, reference to scope class must be scope')
                 DLanguageStatementImpl(STATEMENT)
@@ -62,10 +63,11 @@ D Language File
                                 IDENTIFIER
                                   PsiElement(DLanguageTokenType.ID)('Foo')
                             DLanguageDeclaratorsImpl(DECLARATORS)
-                              DECLARATOR_INITIALIZER
-                                DLanguageVarDeclaratorImpl(VAR_DECLARATOR)
-                                  IDENTIFIER
-                                    PsiElement(DLanguageTokenType.ID)('g')
+                              DLanguageDeclaratorInitializerImpl(DECLARATOR_INITIALIZER)
+                                DECLARATOR
+                                  DLanguageVarDeclaratorImpl(VAR_DECLARATOR)
+                                    IDENTIFIER
+                                      PsiElement(DLanguageTokenType.ID)('g')
                                 PsiElement(DLanguageTokenType.=)('=')
                                 DLanguageInitializerImpl(INITIALIZER)
                                   DLanguageNonVoidInitializerImpl(NON_VOID_INITIALIZER)

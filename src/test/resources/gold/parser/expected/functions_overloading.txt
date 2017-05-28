@@ -111,10 +111,11 @@ D Language File
                                 IDENTIFIER
                                   PsiElement(DLanguageTokenType.ID)('C')
                             DLanguageDeclaratorsImpl(DECLARATORS)
-                              DECLARATOR_INITIALIZER
-                                DLanguageVarDeclaratorImpl(VAR_DECLARATOR)
-                                  IDENTIFIER
-                                    PsiElement(DLanguageTokenType.ID)('c')
+                              DLanguageDeclaratorInitializerImpl(DECLARATOR_INITIALIZER)
+                                DECLARATOR
+                                  DLanguageVarDeclaratorImpl(VAR_DECLARATOR)
+                                    IDENTIFIER
+                                      PsiElement(DLanguageTokenType.ID)('c')
                             PsiElement(DLanguageTokenType.;)(';')
                 PsiComment(DLanguageTokenType.LINE_COMMENT)('// Both foo(A) and foo(B) match with implicit conversion rules.')
                 PsiComment(DLanguageTokenType.LINE_COMMENT)('// Applying partial ordering rules,')
@@ -131,13 +132,14 @@ D Language File
                                 IDENTIFIER
                                   PsiElement(DLanguageTokenType.ID)('foo')
                             DLanguageDeclaratorsImpl(DECLARATORS)
-                              DECLARATOR_INITIALIZER
-                                DLanguageAltDeclaratorImpl(ALT_DECLARATOR)
-                                  PsiElement(DLanguageTokenType.()('(')
-                                  DLanguageAltDeclaratorXImpl(ALT_DECLARATOR_X)
-                                    IDENTIFIER
-                                      PsiElement(DLanguageTokenType.ID)('c')
-                                  PsiElement(DLanguageTokenType.))(')')
+                              DLanguageDeclaratorInitializerImpl(DECLARATOR_INITIALIZER)
+                                DECLARATOR
+                                  DLanguageAltDeclaratorImpl(ALT_DECLARATOR)
+                                    PsiElement(DLanguageTokenType.()('(')
+                                    DLanguageAltDeclaratorXImpl(ALT_DECLARATOR_X)
+                                      IDENTIFIER
+                                        PsiElement(DLanguageTokenType.ID)('c')
+                                    PsiElement(DLanguageTokenType.))(')')
                             PsiElement(DLanguageTokenType.;)(';')
               PsiComment(DLanguageTokenType.LINE_COMMENT)('// calls foo(B)')
               PsiElement(DLanguageTokenType.})('}')

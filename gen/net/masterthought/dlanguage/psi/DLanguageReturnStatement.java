@@ -10,6 +10,9 @@ public interface DLanguageReturnStatement extends PsiElement {
   @Nullable
   DLanguageCommaExpression getCommaExpression();
 
+  @Nullable
+  DLanguageTemplateInstance getTemplateInstance();
+
   @NotNull
   PsiElement getKwReturn();
 

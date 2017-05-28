@@ -38,7 +38,7 @@ D Language File
                   DLanguageBasicTypeImpl(BASIC_TYPE)
                     DLanguageBasicTypeXImpl(BASIC_TYPE_X)
                       PsiElement(DLanguageTokenType.long)('long')
-                  DLanguageDeclaratorImpl(DECLARATOR)
+                  DECLARATOR
                     DLanguageVarDeclaratorImpl(VAR_DECLARATOR)
                       IDENTIFIER
                         PsiElement(DLanguageTokenType.ID)('i')
@@ -103,7 +103,7 @@ D Language File
                   DLanguageBasicTypeImpl(BASIC_TYPE)
                     DLanguageBasicTypeXImpl(BASIC_TYPE_X)
                       PsiElement(DLanguageTokenType.int)('int')
-                  DLanguageDeclaratorImpl(DECLARATOR)
+                  DECLARATOR
                     DLanguageVarDeclaratorImpl(VAR_DECLARATOR)
                       IDENTIFIER
                         PsiElement(DLanguageTokenType.ID)('i')
@@ -149,7 +149,7 @@ D Language File
                     DLanguageIdentifierListImpl(IDENTIFIER_LIST)
                       IDENTIFIER
                         PsiElement(DLanguageTokenType.ID)('C')
-                  DLanguageDeclaratorImpl(DECLARATOR)
+                  DECLARATOR
                     DLanguageVarDeclaratorImpl(VAR_DECLARATOR)
                       IDENTIFIER
                         PsiElement(DLanguageTokenType.ID)('c')
@@ -209,13 +209,14 @@ D Language File
                                 IDENTIFIER
                                   PsiElement(DLanguageTokenType.ID)('foo')
                             DLanguageDeclaratorsImpl(DECLARATORS)
-                              DECLARATOR_INITIALIZER
-                                DLanguageAltDeclaratorImpl(ALT_DECLARATOR)
-                                  PsiElement(DLanguageTokenType.()('(')
-                                  DLanguageAltDeclaratorXImpl(ALT_DECLARATOR_X)
-                                    IDENTIFIER
-                                      PsiElement(DLanguageTokenType.ID)('c')
-                                  PsiElement(DLanguageTokenType.))(')')
+                              DLanguageDeclaratorInitializerImpl(DECLARATOR_INITIALIZER)
+                                DECLARATOR
+                                  DLanguageAltDeclaratorImpl(ALT_DECLARATOR)
+                                    PsiElement(DLanguageTokenType.()('(')
+                                    DLanguageAltDeclaratorXImpl(ALT_DECLARATOR_X)
+                                      IDENTIFIER
+                                        PsiElement(DLanguageTokenType.ID)('c')
+                                    PsiElement(DLanguageTokenType.))(')')
                             PsiElement(DLanguageTokenType.;)(';')
                 PsiComment(DLanguageTokenType.LINE_COMMENT)('// calls B.foo(C)')
                 DLanguageStatementImpl(STATEMENT)
@@ -363,7 +364,7 @@ D Language File
                     DLanguageIdentifierListImpl(IDENTIFIER_LIST)
                       IDENTIFIER
                         PsiElement(DLanguageTokenType.ID)('C')
-                  DLanguageDeclaratorImpl(DECLARATOR)
+                  DECLARATOR
                     DLanguageVarDeclaratorImpl(VAR_DECLARATOR)
                       IDENTIFIER
                         PsiElement(DLanguageTokenType.ID)('c')
@@ -423,13 +424,14 @@ D Language File
                                 IDENTIFIER
                                   PsiElement(DLanguageTokenType.ID)('foo')
                             DLanguageDeclaratorsImpl(DECLARATORS)
-                              DECLARATOR_INITIALIZER
-                                DLanguageAltDeclaratorImpl(ALT_DECLARATOR)
-                                  PsiElement(DLanguageTokenType.()('(')
-                                  DLanguageAltDeclaratorXImpl(ALT_DECLARATOR_X)
-                                    IDENTIFIER
-                                      PsiElement(DLanguageTokenType.ID)('c')
-                                  PsiElement(DLanguageTokenType.))(')')
+                              DLanguageDeclaratorInitializerImpl(DECLARATOR_INITIALIZER)
+                                DECLARATOR
+                                  DLanguageAltDeclaratorImpl(ALT_DECLARATOR)
+                                    PsiElement(DLanguageTokenType.()('(')
+                                    DLanguageAltDeclaratorXImpl(ALT_DECLARATOR_X)
+                                      IDENTIFIER
+                                        PsiElement(DLanguageTokenType.ID)('c')
+                                    PsiElement(DLanguageTokenType.))(')')
                             PsiElement(DLanguageTokenType.;)(';')
                 PsiComment(DLanguageTokenType.LINE_COMMENT)('// calls B.foo(C)')
                 DLanguageStatementImpl(STATEMENT)

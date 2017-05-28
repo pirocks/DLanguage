@@ -13,6 +13,9 @@ public interface DLanguageWhileStatement extends PsiElement {
   @Nullable
   DLanguageScopeStatement getScopeStatement();
 
+  @Nullable
+  DLanguageTemplateInstance getTemplateInstance();
+
   @NotNull
   PsiElement getKwWhile();
 

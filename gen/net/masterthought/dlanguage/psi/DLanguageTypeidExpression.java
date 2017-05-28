@@ -11,6 +11,9 @@ public interface DLanguageTypeidExpression extends PsiElement {
   DLanguageCommaExpression getCommaExpression();
 
   @Nullable
+  DLanguageTemplateInstance getTemplateInstance();
+
+  @Nullable
   DLanguageType getType();
 
   @NotNull

@@ -34,6 +34,12 @@ public class DLanguageTypeofImpl extends ASTWrapperPsiElement implements DLangua
 
   @Override
   @Nullable
+  public DLanguageTemplateInstance getTemplateInstance() {
+    return PsiTreeUtil.getChildOfType(this, DLanguageTemplateInstance.class);
+  }
+
+  @Override
+  @Nullable
   public PsiElement getKwReturn() {
     return findChildByType(KW_RETURN);
   }

@@ -45,9 +45,9 @@ public class DLanguageConditionalExpression_Impl extends ASTWrapperPsiElement im
   }
 
   @Override
-  @NotNull
+  @Nullable
   public DLanguageCommaExpression getCommaExpression() {
-    return notNullChild(PsiTreeUtil.getChildOfType(this, DLanguageCommaExpression.class));
+    return PsiTreeUtil.getChildOfType(this, DLanguageCommaExpression.class);
   }
 
   @Override

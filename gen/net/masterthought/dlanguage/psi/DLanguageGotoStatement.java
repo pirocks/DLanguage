@@ -14,6 +14,9 @@ public interface DLanguageGotoStatement extends PsiElement {
   DLanguageIdentifier getIdentifier();
 
   @Nullable
+  DLanguageTemplateInstance getTemplateInstance();
+
+  @Nullable
   PsiElement getKwCase();
 
   @Nullable

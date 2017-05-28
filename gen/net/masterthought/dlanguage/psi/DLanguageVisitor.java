@@ -14,9 +14,9 @@ import net.masterthought.dlanguage.psi.interfaces.HasTemplateArguments;
 import net.masterthought.dlanguage.psi.interfaces.HasArguments;
 import net.masterthought.dlanguage.psi.interfaces.containers.MixinContainer;
 import net.masterthought.dlanguage.psi.interfaces.DCompositeElement;
-import net.masterthought.dlanguage.psi.interfaces.VariableDeclaration;
 import net.masterthought.dlanguage.psi.interfaces.HasProperty;
 import net.masterthought.dlanguage.psi.interfaces.Mixinable;
+import net.masterthought.dlanguage.psi.interfaces.VariableDeclaration;
 import net.masterthought.dlanguage.psi.interfaces.CanInherit;
 
 public class DLanguageVisitor extends PsiElementVisitor {
@@ -377,7 +377,9 @@ public class DLanguageVisitor extends PsiElementVisitor {
   }
 
   public void visitDeclarator(@NotNull DLanguageDeclarator o) {
-    visitPsiElement(o);
+    visitDNamedElement(o);
+    // visitVariableDeclaration(o);
+    // visitDeclaration(o);
   }
 
   public void visitDeclaratorIdentifier(@NotNull DLanguageDeclaratorIdentifier o) {
@@ -389,9 +391,7 @@ public class DLanguageVisitor extends PsiElementVisitor {
   }
 
   public void visitDeclaratorInitializer(@NotNull DLanguageDeclaratorInitializer o) {
-    visitDNamedElement(o);
-    // visitVariableDeclaration(o);
-    // visitDeclaration(o);
+    visitPsiElement(o);
   }
 
   public void visitDeclarators(@NotNull DLanguageDeclarators o) {

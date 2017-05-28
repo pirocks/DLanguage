@@ -104,11 +104,11 @@ public interface DLanguageTypes {
   IElementType DECLARATION = new DLanguageElementType("DECLARATION");
   IElementType DECLARATION_BLOCK = new DLanguageElementType("DECLARATION_BLOCK");
   IElementType DECLARATION_STATEMENT = new DLanguageElementType("DECLARATION_STATEMENT");
-  IElementType DECLARATOR = new DLanguageElementType("DECLARATOR");
+  IElementType DECLARATOR = DElementTypeFactory.factory("DECLARATOR");
   IElementType DECLARATORS = new DLanguageElementType("DECLARATORS");
   IElementType DECLARATOR_IDENTIFIER = new DLanguageElementType("DECLARATOR_IDENTIFIER");
   IElementType DECLARATOR_IDENTIFIER_LIST = new DLanguageElementType("DECLARATOR_IDENTIFIER_LIST");
-  IElementType DECLARATOR_INITIALIZER = DElementTypeFactory.factory("DECLARATOR_INITIALIZER");
+  IElementType DECLARATOR_INITIALIZER = new DLanguageElementType("DECLARATOR_INITIALIZER");
   IElementType DECL_DEF = new DLanguageElementType("DECL_DEF");
   IElementType DECL_DEFS = new DLanguageElementType("DECL_DEFS");
   IElementType DEFAULT_STATEMENT = new DLanguageElementType("DEFAULT_STATEMENT");

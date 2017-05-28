@@ -8,9 +8,18 @@ import com.intellij.psi.PsiElement;
 public interface DLanguageTemplateInstance extends PsiElement {
 
   @Nullable
+  DLanguageCommaExpression getCommaExpression();
+
+  @NotNull
   DLanguageIdentifier getIdentifier();
 
   @NotNull
   DLanguageTemplateArguments getTemplateArguments();
+
+  @Nullable
+  PsiElement getOpParLeft();
+
+  @Nullable
+  PsiElement getOpParRight();
 
 }

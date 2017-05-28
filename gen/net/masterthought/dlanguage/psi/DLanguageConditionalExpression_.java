@@ -16,7 +16,7 @@ public interface DLanguageConditionalExpression_ extends PsiElement {
   @NotNull
   List<DLanguageCastExpression> getCastExpressionList();
 
-  @NotNull
+  @Nullable
   DLanguageCommaExpression getCommaExpression();
 
   @Nullable

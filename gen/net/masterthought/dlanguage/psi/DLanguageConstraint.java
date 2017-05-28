@@ -10,6 +10,9 @@ public interface DLanguageConstraint extends PsiElement {
   @Nullable
   DLanguageCommaExpression getCommaExpression();
 
+  @Nullable
+  DLanguageTemplateInstance getTemplateInstance();
+
   @NotNull
   PsiElement getKwIf();
 

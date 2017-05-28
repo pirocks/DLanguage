@@ -28,14 +28,32 @@ public class DLanguageTemplateInstanceImpl extends ASTWrapperPsiElement implemen
 
   @Override
   @Nullable
+  public DLanguageCommaExpression getCommaExpression() {
+    return PsiTreeUtil.getChildOfType(this, DLanguageCommaExpression.class);
+  }
+
+  @Override
+  @NotNull
   public DLanguageIdentifier getIdentifier() {
-    return PsiTreeUtil.getChildOfType(this, DLanguageIdentifier.class);
+    return notNullChild(PsiTreeUtil.getChildOfType(this, DLanguageIdentifier.class));
   }
 
   @Override
   @NotNull
   public DLanguageTemplateArguments getTemplateArguments() {
     return notNullChild(PsiTreeUtil.getChildOfType(this, DLanguageTemplateArguments.class));
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getOpParLeft() {
+    return findChildByType(OP_PAR_LEFT);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getOpParRight() {
+    return findChildByType(OP_PAR_RIGHT);
   }
 
 }

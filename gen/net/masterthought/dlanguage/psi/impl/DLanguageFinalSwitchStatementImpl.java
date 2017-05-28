@@ -39,6 +39,12 @@ public class DLanguageFinalSwitchStatementImpl extends ASTWrapperPsiElement impl
   }
 
   @Override
+  @Nullable
+  public DLanguageTemplateInstance getTemplateInstance() {
+    return PsiTreeUtil.getChildOfType(this, DLanguageTemplateInstance.class);
+  }
+
+  @Override
   @NotNull
   public PsiElement getKwFinal() {
     return notNullChild(findChildByType(KW_FINAL));

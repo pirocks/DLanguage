@@ -58,7 +58,7 @@ D Language File
                             DLanguagePrimaryExpressionImpl(PRIMARY_EXPRESSION)
                               PsiElement(DLanguageTokenType.this)('this')
                       PsiElement(DLanguageTokenType.))(')')
-                  DLanguageDeclaratorImpl(DECLARATOR)
+                  DECLARATOR
                     DLanguageVarDeclaratorImpl(VAR_DECLARATOR)
                       IDENTIFIER
                         PsiElement(DLanguageTokenType.ID)('s')
@@ -109,10 +109,11 @@ D Language File
                           IDENTIFIER
                             PsiElement(DLanguageTokenType.ID)('string')
                       DLanguageDeclaratorsImpl(DECLARATORS)
-                        DECLARATOR_INITIALIZER
-                          DLanguageVarDeclaratorImpl(VAR_DECLARATOR)
-                            IDENTIFIER
-                              PsiElement(DLanguageTokenType.ID)('str')
+                        DLanguageDeclaratorInitializerImpl(DECLARATOR_INITIALIZER)
+                          DECLARATOR
+                            DLanguageVarDeclaratorImpl(VAR_DECLARATOR)
+                              IDENTIFIER
+                                PsiElement(DLanguageTokenType.ID)('str')
                       PsiElement(DLanguageTokenType.;)(';')
                 DLanguageDeclDefImpl(DECL_DEF)
                   DLanguageDeclarationImpl(DECLARATION)
@@ -157,10 +158,11 @@ D Language File
                                             IDENTIFIER
                                               PsiElement(DLanguageTokenType.ID)('size_t')
                                         DLanguageDeclaratorsImpl(DECLARATORS)
-                                          DECLARATOR_INITIALIZER
-                                            DLanguageVarDeclaratorImpl(VAR_DECLARATOR)
-                                              IDENTIFIER
-                                                PsiElement(DLanguageTokenType.ID)('hash')
+                                          DLanguageDeclaratorInitializerImpl(DECLARATOR_INITIALIZER)
+                                            DECLARATOR
+                                              DLanguageVarDeclaratorImpl(VAR_DECLARATOR)
+                                                IDENTIFIER
+                                                  PsiElement(DLanguageTokenType.ID)('hash')
                                         PsiElement(DLanguageTokenType.;)(';')
                             DLanguageStatementImpl(STATEMENT)
                               DLanguageNonEmptyStatementImpl(NON_EMPTY_STATEMENT)
@@ -259,7 +261,7 @@ D Language File
                                 DLanguageIdentifierListImpl(IDENTIFIER_LIST)
                                   IDENTIFIER
                                     PsiElement(DLanguageTokenType.ID)('MyString')
-                              DLanguageDeclaratorImpl(DECLARATOR)
+                              DECLARATOR
                                 DLanguageVarDeclaratorImpl(VAR_DECLARATOR)
                                   IDENTIFIER
                                     PsiElement(DLanguageTokenType.ID)('s')

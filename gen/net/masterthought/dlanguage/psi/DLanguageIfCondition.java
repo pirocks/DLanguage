@@ -10,7 +10,7 @@ public interface DLanguageIfCondition extends PsiElement {
   @Nullable
   DLanguageBasicType getBasicType();
 
-  @NotNull
+  @Nullable
   DLanguageCommaExpression getCommaExpression();
 
   @Nullable
@@ -18,6 +18,9 @@ public interface DLanguageIfCondition extends PsiElement {
 
   @Nullable
   DLanguageIdentifier getIdentifier();
+
+  @Nullable
+  DLanguageTemplateInstance getTemplateInstance();
 
   @Nullable
   DLanguageTypeCtors getTypeCtors();

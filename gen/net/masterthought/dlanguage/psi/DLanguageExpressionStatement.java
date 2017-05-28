@@ -7,8 +7,11 @@ import com.intellij.psi.PsiElement;
 
 public interface DLanguageExpressionStatement extends PsiElement {
 
-  @NotNull
+  @Nullable
   DLanguageCommaExpression getCommaExpression();
+
+  @Nullable
+  DLanguageTemplateInstance getTemplateInstance();
 
   @Nullable
   PsiElement getOpScolon();

@@ -33,9 +33,9 @@ public class DLanguageIfConditionImpl extends ASTWrapperPsiElement implements DL
   }
 
   @Override
-  @NotNull
+  @Nullable
   public DLanguageCommaExpression getCommaExpression() {
-    return notNullChild(PsiTreeUtil.getChildOfType(this, DLanguageCommaExpression.class));
+    return PsiTreeUtil.getChildOfType(this, DLanguageCommaExpression.class);
   }
 
   @Override
@@ -48,6 +48,12 @@ public class DLanguageIfConditionImpl extends ASTWrapperPsiElement implements DL
   @Nullable
   public DLanguageIdentifier getIdentifier() {
     return PsiTreeUtil.getChildOfType(this, DLanguageIdentifier.class);
+  }
+
+  @Override
+  @Nullable
+  public DLanguageTemplateInstance getTemplateInstance() {
+    return PsiTreeUtil.getChildOfType(this, DLanguageTemplateInstance.class);
   }
 
   @Override

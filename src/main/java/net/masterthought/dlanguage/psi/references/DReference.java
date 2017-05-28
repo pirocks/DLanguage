@@ -4,12 +4,15 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.stubs.StubIndex;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.ContainerUtil;
 import net.masterthought.dlanguage.index.DModuleIndex;
 import net.masterthought.dlanguage.psi.*;
 import net.masterthought.dlanguage.psi.impl.DPsiImplUtil;
+import net.masterthought.dlanguage.psi.interfaces.Declaration;
+import net.masterthought.dlanguage.stubs.index.DTopLevelDeclarationIndex;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,6 +52,8 @@ public class DReference extends PsiReferenceBase<PsiNamedElement> implements Psi
 //        }
         Project project = myElement.getProject();
         final List<PsiNamedElement> namedElements = findDefinitionNode(project, name, myElement);
+//        final DResolveUtil.DReferenceProcessor processor = new DResolveUtil.DReferenceProcessor();
+//        final boolean b = myElement.processDeclarations(processor,ResolveState.initial(), myElement,myElement);
         // Guess 20 variants tops most of the time in any real code base.
         final Collection<PsiElement> identifiers = new HashSet<>();
         for (PsiElement namedElement : namedElements) {
@@ -105,12 +110,11 @@ public class DReference extends PsiReferenceBase<PsiNamedElement> implements Psi
                 }
             }
             else if(namedElement instanceof DLanguageDeclaratorInitializer){
-                if(((DLanguageDeclaratorInitializer) namedElement).getAltDeclarator() != null &&
-                    ((DLanguageDeclaratorInitializer) namedElement).getAltDeclarator().getIdentifier() != null){
-                    identifiers.add(((DLanguageDeclaratorInitializer) namedElement).getAltDeclarator().getIdentifier());
-                }
-                else if(((DLanguageDeclaratorInitializer) namedElement).getVarDeclarator() != null){
-                    identifiers.add(((DLanguageDeclaratorInitializer) namedElement).getVarDeclarator().getIdentifier());
+                if (((DLanguageDeclarator) namedElement).getAltDeclarator() != null &&
+                    ((DLanguageDeclarator) namedElement).getAltDeclarator().getIdentifier() != null) {
+                    identifiers.add(((DLanguageDeclarator) namedElement).getAltDeclarator().getIdentifier());
+                } else if (((DLanguageDeclarator) namedElement).getVarDeclarator() != null) {
+                    identifiers.add(((DLanguageDeclarator) namedElement).getVarDeclarator().getIdentifier());
                 }
             }
             else {
@@ -187,13 +191,20 @@ public class DReference extends PsiReferenceBase<PsiNamedElement> implements Psi
             declarations.addAll(PsiTreeUtil.findChildrenOfType(psiFile, DLanguageIdentifier.class));
         }
         // find definition in imported files
+        Set<String> result = new HashSet<>();
         for (String potentialModule : potentialModules) {
             List<DLanguageFile> files = DModuleIndex.getFilesByModuleName(project, potentialModule, GlobalSearchScope.allScope(project));
             for (DLanguageFile f : files) {
-                findDefinitionNode(f, null, e, declarations);
+                for (String k : StubIndex.getInstance().getAllKeys(DTopLevelDeclarationIndex.KEY, f.getProject())) {
+                    final Collection<Declaration> declarationsFromFile = StubIndex.getInstance().get(DTopLevelDeclarationIndex.KEY, k, f.getProject(), GlobalSearchScope.fileScope(f));
+                    for (Declaration dNamedElement : declarationsFromFile) {
+                        if (dNamedElement != null) {
+                            result.add(k);
+                        }
+                    }
+                }
             }
         }
-        ArrayList<String> result = new ArrayList<>();
         int i = 0;
         for (PsiNamedElement declaration : declarations) {
             result.add(declaration.getName());
@@ -309,6 +320,7 @@ public class DReference extends PsiReferenceBase<PsiNamedElement> implements Psi
         result.add("__traits");
         result.add("__vector");
         result.add("__parameters");
+        result.add("string");
         return result.toArray();
     }
 

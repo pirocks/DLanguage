@@ -33,6 +33,12 @@ public class DLanguageThrowStatementImpl extends ASTWrapperPsiElement implements
   }
 
   @Override
+  @Nullable
+  public DLanguageTemplateInstance getTemplateInstance() {
+    return PsiTreeUtil.getChildOfType(this, DLanguageTemplateInstance.class);
+  }
+
+  @Override
   @NotNull
   public PsiElement getKwThrow() {
     return notNullChild(findChildByType(KW_THROW));

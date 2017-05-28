@@ -34,6 +34,12 @@ public class DLanguageTypeidExpressionImpl extends ASTWrapperPsiElement implemen
 
   @Override
   @Nullable
+  public DLanguageTemplateInstance getTemplateInstance() {
+    return PsiTreeUtil.getChildOfType(this, DLanguageTemplateInstance.class);
+  }
+
+  @Override
+  @Nullable
   public DLanguageType getType() {
     return PsiTreeUtil.getChildOfType(this, DLanguageType.class);
   }

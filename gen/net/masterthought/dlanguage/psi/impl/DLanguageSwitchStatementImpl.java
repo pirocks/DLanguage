@@ -39,6 +39,12 @@ public class DLanguageSwitchStatementImpl extends ASTWrapperPsiElement implement
   }
 
   @Override
+  @Nullable
+  public DLanguageTemplateInstance getTemplateInstance() {
+    return PsiTreeUtil.getChildOfType(this, DLanguageTemplateInstance.class);
+  }
+
+  @Override
   @NotNull
   public PsiElement getKwSwitch() {
     return notNullChild(findChildByType(KW_SWITCH));

@@ -40,6 +40,12 @@ public class DLanguageGotoStatementImpl extends ASTWrapperPsiElement implements 
 
   @Override
   @Nullable
+  public DLanguageTemplateInstance getTemplateInstance() {
+    return PsiTreeUtil.getChildOfType(this, DLanguageTemplateInstance.class);
+  }
+
+  @Override
+  @Nullable
   public PsiElement getKwCase() {
     return findChildByType(KW_CASE);
   }

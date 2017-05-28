@@ -39,6 +39,12 @@ public class DLanguageWhileStatementImpl extends ASTWrapperPsiElement implements
   }
 
   @Override
+  @Nullable
+  public DLanguageTemplateInstance getTemplateInstance() {
+    return PsiTreeUtil.getChildOfType(this, DLanguageTemplateInstance.class);
+  }
+
+  @Override
   @NotNull
   public PsiElement getKwWhile() {
     return notNullChild(findChildByType(KW_WHILE));

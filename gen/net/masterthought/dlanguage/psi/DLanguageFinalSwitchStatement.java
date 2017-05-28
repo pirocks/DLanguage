@@ -13,6 +13,9 @@ public interface DLanguageFinalSwitchStatement extends PsiElement {
   @Nullable
   DLanguageScopeStatement getScopeStatement();
 
+  @Nullable
+  DLanguageTemplateInstance getTemplateInstance();
+
   @NotNull
   PsiElement getKwFinal();
 

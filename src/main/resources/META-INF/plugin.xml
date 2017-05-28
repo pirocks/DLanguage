@@ -120,6 +120,7 @@
         <!--<testFinder implementation="net.masterthought.dlanguage.unittest.DUnitTestFinder"/>-->
         <!--<consoleFilterProvider implementation="net.masterthought.dlanguage.unittest.DStackTraceFilter"/>-->
         <!--<analyzeStacktraceFilter implementation="net.masterthought.dlanguage.unittest.DStackTraceFilter"/>-->
+        <stubIndex implementation="net.masterthought.dlanguage.stubs.index.DTopLevelDeclarationIndex"/>
     </extensions>
 
     <application-components>

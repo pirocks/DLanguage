@@ -39,6 +39,12 @@ public class DLanguageSynchronizedStatementImpl extends ASTWrapperPsiElement imp
   }
 
   @Override
+  @Nullable
+  public DLanguageTemplateInstance getTemplateInstance() {
+    return PsiTreeUtil.getChildOfType(this, DLanguageTemplateInstance.class);
+  }
+
+  @Override
   @NotNull
   public PsiElement getKwSynchronized() {
     return notNullChild(findChildByType(KW_SYNCHRONIZED));

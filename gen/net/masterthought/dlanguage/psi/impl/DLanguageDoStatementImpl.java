@@ -39,6 +39,12 @@ public class DLanguageDoStatementImpl extends ASTWrapperPsiElement implements DL
   }
 
   @Override
+  @Nullable
+  public DLanguageTemplateInstance getTemplateInstance() {
+    return PsiTreeUtil.getChildOfType(this, DLanguageTemplateInstance.class);
+  }
+
+  @Override
   @NotNull
   public PsiElement getKwDo() {
     return notNullChild(findChildByType(KW_DO));

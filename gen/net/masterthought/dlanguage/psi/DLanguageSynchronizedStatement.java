@@ -13,6 +13,9 @@ public interface DLanguageSynchronizedStatement extends PsiElement {
   @Nullable
   DLanguageScopeStatement getScopeStatement();
 
+  @Nullable
+  DLanguageTemplateInstance getTemplateInstance();
+
   @NotNull
   PsiElement getKwSynchronized();
 

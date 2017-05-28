@@ -1182,8 +1182,8 @@ public class DPsiImplUtil {
     // ------------- Var Declaration ------------------ //
 
     @NotNull
-    public static String getName(@NotNull DLanguageDeclaratorInitializer o) {
-        DLanguageDeclaratorInitializerStub stub = o.getStub();
+    public static String getName(@NotNull DLanguageDeclarator o) {
+        DLanguageDeclaratorStub stub = o.getStub();
         if (stub != null) return StringUtil.notNullize(stub.getName());
 
         if (getIdentifier(o) != null) {
@@ -1194,7 +1194,7 @@ public class DPsiImplUtil {
     }
 
     @Nullable
-    private static DLanguageIdentifier getIdentifier(DLanguageDeclaratorInitializer o) {
+    private static DLanguageIdentifier getIdentifier(DLanguageDeclarator o) {
         if (o.getAltDeclarator() != null) {
             final DLanguageAltDeclarator altDeclarator = o.getAltDeclarator();
             if (altDeclarator.getIdentifier() != null) return altDeclarator.getIdentifier();
@@ -1208,13 +1208,13 @@ public class DPsiImplUtil {
     }
 
     @Nullable
-    public static PsiElement getNameIdentifier(@NotNull DLanguageDeclaratorInitializer o) {
+    public static PsiElement getNameIdentifier(@NotNull DLanguageDeclarator o) {
         ASTNode keyNode = o.getNode();
         return keyNode != null ? keyNode.getPsi() : null;
     }
 
     @Nullable
-    public static PsiElement setName(@NotNull DLanguageDeclaratorInitializer o, @NotNull String newName) {
+    public static PsiElement setName(@NotNull DLanguageDeclarator o, @NotNull String newName) {
         if (getIdentifier(o) == null)
             return null;
         getIdentifier(o).setName(newName);
@@ -1222,12 +1222,12 @@ public class DPsiImplUtil {
     }
 
     @NotNull
-    public static PsiReference getReference(@NotNull DLanguageDeclaratorInitializer o) {
+    public static PsiReference getReference(@NotNull DLanguageDeclarator o) {
         return new DReference(o, TextRange.from(0, getName(o).length()));
     }
 
     @NotNull
-    public static ItemPresentation getPresentation(final DLanguageDeclaratorInitializer o) {
+    public static ItemPresentation getPresentation(final DLanguageDeclarator o) {
         return new ItemPresentation() {
             @Nullable
             @Override
@@ -1253,7 +1253,7 @@ public class DPsiImplUtil {
         };
     }
 
-    public static boolean actuallyIsDeclaration(DLanguageDeclaratorInitializer o) {
+    public static boolean actuallyIsDeclaration(DLanguageDeclarator o) {
         final DLanguageVarDeclarations parentVarDeclaration = (DLanguageVarDeclarations) o.getParent().getParent();
         if (parentVarDeclaration.getStorageClasses() != null)
             return true;
@@ -1271,9 +1271,9 @@ public class DPsiImplUtil {
         return false;//default to false.
     }
 
-    public static Type getVariableDeclarationType(DLanguageDeclaratorInitializer o) {
-        return new Type(o);
-
+    public static Type getVariableDeclarationType(DLanguageDeclarator o) {
+//        return new Type(o);
+        return null;
     }
 
     // ------------- Var Declaration ------------------ //`

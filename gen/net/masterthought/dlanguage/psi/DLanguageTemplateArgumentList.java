@@ -10,10 +10,7 @@ public interface DLanguageTemplateArgumentList extends PsiElement {
   @NotNull
   DLanguageTemplateArgument getTemplateArgument();
 
-  @Nullable
-  DLanguageTemplateArgumentList getTemplateArgumentList();
-
-  @Nullable
-  PsiElement getOpComma();
+  @NotNull
+  List<DLanguageTemplateArgumentList> getTemplateArgumentListList();
 
 }

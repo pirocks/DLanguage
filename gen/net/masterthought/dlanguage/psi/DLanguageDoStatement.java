@@ -13,6 +13,9 @@ public interface DLanguageDoStatement extends PsiElement {
   @Nullable
   DLanguageScopeStatement getScopeStatement();
 
+  @Nullable
+  DLanguageTemplateInstance getTemplateInstance();
+
   @NotNull
   PsiElement getKwDo();
 
