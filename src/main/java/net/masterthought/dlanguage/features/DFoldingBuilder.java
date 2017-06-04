@@ -8,10 +8,7 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
-import net.masterthought.dlanguage.psi.DLangAggregateDeclaration;
-import net.masterthought.dlanguage.psi.DLangFile;
-import net.masterthought.dlanguage.psi.DLangFuncDeclaration;
-import net.masterthought.dlanguage.psi.DLangImportDeclaration;
+import net.masterthought.dlanguage.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,6 +34,17 @@ public class DFoldingBuilder extends FoldingBuilderEx implements DumbAware {
         for (DLangAggregateDeclaration aggregateDefinition : PsiTreeUtil.findChildrenOfType(file, DLangAggregateDeclaration.class)) {
             if (aggregateDefinition.isPhysical() && aggregateDefinition.isValid() && aggregateDefinition.isWritable() && !aggregateDefinition.getText().equals(""))//required in case the psi element has been deleted
                 result.add(new FoldingDescriptor(aggregateDefinition, aggregateDefinition.getTextRange()));
+        }
+
+        //add block statements
+        for (DLangBlockStatement blockStatement : PsiTreeUtil.findChildrenOfType(file, DLangBlockStatement.class)) {
+            if (blockStatement.isPhysical() && blockStatement.isValid() && blockStatement.isWritable() && !blockStatement.getText().equals(""))//required in case the psi element has been deleted
+                result.add(new FoldingDescriptor(blockStatement, blockStatement.getTextRange()));
+        }
+
+        for (DLangEnumDeclaration blockStatement : PsiTreeUtil.findChildrenOfType(file, DLangEnumDeclaration.class)) {
+            if (blockStatement.isPhysical() && blockStatement.isValid() && blockStatement.isWritable() && !blockStatement.getText().equals(""))//required in case the psi element has been deleted
+                result.add(new FoldingDescriptor(blockStatement, blockStatement.getTextRange()));
         }
 
 

@@ -16,18 +16,20 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Key;
 
+import javax.swing.*;
 import java.io.File;
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class DubConfigurationParser {
 
     private static final Logger LOG = Logger.getInstance(DubConfigurationParser.class);
-
-    private List<DubPackage> packages = new ArrayList<>();
     private final Project project;
     private final String dubBinaryPath;
+    private List<DubPackage> packages = new ArrayList<>();
 
     public DubConfigurationParser(Project project, String dubBinaryPath) {
         this.project = project;
@@ -151,7 +153,11 @@ public class DubConfigurationParser {
             } else {
                 errors.forEach(LOG::warn);
                 LOG.warn(String.format("%s exited with %s", dubCommand, exitCode));
-                Messages.showErrorDialog(this.project, String.format("%s exited with %s", dubCommand, exitCode), "Dub Import");
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        Messages.showErrorDialog(project, String.format("%s exited with %s", dubCommand, exitCode), "Dub Import");
+                    }
+                });
             }
         } catch (ExecutionException | JsonSyntaxException e) {
             LOG.error("Unable to parse dub configuration", e);

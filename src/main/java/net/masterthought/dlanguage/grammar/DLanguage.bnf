@@ -2303,7 +2303,7 @@ AnonymousEnumDeclaration ::=
 //Template
 
 TemplateDeclaration ::=
-    'template' Identifier TemplateParameters Constraint? '{' DeclDefs? '}' {
+    'template' Identifier TemplateParameters Constraint? AggregateBody {
     pin= 2
       methods=[getName getFullName getNameIdentifier getReference setName getPresentation getTemplateArguments isSomeVisibility ]
     implements = ["net.masterthought.dlanguage.psi.interfaces.DNamedElement" "net.masterthought.dlanguage.psi.interfaces.containers.StatementContainer" "net.masterthought.dlanguage.psi.interfaces.containers.MixinContainer" "net.masterthought.dlanguage.psi.interfaces.containers.GlobalDeclarationContainer" "net.masterthought.dlanguage.psi.interfaces.HasVisibility" "net.masterthought.dlanguage.psi.interfaces.HasTemplateArguments" "net.masterthought.dlanguage.psi.interfaces.Mixinable" "net.masterthought.dlanguage.psi.interfaces.Declaration"]
@@ -2387,7 +2387,7 @@ TemplateValueParameterDefault ::=
     '=' ( AssignExpression | SpecialKeyword)
 
 TemplateMixinDeclaration ::=
-    'mixin' 'template' Identifier TemplateParameters Constraint? '{' DeclDefs? '}'{
+    'mixin' 'template' Identifier TemplateParameters Constraint? AggregateBody{
     pin = 3
         methods=[getName getFullName getNameIdentifier getReference setName getPresentation isSomeVisibility ]//getTemplateArguments getPublicSyTypesmbols]
     implements = ["net.masterthought.dlanguage.psi.interfaces.DNamedElement" "net.masterthought.dlanguage.psi.interfaces.containers.StatementContainer" "net.masterthought.dlanguage.psi.interfaces.containers.MixinContainer" "net.masterthought.dlanguage.psi.interfaces.containers.GlobalDeclarationContainer" "net.masterthought.dlanguage.psi.interfaces.HasVisibility" "net.masterthought.dlanguage.psi.interfaces.HasTemplateArguments" "net.masterthought.dlanguage.psi.interfaces.Mixinable" "net.masterthought.dlanguage.psi.interfaces.Declaration"]
