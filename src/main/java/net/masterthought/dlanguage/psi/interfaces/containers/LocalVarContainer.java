@@ -1,7 +1,7 @@
 package net.masterthought.dlanguage.psi.interfaces.containers;
 
-import net.masterthought.dlanguage.psi.DLanguageAutoDeclarationY;
-import net.masterthought.dlanguage.psi.DLanguageDeclaratorInitializer;
+import net.masterthought.dlanguage.psi.DLangAutoDeclarationY;
+import net.masterthought.dlanguage.psi.DLangDeclaratorInitializer;
 import net.masterthought.dlanguage.psi.interfaces.VariableDeclaration;
 
 /**
@@ -9,7 +9,7 @@ import net.masterthought.dlanguage.psi.interfaces.VariableDeclaration;
  */
 public interface LocalVarContainer extends Container {
     Class variableDeclarationClass = VariableDeclaration.class;
-    Class autoDeclarationClass = DLanguageAutoDeclarationY.class;
-    Class declaratorInitializer = DLanguageDeclaratorInitializer.class;
+    Class autoDeclarationClass = DLangAutoDeclarationY.class;
+    Class declaratorInitializer = DLangDeclaratorInitializer.class;
 
 }

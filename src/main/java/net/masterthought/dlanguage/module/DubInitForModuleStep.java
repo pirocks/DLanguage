@@ -15,8 +15,8 @@ import java.util.List;
 
 public class DubInitForModuleStep extends ModuleWizardStep {
 
-    private final JPanel myPanel;
     protected final WizardContext myWizardContext;
+    private final JPanel myPanel;
     private final ProjectFormatPanel myFormatPanel = new ProjectFormatPanel();
     private final ComboBox dubFormat;
     private final ComboBox dubType;
@@ -85,7 +85,7 @@ public class DubInitForModuleStep extends ModuleWizardStep {
                 ModuleBuilder builder = (ModuleBuilder) moduleBuilder;
 
                 if (builder.getBuilderId() != null && builder.getBuilderId().equals("DLangDubApp")) {
-                    DLanguageDubModuleBuilder dubBuilder = (DLanguageDubModuleBuilder) builder;
+                    DLangDubModuleBuilder dubBuilder = (DLangDubModuleBuilder) builder;
 
                     List<Pair<String, String>> optionsList = new ArrayList<>();
                     optionsList.add(Pair.create("dubFormat", this.dubFormat.getSelectedItem().toString()));

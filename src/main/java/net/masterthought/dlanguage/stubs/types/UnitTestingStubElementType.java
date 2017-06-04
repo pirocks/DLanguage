@@ -4,8 +4,8 @@ import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
-import net.masterthought.dlanguage.psi.DLanguageUnitTesting;
-import net.masterthought.dlanguage.psi.impl.DLanguageUnitTestingImpl;
+import net.masterthought.dlanguage.psi.DLangUnitTesting;
+import net.masterthought.dlanguage.psi.impl.DLangUnitTestingImpl;
 import net.masterthought.dlanguage.stubs.UnitTestingStubImpl;
 import net.masterthought.dlanguage.stubs.interfaces.UnitTestingStub;
 import org.jetbrains.annotations.NotNull;
@@ -15,19 +15,19 @@ import java.io.IOException;
 /**
  * Created by francis on 4/8/2017.
  */
-public class UnitTestingStubElementType extends DStubElementType<UnitTestingStub, DLanguageUnitTesting> {
+public class UnitTestingStubElementType extends DStubElementType<UnitTestingStub, DLangUnitTesting> {
     public UnitTestingStubElementType(@NotNull String debugName) {
         super(debugName);
     }
 
     @Override
-    public DLanguageUnitTesting createPsi(@NotNull UnitTestingStub stub) {
-        return new DLanguageUnitTestingImpl(stub, this);
+    public DLangUnitTesting createPsi(@NotNull UnitTestingStub stub) {
+        return new DLangUnitTestingImpl(stub, this);
     }
 
     @NotNull
     @Override
-    public UnitTestingStub createStub(@NotNull DLanguageUnitTesting psi, StubElement parentStub) {
+    public UnitTestingStub createStub(@NotNull DLangUnitTesting psi, StubElement parentStub) {
         return new UnitTestingStubImpl(parentStub, this);
     }
     @Override

@@ -1,6 +1,6 @@
 package net.masterthought.dlanguage.jps;
 
-import net.masterthought.dlanguage.jps.model.JpsDLanguageModuleType;
+import net.masterthought.dlanguage.jps.model.JpsDLangModuleType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.builders.BuildTargetLoader;
@@ -26,7 +26,7 @@ public class DTargetType extends ModuleBasedBuildTargetType<DTarget> {
     @Override
     public List<DTarget> computeAllTargets(@NotNull JpsModel jpsModel) {
         List<DTarget> targets = new ArrayList<DTarget>();
-        for (JpsTypedModule<JpsDummyElement> module : jpsModel.getProject().getModules(JpsDLanguageModuleType.INSTANCE)) {
+        for (JpsTypedModule<JpsDummyElement> module : jpsModel.getProject().getModules(JpsDLangModuleType.INSTANCE)) {
             targets.add(new DTarget(module, this));
         }
         return targets;
@@ -39,7 +39,7 @@ public class DTargetType extends ModuleBasedBuildTargetType<DTarget> {
             @Nullable
             @Override
             public DTarget createTarget(@NotNull String targetId) {
-                for (JpsTypedModule<JpsDummyElement> module : jpsModel.getProject().getModules(JpsDLanguageModuleType.INSTANCE)) {
+                for (JpsTypedModule<JpsDummyElement> module : jpsModel.getProject().getModules(JpsDLangModuleType.INSTANCE)) {
                     if (module.getName().equals(targetId)) {
                         return new DTarget(module, DTargetType.this);
                     }

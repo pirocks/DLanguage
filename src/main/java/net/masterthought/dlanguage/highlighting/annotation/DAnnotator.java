@@ -5,8 +5,7 @@ import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.PsiElement;
-import net.masterthought.dlanguage.highlighting.DHighlighter;
-import net.masterthought.dlanguage.psi.*;
+import net.masterthought.dlanguage.psi.DLangVisitor;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -15,11 +14,17 @@ import org.jetbrains.annotations.NotNull;
 */
 public class DAnnotator implements Annotator {
 
+    private static void setHighlighting(@NotNull PsiElement element, @NotNull AnnotationHolder holder,
+                                        @NotNull TextAttributesKey key) {
+        holder.createInfoAnnotation(element, null).setEnforcedTextAttributes(
+            EditorColorsManager.getInstance().getGlobalScheme().getAttributes(key));
+    }
+
     @Override
     public void annotate(@NotNull final PsiElement element, @NotNull final AnnotationHolder holder) {
-        element.accept(new DLanguageVisitor() {
+        element.accept(new DLangVisitor() {
 //            @Override
-//            public void visitModuleFullyQualifiedName(@NotNull DLanguageModuleFullyQualifiedName o) {
+//            public void visitModuleFullyQualifiedName(@NotNull DLangModuleFullyQualifiedName o) {
 //                super.visitModuleFullyQualifiedName(o);
 //                if(o.getIdentifier().getText().startsWith("std")) {
 //                    setHighlighting(o, holder, DHighlighter.STD_IMPORT);
@@ -27,19 +32,19 @@ public class DAnnotator implements Annotator {
 //            }
 //
 //            @Override
-//            public void visitModuleDeclaration(@NotNull DLanguageModuleDeclaration o) {
+//            public void visitModuleDeclaration(@NotNull DLangModuleDeclaration o) {
 //                super.visitModuleDeclaration(o);
 //                setHighlighting(o.getModuleFullyQualifiedName(), holder, DHighlighter.MODULE_DEFINITION);
 //            }
 //
 //            @Override
-//            public void visitFuncDeclaration(@NotNull DLanguageFuncDeclaration o) {
+//            public void visitFuncDeclaration(@NotNull DLangFuncDeclaration o) {
 //                super.visitFuncDeclaration(o);
 //                setHighlighting(o.getIdentifier(), holder, DHighlighter.FUNCTION_DEFINITION);
 //            }
 //
 //            @Override
-//            public void visitVarDeclarations(@NotNull DLanguageVarDeclarations o) {
+//            public void visitVarDeclarations(@NotNull DLangVarDeclarations o) {
 //                super.visitVarDeclarations(o);
 //                if(o.getBasicType() != null) {
 //                    setHighlighting(o.getBasicType(), holder, DHighlighter.BASIC_TYPE);
@@ -47,13 +52,13 @@ public class DAnnotator implements Annotator {
 //            }
 //
 //            @Override
-//            public void visitUserDefinedAttribute(@NotNull DLanguageUserDefinedAttribute o) {
+//            public void visitUserDefinedAttribute(@NotNull DLangUserDefinedAttribute o) {
 //                super.visitUserDefinedAttribute(o);
 //                    setHighlighting(o, holder, DHighlighter.USER_DEFINED_ATTRIBUTE);
 //            }
 //
 //            @Override
-//            public void visitAggregateDeclaration(@NotNull DLanguageAggregateDeclaration o) {
+//            public void visitAggregateDeclaration(@NotNull DLangAggregateDeclaration o) {
 //                super.visitAggregateDeclaration(o);
 //                if(o.getClassDeclaration() != null){
 //                    if(o.getClassDeclaration().getIdentifier() != null) {
@@ -78,17 +83,17 @@ public class DAnnotator implements Annotator {
 //            }
 //
 //            @Override
-//            public void visitBasicType2(@NotNull DLanguageBasicType2 o) {
+//            public void visitBasicType2(@NotNull DLangBasicType2 o) {
 //                super.visitBasicType2(o);
 //                    setHighlighting(o, holder, DHighlighter.BASIC_TYPE);
 //            }
 //
 //            @Override
-//            public void visitNewExpressionWithArgs(@NotNull DLanguageNewExpressionWithArgs o) {
+//            public void visitNewExpressionWithArgs(@NotNull DLangNewExpressionWithArgs o) {
 //                super.visitNewExpressionWithArgs(o);
 //                try {
 //                    // try catch this
-//                    DLanguageIdentifier identifier = o.getType().getBasicType().getIdentifierList().getIdentifier();
+//                    DLangIdentifier identifier = o.getType().getBasicType().getIdentifierList().getIdentifier();
 //                    setHighlighting(identifier, holder, DHighlighter.AGGREGATE_DEFINITION);
 //                } catch(Exception e){
 //                   // do nothing
@@ -96,12 +101,6 @@ public class DAnnotator implements Annotator {
 //            }
 
         });
-    }
-
-    private static void setHighlighting(@NotNull PsiElement element, @NotNull AnnotationHolder holder,
-                                        @NotNull TextAttributesKey key) {
-        holder.createInfoAnnotation(element, null).setEnforcedTextAttributes(
-                EditorColorsManager.getInstance().getGlobalScheme().getAttributes(key));
     }
 }
 

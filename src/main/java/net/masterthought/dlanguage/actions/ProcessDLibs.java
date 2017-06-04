@@ -21,7 +21,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.ui.components.JBList;
-import net.masterthought.dlanguage.module.DLanguageModuleType;
+import net.masterthought.dlanguage.module.DLangModuleType;
 import net.masterthought.dlanguage.project.DubConfigurationParser;
 import net.masterthought.dlanguage.project.DubPackage;
 import net.masterthought.dlanguage.settings.ToolKey;
@@ -32,35 +32,14 @@ import javax.swing.*;
 import java.util.Collection;
 
 public class ProcessDLibs extends AnAction implements DumbAware {
-    private static final Logger LOG = Logger.getInstance(ProcessDLibs.class);
-
     public static final String MENU_PATH = "Tools > Process D Libraries";
-
-    @Override
-    public void update(@NotNull AnActionEvent e) {
-        e.getPresentation().setEnabled(enabled(e));
-    }
+    private static final Logger LOG = Logger.getInstance(ProcessDLibs.class);
 
     private static boolean enabled(@NotNull AnActionEvent e) {
         final Project project = getEventProject(e);
         if (project == null) return false;
         final String dubPath = ToolKey.DUB_KEY.getPath(project);
-        return dubPath != null && !dubPath.isEmpty() && DLanguageModuleType.findModules(project).size() > 0;
-    }
-
-    @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
-        final String prefix = "Unable to process D libraries - ";
-        final Project project = e.getProject();
-        if (project == null) {
-            displayError(e, prefix + "No active project.");
-            return;
-        }
-        final Collection<Module> modules = DLanguageModuleType.findModules(project);
-        int size = modules.size();
-        if (size == 0) displayError(e, prefix + "No DLanguage modules are used in this project.");
-        else if (size == 1) processDLibs(e, modules.iterator().next());
-        else showModuleChoicePopup(e, project, modules);
+        return dubPath != null && !dubPath.isEmpty() && DLangModuleType.findModules(project).size() > 0;
     }
 
     private static void showModuleChoicePopup(@NotNull AnActionEvent e, Project project, Collection<Module> modules) {
@@ -95,7 +74,7 @@ public class ProcessDLibs extends AnAction implements DumbAware {
             Notifications.Bus.notify(
                     new Notification(e.getPresentation().getText(), "Process D Libraries",
                             "DUB executable path is empty"+
-                                    "<br/><a href='configureDLanguageTools'>Configure</a>",
+                                "<br/><a href='configureDLangTools'>Configure</a>",
                             NotificationType.WARNING, new DToolsNotificationListener(project)), project);
             return;
         }
@@ -171,6 +150,26 @@ public class ProcessDLibs extends AnAction implements DumbAware {
         Notifications.Bus.notify(new Notification(
                 groupId, "Process D libs", message, NotificationType.ERROR), getEventProject(e));
         LOG.warn(message);
+    }
+
+    @Override
+    public void update(@NotNull AnActionEvent e) {
+        e.getPresentation().setEnabled(enabled(e));
+    }
+
+    @Override
+    public void actionPerformed(@NotNull AnActionEvent e) {
+        final String prefix = "Unable to process D libraries - ";
+        final Project project = e.getProject();
+        if (project == null) {
+            displayError(e, prefix + "No active project.");
+            return;
+        }
+        final Collection<Module> modules = DLangModuleType.findModules(project);
+        int size = modules.size();
+        if (size == 0) displayError(e, prefix + "No DLanguage modules are used in this project.");
+        else if (size == 1) processDLibs(e, modules.iterator().next());
+        else showModuleChoicePopup(e, project, modules);
     }
 
 }

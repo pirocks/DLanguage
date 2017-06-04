@@ -8,10 +8,10 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference;
 import net.masterthought.dlanguage.DLightPlatformCodeInsightFixtureTestCase;
-import net.masterthought.dlanguage.psi.DLanguageClassDeclaration;
-import net.masterthought.dlanguage.psi.DLanguageConstructor;
-import net.masterthought.dlanguage.psi.DLanguageDeclaratorInitializer;
-import net.masterthought.dlanguage.psi.DLanguageIdentifier;
+import net.masterthought.dlanguage.psi.DLangClassDeclaration;
+import net.masterthought.dlanguage.psi.DLangConstructor;
+import net.masterthought.dlanguage.psi.DLangDeclaratorInitializer;
+import net.masterthought.dlanguage.psi.DLangIdentifier;
 
 import java.io.File;
 
@@ -54,13 +54,13 @@ public abstract class DResolveTestCase extends DLightPlatformCodeInsightFixtureT
                 resolvedElement = ref.getElement();
                 ensureNotNull(file);
                 // container elements like DEFINITION_FUNCTION need to be looked up by .getElement().getParent()
-                if (resolvedElement instanceof DLanguageIdentifier) {
+                if (resolvedElement instanceof DLangIdentifier) {
                     resolvedElement = ref.getElement().getParent();
                 }
                 //if we're resolving something within a class don't resolve the class
-                if (ref instanceof PsiMultiReference && resolvedElement instanceof DLanguageClassDeclaration) {
+                if (ref instanceof PsiMultiReference && resolvedElement instanceof DLangClassDeclaration) {
                     for (PsiReference psiReference : ((PsiMultiReference) ref).getReferences()) {
-                        if (!(psiReference.getElement() instanceof DLanguageClassDeclaration)) {
+                        if (!(psiReference.getElement() instanceof DLangClassDeclaration)) {
                             resolvedElement = psiReference.getElement();
                         }
                     }
@@ -89,9 +89,9 @@ public abstract class DResolveTestCase extends DLightPlatformCodeInsightFixtureT
             fail("Could not find resolved element.");
         }
         if (succeed) {
-            if (resolvedElement instanceof DLanguageDeclaratorInitializer) {
+            if (resolvedElement instanceof DLangDeclaratorInitializer) {
                 assertEquals("Could not resolve expected reference.", resolvedElement, referencedElement.resolve().getParent().getParent());
-            } else if (resolvedElement instanceof DLanguageConstructor) {
+            } else if (resolvedElement instanceof DLangConstructor) {
                 assertEquals("Could not resolve expected reference.", resolvedElement, referencedElement.resolve());
             }
             else

@@ -36,13 +36,11 @@ import java.util.regex.Pattern;
 
 public class DUnitTestRunProcessHandler extends ProcessHandler {
     private static final Logger LOG = Logger.getInstance(DUnitTestRunProcessHandler.class);
-    private Map<String, Set<String>> testClassToTestMethodNames = new HashMap<>();
-
     private final Map<String, Integer> nodeIdsByFullTestName = new HashMap<>();
-    private int nextNodeId = 0;
-
     private final Project project;
     private final DUnitTestRunConfiguration configuration;
+    private Map<String, Set<String>> testClassToTestMethodNames = new HashMap<>();
+    private int nextNodeId = 0;
 
 
     public DUnitTestRunProcessHandler(Project project, DUnitTestRunConfiguration configuration) {
@@ -63,15 +61,15 @@ public class DUnitTestRunProcessHandler extends ProcessHandler {
 
                 try {
                     PsiFile psiFile = PsiManager.getInstance(project).findFile(configuration.getDFile());
-                    Collection<DLanguageClassDeclaration> cds = PsiTreeUtil.findChildrenOfType(psiFile, DLanguageClassDeclaration.class);
-                    for (DLanguageClassDeclaration cd : cds) {
+                    Collection<DLangClassDeclaration> cds = PsiTreeUtil.findChildrenOfType(psiFile, DLangClassDeclaration.class);
+                    for (DLangClassDeclaration cd : cds) {
 
                         // if a class contains the UnitTest mixin assume its a valid d-unit test class
                         String testClassName = null;
-                        Collection<DLanguageTemplateMixin> tmis = PsiTreeUtil.findChildrenOfType(cd, DLanguageTemplateMixin.class);
-                        for (DLanguageTemplateMixin tmi : tmis) {
+                        Collection<DLangTemplateMixin> tmis = PsiTreeUtil.findChildrenOfType(cd, DLangTemplateMixin.class);
+                        for (DLangTemplateMixin tmi : tmis) {
                             if (tmi.getText().contains("UnitTest")) {
-                                DLanguageIdentifier classIdentifier = cd.getIdentifier();
+                                DLangIdentifier classIdentifier = cd.getIdentifier();
                                 if (classIdentifier != null) {
                                     testClassName = classIdentifier.getText();
                                 }
@@ -80,8 +78,8 @@ public class DUnitTestRunProcessHandler extends ProcessHandler {
 
                         // find methods for the class
                         Set<String> testMethodNames = new LinkedHashSet<>();
-                        Collection<DLanguageFuncDeclaration> fds = PsiTreeUtil.findChildrenOfType(cd, DLanguageFuncDeclaration.class);
-                        for (DLanguageFuncDeclaration fd : fds) {
+                        Collection<DLangFuncDeclaration> fds = PsiTreeUtil.findChildrenOfType(cd, DLangFuncDeclaration.class);
+                        for (DLangFuncDeclaration fd : fds) {
                             if (testClassName != null) {
                                 // only add methods with @Test
                                 if (isTestMethod(fd) || isIgnoreMethod(fd)) {
@@ -200,7 +198,7 @@ public class DUnitTestRunProcessHandler extends ProcessHandler {
             Notifications.Bus.notify(
                     new Notification("Dunit Test Runner", "Dub path must be specified",
                             "Dub executable path is empty" +
-                                    "<br/><a href='configureDLanguageTools'>Configure</a>",
+                                "<br/><a href='configureDLangTools'>Configure</a>",
                             NotificationType.WARNING, new DToolsNotificationListener(project)), project);
             return;
         }
@@ -253,13 +251,13 @@ public class DUnitTestRunProcessHandler extends ProcessHandler {
 
     }
 
-    private boolean isTestMethod(DLanguageFuncDeclaration fd) {
-        PsiElement ele = findElementUpstream(fd, DLanguageUserDefinedAttribute.class);
+    private boolean isTestMethod(DLangFuncDeclaration fd) {
+        PsiElement ele = findElementUpstream(fd, DLangUserDefinedAttribute.class);
         return (ele != null && ele.getText().contains("@Test"));
     }
 
-    private boolean isIgnoreMethod(DLanguageFuncDeclaration fd) {
-        PsiElement ele = findElementUpstream(fd, DLanguageUserDefinedAttribute.class);
+    private boolean isIgnoreMethod(DLangFuncDeclaration fd) {
+        PsiElement ele = findElementUpstream(fd, DLangUserDefinedAttribute.class);
         return (ele != null && ele.getText().contains("@Ignore"));
     }
 

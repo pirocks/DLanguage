@@ -1,9 +1,5 @@
 package net.masterthought.dlanguage.actions;
 
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.project.DumbAware;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.CapturingProcessAdapter;
 import com.intellij.execution.process.OSProcessHandler;
@@ -11,16 +7,20 @@ import com.intellij.execution.process.ProcessEvent;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.ExceptionUtil;
-import net.masterthought.dlanguage.psi.DLanguageFile;
+import net.masterthought.dlanguage.psi.DLangFile;
 import net.masterthought.dlanguage.settings.ToolKey;
 import net.masterthought.dlanguage.utils.DToolsNotificationListener;
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +41,7 @@ public class DFormatAction extends AnAction implements DumbAware {
     @Override
     public void update(AnActionEvent e) {
         PsiFile psiFile = e.getData(CommonDataKeys.PSI_FILE);
-        boolean isHaskell = psiFile instanceof DLanguageFile;
+        boolean isHaskell = psiFile instanceof DLangFile;
         e.getPresentation().setEnabled(isHaskell);
     }
 
@@ -53,7 +53,7 @@ public class DFormatAction extends AnAction implements DumbAware {
         final PsiFile psiFile = e.getData(CommonDataKeys.PSI_FILE);
         final Project project = getEventProject(e);
         if (project == null) return;
-        if (!(psiFile instanceof DLanguageFile)) return;
+        if (!(psiFile instanceof DLangFile)) return;
         VirtualFile virtualFile = psiFile.getVirtualFile();
         if (virtualFile == null) return;
 
@@ -66,7 +66,7 @@ public class DFormatAction extends AnAction implements DumbAware {
                 Notifications.Bus.notify(
                         new Notification(groupId, NOTIFICATION_TITLE,
                                 "DFormat executable path is empty"+
-                                        "<br/><a href='configureDLanguageTools'>Configure</a>",
+                                    "<br/><a href='configureDLangTools'>Configure</a>",
                                 NotificationType.WARNING, new DToolsNotificationListener(project)), project);
                 return;
             }

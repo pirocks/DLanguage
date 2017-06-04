@@ -24,8 +24,8 @@ public class DPsiUtil {
     }
 
     @Deprecated
-    private static List<DLanguageDeclDefs> getDeclDefs(PsiElement defs, List<DLanguageDeclDefs> declDefsList) {
-        DLanguageDeclDefs declDefs = PsiTreeUtil.getChildOfType(defs, DLanguageDeclDefs.class);
+    private static List<DLangDeclDefs> getDeclDefs(PsiElement defs, List<DLangDeclDefs> declDefsList) {
+        DLangDeclDefs declDefs = PsiTreeUtil.getChildOfType(defs, DLangDeclDefs.class);
         if (declDefs != null) {
             declDefsList.add(declDefs);
             getDeclDefs(declDefs, declDefsList);
@@ -42,11 +42,11 @@ public class DPsiUtil {
     @NotNull
     public static Set<String> parseImports(@NotNull final PsiFile file) {
         Set<String> imports = Sets.newHashSet();
-        List<DLanguageDeclDef> declDefList = Lists.newArrayList();
-        declDefList.addAll(PsiTreeUtil.findChildrenOfType(file, DLanguageDeclDef.class));
-        for (DLanguageDeclDef declDef : declDefList) {
-            Collection<DLanguageImportDeclaration> importDecls = PsiTreeUtil.findChildrenOfType(declDef, DLanguageImportDeclaration.class);
-            for (DLanguageImportDeclaration importDecl : importDecls) {
+        List<DLangDeclDef> declDefList = Lists.newArrayList();
+        declDefList.addAll(PsiTreeUtil.findChildrenOfType(file, DLangDeclDef.class));
+        for (DLangDeclDef declDef : declDefList) {
+            Collection<DLangImportDeclaration> importDecls = PsiTreeUtil.findChildrenOfType(declDef, DLangImportDeclaration.class);
+            for (DLangImportDeclaration importDecl : importDecls) {
                 imports.add(importDecl.getImportList().getText());
             }
         }

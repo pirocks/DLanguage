@@ -1,7 +1,7 @@
 package net.masterthought.dlanguage.jps;
 
 import com.intellij.util.containers.ContainerUtil;
-import net.masterthought.dlanguage.jps.model.JpsDLanguageModuleType;
+import net.masterthought.dlanguage.jps.model.JpsDLangModuleType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.builders.*;
@@ -36,7 +36,7 @@ public class DTarget extends ModuleBasedTarget<DSourceRootDescriptor> {
         List<BuildTarget<?>> dependencies = new ArrayList<BuildTarget<?>>();
         Set<JpsModule> modules = JpsJavaExtensionService.dependencies(myModule).includedIn(JpsJavaClasspathKind.compile(isTests())).getModules();
         for (JpsModule module : modules) {
-            if (module.getModuleType().equals(JpsDLanguageModuleType.INSTANCE)) {
+            if (module.getModuleType().equals(JpsDLangModuleType.INSTANCE)) {
                 dependencies.add(new DTarget(module, getDTargetType()));
             }
         }

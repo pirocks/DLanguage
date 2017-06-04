@@ -16,9 +16,9 @@ import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.Pair;
 import com.intellij.packaging.artifacts.ModifiableArtifactModel;
 import com.intellij.projectImport.ProjectImportBuilder;
-import net.masterthought.dlanguage.icons.DLanguageIcons;
-import net.masterthought.dlanguage.DLanguageSdkType;
-import net.masterthought.dlanguage.module.DLanguageDubModuleBuilder;
+import net.masterthought.dlanguage.DLangSdkType;
+import net.masterthought.dlanguage.icons.DLangIcons;
+import net.masterthought.dlanguage.module.DLangDubModuleBuilder;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,18 +33,11 @@ import java.util.List;
 public class DubProjectImportBuilder extends ProjectImportBuilder<DubPackage> {
 
     private static final Logger LOG = Logger.getInstance("#" + DubProjectImportBuilder.class.getName());
+    public Parameters parameters;
 
     public void setRootDirectory(String path) {
 
     }
-
-    public static class Parameters {
-        public List<DubPackage> packages;
-        public boolean openModuleSettings = false;
-        public String dubBinary;
-    }
-
-    public Parameters parameters;
 
     @NotNull
     public Parameters getParameters() {
@@ -62,7 +55,7 @@ public class DubProjectImportBuilder extends ProjectImportBuilder<DubPackage> {
 
     @Override
     public Icon getIcon() {
-        return DLanguageIcons.MODULE;
+        return DLangIcons.MODULE;
     }
 
     @Override
@@ -87,7 +80,6 @@ public class DubProjectImportBuilder extends ProjectImportBuilder<DubPackage> {
     public boolean isMarked(DubPackage s) {
         return getList().contains(s);
     }
-
 
     @Nullable
     @Override
@@ -114,7 +106,7 @@ public class DubProjectImportBuilder extends ProjectImportBuilder<DubPackage> {
         DubConfigurationParser dubConfigurationParser = new DubConfigurationParser(project, getParameters().dubBinary);
         final DubPackage pkg = dubConfigurationParser.getDubPackage().get();
 
-        final DLanguageDubModuleBuilder builder = new DLanguageDubModuleBuilder();
+        final DLangDubModuleBuilder builder = new DLangDubModuleBuilder();
         builder.setModuleFilePath(pkg.getPath() + pkg.getName() + ".iml");
         builder.setContentEntryPath(pkg.getPath());
         builder.setName(pkg.getName());
@@ -135,7 +127,7 @@ public class DubProjectImportBuilder extends ProjectImportBuilder<DubPackage> {
     }
 
     private Sdk findOrCreateSdk() {
-        final DLanguageSdkType sdkType = DLanguageSdkType.getInstance();
+        final DLangSdkType sdkType = DLangSdkType.getInstance();
 
         Comparator<Sdk> sdkComparator = new Comparator<Sdk>() {
             public int compare(Sdk s1, Sdk s2) {
@@ -149,5 +141,11 @@ public class DubProjectImportBuilder extends ProjectImportBuilder<DubPackage> {
             }
         };
         return SdkConfigurationUtil.findOrCreateSdk(sdkComparator, sdkType);
+    }
+
+    public static class Parameters {
+        public List<DubPackage> packages;
+        public boolean openModuleSettings = false;
+        public String dubBinary;
     }
 }

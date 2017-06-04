@@ -7,7 +7,7 @@
     <description><![CDATA[
      Support for the <a href="http://dlang.org/">D Language</a>.
      <br/>
-     <a href="https://github.com/kingsleyh/DLanguage/">Github</a>
+     <a href="https://github.com/kingsleyh/DLang/">Github</a>
     ]]></description>
 
     <change-notes><![CDATA[
@@ -37,8 +37,8 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
-        <stubElementTypeHolder class="net.masterthought.dlanguage.psi.DLanguageTypes"/>
-        <fileTypeFactory implementation="net.masterthought.dlanguage.DLanguageFileTypeFactory"/>
+        <stubElementTypeHolder class="net.masterthought.dlanguage.psi.DLangTypes"/>
+        <fileTypeFactory implementation="net.masterthought.dlanguage.DLangFileTypeFactory"/>
         <lang.parserDefinition language="D" implementationClass="net.masterthought.dlanguage.DLangParserDefinition"/>
         <lang.syntaxHighlighterFactory language="D" implementationClass="net.masterthought.dlanguage.highlighting.DHighlighterFactory"/>
         <colorSettingsPage implementation="net.masterthought.dlanguage.settings.DColorSettingsPage"/>
@@ -52,8 +52,8 @@
 
 
         <!-- D Language support -->
-        <sdkType implementation="net.masterthought.dlanguage.DLanguageSdkType"/>
-        <runConfigurationProducer implementation="net.masterthought.dlanguage.run.DLanguageRunDubConfigurationProducer"/>
+        <sdkType implementation="net.masterthought.dlanguage.DLangSdkType"/>
+        <runConfigurationProducer implementation="net.masterthought.dlanguage.run.DLangRunDubConfigurationProducer"/>
 
         <!-- project open and import -->
         <projectImportProvider implementation="net.masterthought.dlanguage.project.DubProjectImportProvider"/>
@@ -62,19 +62,19 @@
 
         <!-- module -->
         <internalFileTemplate name="D Language Module"/>
-        <moduleType id="DLANGUAGE_MODULE" implementationClass="net.masterthought.dlanguage.module.DLanguageModuleType"/>
-        <configurationType implementation="net.masterthought.dlanguage.run.DLanguageRunDubConfigurationType"/>
-        <configurationType implementation="net.masterthought.dlanguage.run.DLanguageRunDmdConfigurationType"/>
-        <configurationType implementation="net.masterthought.dlanguage.run.DLanguageRunAppConfigurationType"/>
+        <moduleType id="DLANGUAGE_MODULE" implementationClass="net.masterthought.dlanguage.module.DLangModuleType"/>
+        <configurationType implementation="net.masterthought.dlanguage.run.DLangRunDubConfigurationType"/>
+        <configurationType implementation="net.masterthought.dlanguage.run.DLangRunDmdConfigurationType"/>
+        <configurationType implementation="net.masterthought.dlanguage.run.DLangRunAppConfigurationType"/>
         <moduleBuilder id="DLangModuleBuilder"
-                       builderClass="net.masterthought.dlanguage.module.DLanguageModuleBuilder"/>
+                       builderClass="net.masterthought.dlanguage.module.DLangModuleBuilder"/>
         <moduleBuilder id="DLangDubModuleBuilder"
-                       builderClass="net.masterthought.dlanguage.module.DLanguageDubModuleBuilder"/>
+                       builderClass="net.masterthought.dlanguage.module.DLangDubModuleBuilder"/>
         <moduleConfigurationEditorProvider
-                implementation="net.masterthought.dlanguage.module.DLanguageModuleEditorsProvider"/>
+            implementation="net.masterthought.dlanguage.module.DLangModuleEditorsProvider"/>
 
         <!-- library -->
-        <library.type implementation="net.masterthought.dlanguage.library.DLanguageLibraryType"/>
+        <library.type implementation="net.masterthought.dlanguage.library.DLangLibraryType"/>
         <orderRootType implementation="net.masterthought.dlanguage.library.LibFileRootType" id="LIBRARY_FILE"
                        order="FIRST"/>
         <OrderRootTypeUI key="LIBRARY_FILE"
@@ -88,15 +88,15 @@
         <!-- Project settings -->
 
         <!-- Tab under compiler in IntelliJ -> Preferences -->
-        <!--<projectConfigurable instance="net.masterthought.dlanguage.DLanguageCompilerConfigurable"-->
+        <!--<projectConfigurable instance="net.masterthought.dlanguage.DLangCompilerConfigurable"-->
         <!--parentId="project.propCompiler" id="DMD compiler"-->
         <!--displayName="DMD Compiler"/>-->
         <!-- Persistent data + build server communication for compiler settings -->
-        <projectService serviceImplementation="net.masterthought.dlanguage.settings.DLanguageBuildSettings"/>
+        <projectService serviceImplementation="net.masterthought.dlanguage.settings.DLangBuildSettings"/>
         <!-- Tab in IntelliJ -> Preferences -->
-        <projectConfigurable instance="net.masterthought.dlanguage.settings.DLanguageToolsConfigurable"/>
+        <projectConfigurable instance="net.masterthought.dlanguage.settings.DLangToolsConfigurable"/>
         <!-- File -> Project Structure dialogue. -->
-        <!--<moduleConfigurationEditorProvider implementation="net.masterthought.dlanguage.settings.DLanguageModuleConfigurationEditor" order="first"/>-->
+        <!--<moduleConfigurationEditorProvider implementation="net.masterthought.dlanguage.settings.DLangModuleConfigurationEditor" order="first"/>-->
         <!-- Tab in IntelliJ -> Preferences -->
 
         <!-- References/navigation -->
@@ -127,22 +127,22 @@
     </application-components>
 
     <actions>
-        <action id="DLanguage.NewDLanguageClass" class="net.masterthought.dlanguage.actions.CreateDLanguageClassAction"
+        <action id="DLang.NewDLangClass" class="net.masterthought.dlanguage.actions.CreateDLangClassAction"
                 text="D Class" description="Create new D Class">
             <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFile"/>
         </action>
-        <action id="DLanguage.NewDLanguageFile" class="net.masterthought.dlanguage.actions.CreateDLanguageFileAction"
+        <action id="DLang.NewDLangFile" class="net.masterthought.dlanguage.actions.CreateDLangFileAction"
                 text="D File" description="Create new D file">
             <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFile"/>
         </action>
-        <action id="DLanguage.DFormat"
+        <action id="DLang.DFormat"
                 class="net.masterthought.dlanguage.actions.DFormatAction"
                 text="Reformat code with DFormat"
                 description="Format current file with DFormat formatter">
             <add-to-group group-id="CodeFormatGroup" anchor="last"/>
             <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt K"/>
         </action>
-        <action id="DLanguage.DFix"
+        <action id="DLang.DFix"
                 class="net.masterthought.dlanguage.actions.DFixAction"
                 text="Fix D code with DFix"
                 description="Fix current file with DFix">

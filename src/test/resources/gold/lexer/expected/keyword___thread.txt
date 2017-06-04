@@ -1,1 +1,1 @@
-DLanguageTokenType.ID ('__thread')
+DLangTokenType.ID ('__thread')

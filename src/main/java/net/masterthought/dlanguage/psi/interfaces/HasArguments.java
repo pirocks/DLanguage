@@ -1,7 +1,7 @@
 package net.masterthought.dlanguage.psi.interfaces;
 
 import com.intellij.psi.PsiElement;
-import net.masterthought.dlanguage.psi.DLanguageParameter;
+import net.masterthought.dlanguage.psi.DLangParameter;
 
 import java.util.List;
 
@@ -10,5 +10,5 @@ import java.util.List;
  * Use HasTemplateArguments for accessing template arguments
  */
 public interface HasArguments extends PsiElement {
-    List<DLanguageParameter> getArguments();
+    List<DLangParameter> getArguments();
 }

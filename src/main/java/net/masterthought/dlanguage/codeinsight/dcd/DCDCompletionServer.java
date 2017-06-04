@@ -14,7 +14,7 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
-import net.masterthought.dlanguage.DLanguageSdkType;
+import net.masterthought.dlanguage.DLangSdkType;
 import net.masterthought.dlanguage.project.DubConfigurationParser;
 import net.masterthought.dlanguage.project.DubPackage;
 import net.masterthought.dlanguage.settings.SettingsChangeNotifier;
@@ -155,7 +155,7 @@ public class DCDCompletionServer implements ModuleComponent, SettingsChangeNotif
         final ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(module);
         final Sdk sdk = moduleRootManager.getSdk();
 
-        if (sdk != null && (sdk.getSdkType() instanceof DLanguageSdkType)) {
+        if (sdk != null && (sdk.getSdkType() instanceof DLangSdkType)) {
             final String path = sdk.getHomePath();
             if (isNotNullOrEmpty(path)) {
                 if (SystemInfo.isMac) {

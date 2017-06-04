@@ -1,4 +1,4 @@
-rootProject.name = 'DLanguage'
+rootProject.name = 'DLang'
 include 'jps-shared'
 include 'jps-plugin'
 

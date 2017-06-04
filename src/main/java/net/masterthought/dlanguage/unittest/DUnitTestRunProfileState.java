@@ -10,7 +10,6 @@ import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
 import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties;
 import com.intellij.execution.testframework.sm.runner.SMTestLocator;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
-import com.intellij.execution.testframework.ui.BaseTestsOutputConsoleView;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
@@ -56,7 +55,7 @@ public class DUnitTestRunProfileState implements RunProfileState
 
         // Create the test runner
         final DUnitTestRunProcessHandler processHandler = new DUnitTestRunProcessHandler(project, unitTestRunConfiguration);
-        
+
         final SMTRunnerConsoleProperties properties = new SMTRunnerConsoleProperties(configuration, DLanguage.INSTANCE.getDisplayName(), executor) {
             @Override
             public SMTestLocator getTestLocator() {
@@ -77,7 +76,7 @@ public class DUnitTestRunProfileState implements RunProfileState
 
         // Register an action to re-run failed tests
         DUnitTestRerunFailedTestsAction rerunFailedTestsAction = new DUnitTestRerunFailedTestsAction(project, consoleView);
-        rerunFailedTestsAction.init(((BaseTestsOutputConsoleView) consoleView).getProperties());
+        rerunFailedTestsAction.init(consoleView.getProperties());
         rerunFailedTestsAction.setModelProvider(new Getter<TestFrameworkRunningModel>()
         {
             @Override

@@ -10,7 +10,7 @@ import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.usageView.UsageViewLongNameLocation;
 import com.intellij.usageView.UsageViewNodeTextLocation;
-import net.masterthought.dlanguage.DLanguageLexerAdapter;
+import net.masterthought.dlanguage.DLangLexerAdapter;
 import net.masterthought.dlanguage.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,8 +24,8 @@ public class DFindUsagesProvider implements FindUsagesProvider {
     @Nullable
     @Override
     public WordsScanner getWordsScanner() {
-        return new DefaultWordsScanner(new DLanguageLexerAdapter(),
-                TokenSet.create(DLanguageTypes.IDENTIFIER),
+        return new DefaultWordsScanner(new DLangLexerAdapter(),
+            TokenSet.create(DLangTypes.IDENTIFIER),
                 DTokenSets.LINE_COMMENTS, DTokenSets.BLOCK_COMMENTS, DTokenSets.STRING_LITERALS);
     }
 
@@ -47,11 +47,11 @@ public class DFindUsagesProvider implements FindUsagesProvider {
 //        return ElementDescriptionUtil.getElementDescription(element, UsageViewTypeLocation.INSTANCE);
 //        return "woops";
 
-        if (element instanceof DLanguageFuncDeclaration) {
+        if (element instanceof DLangFuncDeclaration) {
             return "Function";
-        } else if (element instanceof DLanguageIdentifier) {
+        } else if (element instanceof DLangIdentifier) {
             return "Identifier";
-        } else if (element instanceof DLanguageClassDeclaration) {
+        } else if (element instanceof DLangClassDeclaration) {
             return "Class";
         } else {
             return "";

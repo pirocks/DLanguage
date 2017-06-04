@@ -10,7 +10,7 @@ import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.testFramework.LexerTestCase;
 import com.intellij.testFramework.TestDataFile;
 import com.intellij.testFramework.VfsTestUtil;
-import net.masterthought.dlanguage.DLanguageHighlightingLexer;
+import net.masterthought.dlanguage.DLangHighlightingLexer;
 import org.jetbrains.annotations.NonNls;
 
 import java.io.File;
@@ -52,7 +52,7 @@ public class DLanguageHighlightingLexerTestBase extends LexerTestCase {
 
     @Override
     protected Lexer createLexer() {
-        return new FlexAdapter(new DLanguageHighlightingLexer(null));
+        return new FlexAdapter(new DLangHighlightingLexer(null));
     }
 
     @Override

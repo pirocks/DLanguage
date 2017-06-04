@@ -4,7 +4,7 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
-import net.masterthought.dlanguage.settings.DLanguageToolsConfigurable;
+import net.masterthought.dlanguage.settings.DLangToolsConfigurable;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.event.HyperlinkEvent;
@@ -26,8 +26,8 @@ public class DToolsNotificationListener implements NotificationListener {
     @Override
     public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
         if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-            if (event.getDescription().equals("configureDLanguageTools") && !myProject.isDisposed()) {
-                ShowSettingsUtil.getInstance().showSettingsDialog(myProject, DLanguageToolsConfigurable.D_TOOLS_ID);
+            if (event.getDescription().equals("configureDLangTools") && !myProject.isDisposed()) {
+                ShowSettingsUtil.getInstance().showSettingsDialog(myProject, DLangToolsConfigurable.D_TOOLS_ID);
                 notification.expire();
             }
         }

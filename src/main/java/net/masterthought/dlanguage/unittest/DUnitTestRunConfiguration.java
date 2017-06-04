@@ -17,9 +17,9 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
 import com.intellij.util.xmlb.XmlSerializer;
+import net.masterthought.dlanguage.DLangBundle;
+import net.masterthought.dlanguage.DLangFileType;
 import net.masterthought.dlanguage.DLanguage;
-import net.masterthought.dlanguage.DLanguageBundle;
-import net.masterthought.dlanguage.DLanguageFileType;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,6 +28,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DUnitTestRunConfiguration extends LocatableConfigurationBase {
+
+    private String dFilePath;
+    private String workingDir;
+    private Map<String, String> envVars;
+
+    public DUnitTestRunConfiguration(Project project) {
+        super(project, new DUnitTestRunConfigurationFactory(DUnitTestRunConfigurationType.getInstance()), DLanguage.INSTANCE.getDisplayName());
+        envVars = new HashMap<>();
+    }
 
     public String getdFilePath() {
         return dFilePath;
@@ -52,17 +61,6 @@ public class DUnitTestRunConfiguration extends LocatableConfigurationBase {
     public void setEnvVars(Map<String, String> envVars) {
         this.envVars = envVars;
     }
-
-    private String dFilePath;
-    private String workingDir;
-    private Map<String, String> envVars;
-
-    public DUnitTestRunConfiguration(Project project)
-    {
-        super(project, new DUnitTestRunConfigurationFactory(DUnitTestRunConfigurationType.getInstance()), DLanguage.INSTANCE.getDisplayName());
-        envVars = new HashMap<>();
-    }
-
 
     @Override
     public void readExternal(Element element) throws InvalidDataException
@@ -102,16 +100,16 @@ public class DUnitTestRunConfiguration extends LocatableConfigurationBase {
     public VirtualFile getDFile() throws RuntimeConfigurationError {
         final String filePath = getdFilePath();
         if (StringUtil.isEmptyOrSpaces(filePath)) {
-            throw new RuntimeConfigurationError(DLanguageBundle.INSTANCE.message("path.to.dlanguage.file.not.set"));
+            throw new RuntimeConfigurationError(DLangBundle.INSTANCE.message("path.to.dlanguage.file.not.set"));
         }
 
         final VirtualFile dFile = LocalFileSystem.getInstance().findFileByPath(filePath);
         if (dFile == null || dFile.isDirectory()) {
-            throw new RuntimeConfigurationError(DLanguageBundle.INSTANCE.message("dlanguage.file.not.found", FileUtil.toSystemDependentName(filePath)));
+            throw new RuntimeConfigurationError(DLangBundle.INSTANCE.message("dlanguage.file.not.found", FileUtil.toSystemDependentName(filePath)));
         }
 
-        if (dFile.getFileType() != DLanguageFileType.INSTANCE) {
-            throw new RuntimeConfigurationError(DLanguageBundle.INSTANCE.message("not.a.dlanguage.file", FileUtil.toSystemDependentName(filePath)));
+        if (dFile.getFileType() != DLangFileType.INSTANCE) {
+            throw new RuntimeConfigurationError(DLangBundle.INSTANCE.message("not.a.dlanguage.file", FileUtil.toSystemDependentName(filePath)));
         }
 
         return dFile;

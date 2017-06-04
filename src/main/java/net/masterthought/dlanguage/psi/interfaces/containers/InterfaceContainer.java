@@ -1,11 +1,11 @@
 package net.masterthought.dlanguage.psi.interfaces.containers;
 
-import net.masterthought.dlanguage.psi.DLanguageInterfaceDeclaration;
+import net.masterthought.dlanguage.psi.DLangInterfaceDeclaration;
 
 /**
  * Created by francis on 3/10/2017.
  */
 public interface InterfaceContainer extends Container {
-    Class interfaceClass = DLanguageInterfaceDeclaration.class;
+    Class interfaceClass = DLangInterfaceDeclaration.class;
 
 }

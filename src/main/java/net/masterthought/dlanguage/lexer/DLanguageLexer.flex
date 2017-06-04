@@ -1,8 +1,8 @@
 package net.masterthought.dlanguage;
 import com.intellij.lexer.*;
 import com.intellij.psi.tree.IElementType;
-import static net.masterthought.dlanguage.psi.DLanguageTypes.*;
-import net.masterthought.dlanguage.psi.DLanguageTypes;
+import static net.masterthought.dlanguage.psi.DLangTypes.*;
+import net.masterthought.dlanguage.psi.DLangTypes;
 
 %%
 
@@ -11,13 +11,13 @@ import net.masterthought.dlanguage.psi.DLanguageTypes;
   private int nestedCommentDepth = 0;
   private int blockCommentDepth = 0;
 
-  public DLanguageLexer() {
+  public DLangLexer() {
     this((java.io.Reader)null);
   }
 %}
 
 %public
-%class DLanguageLexer
+%class DLangLexer
 %implements FlexLexer
 %function advance
 %type IElementType
@@ -109,13 +109,13 @@ HEX_EXPONENT = [pP][\+\-]? [0-9]+
 <YYINITIAL> {NESTING_BLOCK_COMMENT_START} {
 		yybegin(NESTING_COMMENT_CONTENT);
 		nestedCommentDepth = 1;
-		return DLanguageTypes.NESTING_BLOCK_COMMENT;
+		return DLangTypes.NESTING_BLOCK_COMMENT;
 	}
 
 <YYINITIAL> {BLOCK_COMMENT_START} {
 		yybegin(BLOCK_COMMENT_CONTENT);
 		blockCommentDepth = 1;
-		return DLanguageTypes.BLOCK_COMMENT;
+		return DLangTypes.BLOCK_COMMENT;
 	}
 
 <YYINITIAL> {CHARACTER_LITERAL} { return CHARACTER_LITERAL; }
@@ -133,7 +133,7 @@ HEX_EXPONENT = [pP][\+\-]? [0-9]+
 <NESTING_COMMENT_CONTENT> {
 	{NESTING_BLOCK_COMMENT_START}	{
 		nestedCommentDepth += 1;
-		return DLanguageTypes.NESTING_BLOCK_COMMENT;
+		return DLangTypes.NESTING_BLOCK_COMMENT;
 	}
 
 	{NESTING_BLOCK_COMMENT_END}	{
@@ -141,16 +141,16 @@ HEX_EXPONENT = [pP][\+\-]? [0-9]+
 		if(nestedCommentDepth == 0) {
 			yybegin(YYINITIAL); //Exit nesting comment block
 		}
-		return DLanguageTypes.NESTING_BLOCK_COMMENT;
+		return DLangTypes.NESTING_BLOCK_COMMENT;
 	}
-	\n|\/|\+	{return DLanguageTypes.NESTING_BLOCK_COMMENT;}
-	[^/+\n]+	{return DLanguageTypes.NESTING_BLOCK_COMMENT;}
+	\n|\/|\+	{return DLangTypes.NESTING_BLOCK_COMMENT;}
+	[^/+\n]+	{return DLangTypes.NESTING_BLOCK_COMMENT;}
 }
 
 <BLOCK_COMMENT_CONTENT> {
 	{BLOCK_COMMENT_START}	{
 		blockCommentDepth += 1;
-		return DLanguageTypes.BLOCK_COMMENT;
+		return DLangTypes.BLOCK_COMMENT;
 	}
 
 	{BLOCK_COMMENT_END}	{
@@ -158,10 +158,10 @@ HEX_EXPONENT = [pP][\+\-]? [0-9]+
 		if(blockCommentDepth == 0) {
 			yybegin(YYINITIAL); //Exit nesting comment block
 		}
-		return DLanguageTypes.BLOCK_COMMENT;
+		return DLangTypes.BLOCK_COMMENT;
 	}
-	\n|\/|\*	{return DLanguageTypes.BLOCK_COMMENT;}
-	[^/*\n]+	{return DLanguageTypes.BLOCK_COMMENT;}
+	\n|\/|\*	{return DLangTypes.BLOCK_COMMENT;}
+	[^/*\n]+	{return DLangTypes.BLOCK_COMMENT;}
 }
 
 <YYINITIAL> "module"                   { return KW_MODULE; }

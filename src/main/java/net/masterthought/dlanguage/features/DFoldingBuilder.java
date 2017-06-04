@@ -8,10 +8,10 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
-import net.masterthought.dlanguage.psi.DLanguageAggregateDeclaration;
-import net.masterthought.dlanguage.psi.DLanguageFile;
-import net.masterthought.dlanguage.psi.DLanguageFuncDeclaration;
-import net.masterthought.dlanguage.psi.DLanguageImportDeclaration;
+import net.masterthought.dlanguage.psi.DLangAggregateDeclaration;
+import net.masterthought.dlanguage.psi.DLangFile;
+import net.masterthought.dlanguage.psi.DLangFuncDeclaration;
+import net.masterthought.dlanguage.psi.DLangImportDeclaration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,19 +22,19 @@ public class DFoldingBuilder extends FoldingBuilderEx implements DumbAware {
 
     @Override
     public FoldingDescriptor[] buildFoldRegions(@NotNull PsiElement root, @NotNull Document document, boolean quick) {
-        if (!(root instanceof DLanguageFile)) return FoldingDescriptor.EMPTY;
-        DLanguageFile file = (DLanguageFile) root;
+        if (!(root instanceof DLangFile)) return FoldingDescriptor.EMPTY;
+        DLangFile file = (DLangFile) root;
 
         final List<FoldingDescriptor> result = ContainerUtil.newArrayList();
 
         // add all functions
-        for (DLanguageFuncDeclaration function : PsiTreeUtil.findChildrenOfType(file, DLanguageFuncDeclaration.class)) {
+        for (DLangFuncDeclaration function : PsiTreeUtil.findChildrenOfType(file, DLangFuncDeclaration.class)) {
             if (function.isPhysical() && function.isValid() && function.isWritable() && !function.getText().equals(""))//required in case the psi element has been deleted
                 result.add(new FoldingDescriptor(function, function.getTextRange()));
         }
 
         // add all aggregates
-        for (DLanguageAggregateDeclaration aggregateDefinition : PsiTreeUtil.findChildrenOfType(file, DLanguageAggregateDeclaration.class)) {
+        for (DLangAggregateDeclaration aggregateDefinition : PsiTreeUtil.findChildrenOfType(file, DLangAggregateDeclaration.class)) {
             if (aggregateDefinition.isPhysical() && aggregateDefinition.isValid() && aggregateDefinition.isWritable() && !aggregateDefinition.getText().equals(""))//required in case the psi element has been deleted
                 result.add(new FoldingDescriptor(aggregateDefinition, aggregateDefinition.getTextRange()));
         }
@@ -80,14 +80,14 @@ public class DFoldingBuilder extends FoldingBuilderEx implements DumbAware {
     public String getPlaceholderText(@NotNull ASTNode node) {
         PsiElement psi = node.getPsi();
 
-        if (psi instanceof DLanguageFuncDeclaration) {
-            return ((DLanguageFuncDeclaration) psi).getName() + " (Function) ...";
+        if (psi instanceof DLangFuncDeclaration) {
+            return ((DLangFuncDeclaration) psi).getName() + " (Function) ...";
         }
-        if (psi instanceof DLanguageImportDeclaration) {
+        if (psi instanceof DLangImportDeclaration) {
             return "import ...";
         }
-        if (psi instanceof DLanguageAggregateDeclaration) {
-            DLanguageAggregateDeclaration declaration = (DLanguageAggregateDeclaration) psi;
+        if (psi instanceof DLangAggregateDeclaration) {
+            DLangAggregateDeclaration declaration = (DLangAggregateDeclaration) psi;
             if(declaration.getClassDeclaration() != null){
                 return declaration.getClassDeclaration().getName() + " (Class) ...";
             }
@@ -98,6 +98,6 @@ public class DFoldingBuilder extends FoldingBuilderEx implements DumbAware {
     @Override
     public boolean isCollapsedByDefault(@NotNull ASTNode node) {
         PsiElement psi = node.getPsi();
-        return psi instanceof DLanguageImportDeclaration;
+        return psi instanceof DLangImportDeclaration;
     }
 }

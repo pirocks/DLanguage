@@ -4,10 +4,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFileFactory;
 import net.masterthought.dlanguage.DLanguage;
-import net.masterthought.dlanguage.psi.DLanguageFile;
-import net.masterthought.dlanguage.psi.DLanguageIdentifier;
-import net.masterthought.dlanguage.psi.DLanguageImportDeclaration;
-import net.masterthought.dlanguage.psi.DLanguageModuleDeclaration;
+import net.masterthought.dlanguage.psi.DLangFile;
+import net.masterthought.dlanguage.psi.DLangIdentifier;
+import net.masterthought.dlanguage.psi.DLangImportDeclaration;
+import net.masterthought.dlanguage.psi.DLangModuleDeclaration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,8 +22,8 @@ public class DElementFactory {
      * Takes a name and returns a Psi node of that name, or null.
      */
     @Nullable
-    public static DLanguageIdentifier createDLanguageIdentifierFromText(@NotNull Project project, @NotNull String name) {
-        DLanguageIdentifier e = findChildOfType(createExpressionFromText(project, name + " uniq = " + name), DLanguageIdentifier.class);
+    public static DLangIdentifier createDLangIdentifierFromText(@NotNull Project project, @NotNull String name) {
+        DLangIdentifier e = findChildOfType(createExpressionFromText(project, name + " uniq = " + name), DLangIdentifier.class);
         if (e != null && e.getName().equals(name)) return e;
         return null;
     }
@@ -33,7 +33,7 @@ public class DElementFactory {
      */
     @NotNull
     private static PsiElement createExpressionFromText(@NotNull Project project, @NotNull String name) {
-        final DLanguageFile fileFromText = createFileFromText(project, name);
+        final DLangFile fileFromText = createFileFromText(project, name);
         final PsiElement rhs = fileFromText.getFirstChild().getFirstChild().getLastChild();
         return rhs.getLastChild().getLastChild().getLastChild();
     }
@@ -42,19 +42,19 @@ public class DElementFactory {
      * Create a file containing text.
      */
     @NotNull
-    private static DLanguageFile createFileFromText(@NotNull Project project, @NotNull String text) {
-        return (DLanguageFile) PsiFileFactory.getInstance(project).createFileFromText("A.hs", DLanguage.INSTANCE, text);
+    private static DLangFile createFileFromText(@NotNull Project project, @NotNull String text) {
+        return (DLangFile) PsiFileFactory.getInstance(project).createFileFromText("A.hs", DLanguage.INSTANCE, text);
     }
 
-    public static PsiElement createDLanguageModuleFromText(Project project, String name) {
+    public static PsiElement createDLangModuleFromText(Project project, String name) {
         PsiElement e = createExpressionFromText(project, "module " + name + ";").getFirstChild();
-        if (e instanceof DLanguageModuleDeclaration) return e;
+        if (e instanceof DLangModuleDeclaration) return e;
         return null;
     }
 
-    public static PsiElement createDLanguageImportFromText(Project project, String name) {
+    public static PsiElement createDLangImportFromText(Project project, String name) {
         PsiElement e = createExpressionFromText(project, "import " + name + ";").getFirstChild();
-        if (e instanceof DLanguageImportDeclaration) return e;
+        if (e instanceof DLangImportDeclaration) return e;
         return null;
     }
 }

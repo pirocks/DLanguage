@@ -4,23 +4,18 @@ import com.intellij.ide.util.projectWizard.ModuleBuilder;
 import com.intellij.ide.util.projectWizard.ModuleWizardStep;
 import com.intellij.ide.util.projectWizard.ProjectBuilder;
 import com.intellij.ide.util.projectWizard.WizardContext;
-import com.intellij.openapi.fileChooser.FileChooser;
-import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.openapi.util.Pair;
 import com.intellij.projectImport.ProjectFormatPanel;
 import net.masterthought.dlanguage.project.DubProjectImportBuilder;
 import net.masterthought.dlanguage.utils.GuiUtil;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DubBinaryForModuleStep extends ModuleWizardStep {
 
-    private final JPanel myPanel;
     protected final WizardContext myWizardContext;
+    private final JPanel myPanel;
     private final ProjectFormatPanel myFormatPanel = new ProjectFormatPanel();
     private final TextFieldWithBrowseButton dubBinary;
     private final JButton autoFindButton;
@@ -67,7 +62,7 @@ public class DubBinaryForModuleStep extends ModuleWizardStep {
                 ModuleBuilder builder = (ModuleBuilder) moduleBuilder;
 
                 if (builder.getBuilderId() != null && builder.getBuilderId().equals("DLangDubApp")) {
-                    DLanguageDubModuleBuilder dubBuilder = (DLanguageDubModuleBuilder) builder;
+                    DLangDubModuleBuilder dubBuilder = (DLangDubModuleBuilder) builder;
 
                     dubBuilder.setDubBinary(this.dubBinary.getText());
                 }

@@ -52,65 +52,50 @@ public class DReference extends PsiReferenceBase<PsiNamedElement> implements Psi
         // Guess 20 variants tops most of the time in any real code base.
         final Collection<PsiElement> identifiers = new HashSet<>();
         for (PsiElement namedElement : namedElements) {
-            if(namedElement instanceof DLanguageFuncDeclaration){
-                identifiers.add(((DLanguageFuncDeclaration) namedElement).getIdentifier());
-            }
-            else if(namedElement instanceof DLanguageTemplateDeclaration){
-                identifiers.add(((DLanguageTemplateDeclaration) namedElement).getIdentifier());
-            }
-            else if(namedElement instanceof DLanguageClassDeclaration){
-                if(((DLanguageClassDeclaration) namedElement).getIdentifier() != null) {
-                    identifiers.add(((DLanguageClassDeclaration) namedElement).getIdentifier());
+            if (namedElement instanceof DLangFuncDeclaration) {
+                identifiers.add(((DLangFuncDeclaration) namedElement).getIdentifier());
+            } else if (namedElement instanceof DLangTemplateDeclaration) {
+                identifiers.add(((DLangTemplateDeclaration) namedElement).getIdentifier());
+            } else if (namedElement instanceof DLangClassDeclaration) {
+                if (((DLangClassDeclaration) namedElement).getIdentifier() != null) {
+                    identifiers.add(((DLangClassDeclaration) namedElement).getIdentifier());
+                } else if (((DLangClassDeclaration) namedElement).getClassTemplateDeclaration().getIdentifier() != null) {
+                    identifiers.add(((DLangClassDeclaration) namedElement).getClassTemplateDeclaration().getIdentifier());
                 }
-                else if(((DLanguageClassDeclaration) namedElement).getClassTemplateDeclaration().getIdentifier() != null) {
-                    identifiers.add(((DLanguageClassDeclaration) namedElement).getClassTemplateDeclaration().getIdentifier());
+            } else if (namedElement instanceof DLangUnionDeclaration) {
+                if (((DLangUnionDeclaration) namedElement).getIdentifier() != null) {
+                    identifiers.add(((DLangUnionDeclaration) namedElement).getIdentifier());
+                } else if (((DLangUnionDeclaration) namedElement).getUnionTemplateDeclaration().getIdentifier() != null) {
+                    identifiers.add(((DLangUnionDeclaration) namedElement).getUnionTemplateDeclaration().getIdentifier());
                 }
-            }
-            else if(namedElement instanceof DLanguageUnionDeclaration){
-                if(((DLanguageUnionDeclaration) namedElement).getIdentifier() != null) {
-                    identifiers.add(((DLanguageUnionDeclaration) namedElement).getIdentifier());
+            } else if (namedElement instanceof DLangInterfaceDeclaration) {
+                if (((DLangInterfaceDeclaration) namedElement).getIdentifier() != null) {
+                    identifiers.add(((DLangInterfaceDeclaration) namedElement).getIdentifier());
+                } else if (((DLangInterfaceDeclaration) namedElement).getInterfaceTemplateDeclaration().getIdentifier() != null) {
+                    identifiers.add(((DLangInterfaceDeclaration) namedElement).getInterfaceTemplateDeclaration().getIdentifier());
                 }
-                else if(((DLanguageUnionDeclaration) namedElement).getUnionTemplateDeclaration().getIdentifier() != null) {
-                    identifiers.add(((DLanguageUnionDeclaration) namedElement).getUnionTemplateDeclaration().getIdentifier());
+            } else if (namedElement instanceof DLangStructDeclaration) {
+                if (((DLangStructDeclaration) namedElement).getIdentifier() != null) {
+                    identifiers.add(((DLangStructDeclaration) namedElement).getIdentifier());
                 }
-            }
-            else if(namedElement instanceof DLanguageInterfaceDeclaration){
-                if(((DLanguageInterfaceDeclaration) namedElement).getIdentifier() != null) {
-                    identifiers.add(((DLanguageInterfaceDeclaration) namedElement).getIdentifier());
+            } else if (namedElement instanceof DLangEnumDeclaration) {
+                identifiers.add(((DLangEnumDeclaration) namedElement).getIdentifier());
+            } else if (namedElement instanceof DLangAutoDeclarationY) {
+                identifiers.add(((DLangAutoDeclarationY) namedElement).getIdentifier());
+            } else if (namedElement instanceof DLangAliasDeclaration) {
+                if (((DLangAliasDeclaration) namedElement).getIdentifier() != null) {
+                    identifiers.add(((DLangAliasDeclaration) namedElement).getIdentifier());
+                } else if (((DLangAliasDeclaration) namedElement).getAliasDeclarationX() != null) {
+                    identifiers.add(((DLangAliasDeclaration) namedElement).getAliasDeclarationX().getAliasDeclarationY().getIdentifier());
+                } else if (((DLangAliasDeclaration) namedElement).getAliasDeclarationX() != null) {
+                    identifiers.add(((DLangAliasDeclaration) namedElement).getAliasDeclarationX().getAliasDeclarationY().getIdentifier());
                 }
-                else if(((DLanguageInterfaceDeclaration) namedElement).getInterfaceTemplateDeclaration().getIdentifier() != null) {
-                    identifiers.add(((DLanguageInterfaceDeclaration) namedElement).getInterfaceTemplateDeclaration().getIdentifier());
-                }
-            }
-            else if(namedElement instanceof DLanguageStructDeclaration){
-                if(((DLanguageStructDeclaration) namedElement).getIdentifier() != null) {
-                    identifiers.add(((DLanguageStructDeclaration) namedElement).getIdentifier());
-                }
-            }
-            else if(namedElement instanceof DLanguageEnumDeclaration){
-                identifiers.add(((DLanguageEnumDeclaration) namedElement).getIdentifier());
-            }
-            else if(namedElement instanceof DLanguageAutoDeclarationY){
-                identifiers.add(((DLanguageAutoDeclarationY) namedElement).getIdentifier());
-            }
-            else if(namedElement instanceof DLanguageAliasDeclaration){
-                if(((DLanguageAliasDeclaration) namedElement).getIdentifier() != null) {
-                    identifiers.add(((DLanguageAliasDeclaration) namedElement).getIdentifier());
-                }
-                else if(((DLanguageAliasDeclaration) namedElement).getAliasDeclarationX() != null) {
-                    identifiers.add(((DLanguageAliasDeclaration) namedElement).getAliasDeclarationX().getAliasDeclarationY().getIdentifier());
-                }
-                else if(((DLanguageAliasDeclaration) namedElement).getAliasDeclarationX() != null) {
-                    identifiers.add(((DLanguageAliasDeclaration) namedElement).getAliasDeclarationX().getAliasDeclarationY().getIdentifier());
-                }
-            }
-            else if(namedElement instanceof DLanguageDeclaratorInitializer){
-                if(((DLanguageDeclaratorInitializer) namedElement).getAltDeclarator() != null &&
-                    ((DLanguageDeclaratorInitializer) namedElement).getAltDeclarator().getIdentifier() != null){
-                    identifiers.add(((DLanguageDeclaratorInitializer) namedElement).getAltDeclarator().getIdentifier());
-                }
-                else if(((DLanguageDeclaratorInitializer) namedElement).getVarDeclarator() != null){
-                    identifiers.add(((DLanguageDeclaratorInitializer) namedElement).getVarDeclarator().getIdentifier());
+            } else if (namedElement instanceof DLangDeclaratorInitializer) {
+                if (((DLangDeclaratorInitializer) namedElement).getAltDeclarator() != null &&
+                    ((DLangDeclaratorInitializer) namedElement).getAltDeclarator().getIdentifier() != null) {
+                    identifiers.add(((DLangDeclaratorInitializer) namedElement).getAltDeclarator().getIdentifier());
+                } else if (((DLangDeclaratorInitializer) namedElement).getVarDeclarator() != null) {
+                    identifiers.add(((DLangDeclaratorInitializer) namedElement).getVarDeclarator().getIdentifier());
                 }
             }
             else {
@@ -156,7 +141,7 @@ public class DReference extends PsiReferenceBase<PsiNamedElement> implements Psi
 //        }
 
 //        final PsiFile containingFile = myElement.getContainingFile();
-//               if (!(containingFile instanceof DLanguageFile)) {
+//               if (!(containingFile instanceof DLangFile)) {
 //                   return new Object[]{};
 //               }
 //        int offset = myElement.getTextOffset();
@@ -165,10 +150,10 @@ public class DReference extends PsiReferenceBase<PsiNamedElement> implements Psi
 //        return dcdCompletion.autoComplete(offset,containingFile).toArray();
 
 //        final PsiFile containingFile = myElement.getContainingFile();
-//        if (!(containingFile instanceof DLanguageFile)) {
+//        if (!(containingFile instanceof DLangFile)) {
 //            return new Object[]{};
 //        }
-//        List<PsiNamedElement> namedNodes = DUtil.findDefinitionNodes((DLanguageFile)containingFile);
+//        List<PsiNamedElement> namedNodes = DUtil.findDefinitionNodes((DLangFile)containingFile);
 //        List<String> variants = new ArrayList<String>(20);
 //        for (final PsiNamedElement namedElement : namedNodes) {
 //            variants.add(namedElement.getName());
@@ -182,14 +167,14 @@ public class DReference extends PsiReferenceBase<PsiNamedElement> implements Psi
         List<PsiNamedElement> declarations = ContainerUtil.newArrayList();
         final PsiFile psiFile = e.getContainingFile().getOriginalFile();
         // find definition in current file
-        if (psiFile instanceof DLanguageFile) {
-            findDefinitionNode((DLanguageFile) psiFile, null, e, declarations);
-            declarations.addAll(PsiTreeUtil.findChildrenOfType(psiFile, DLanguageIdentifier.class));
+        if (psiFile instanceof DLangFile) {
+            findDefinitionNode((DLangFile) psiFile, null, e, declarations);
+            declarations.addAll(PsiTreeUtil.findChildrenOfType(psiFile, DLangIdentifier.class));
         }
         // find definition in imported files
         for (String potentialModule : potentialModules) {
-            List<DLanguageFile> files = DModuleIndex.getFilesByModuleName(project, potentialModule, GlobalSearchScope.allScope(project));
-            for (DLanguageFile f : files) {
+            List<DLangFile> files = DModuleIndex.getFilesByModuleName(project, potentialModule, GlobalSearchScope.allScope(project));
+            for (DLangFile f : files) {
                 findDefinitionNode(f, null, e, declarations);
             }
         }
@@ -323,8 +308,8 @@ public class DReference extends PsiReferenceBase<PsiNamedElement> implements Psi
     @Override
     public PsiElement handleElementRename(final String newName)  throws IncorrectOperationException {
         PsiElement element;
-        if (myElement instanceof DLanguageIdentifier) {
-            element = DPsiImplUtil.setName((DLanguageIdentifier) myElement, newName);
+        if (myElement instanceof DLangIdentifier) {
+            element = DPsiImplUtil.setName((DLangIdentifier) myElement, newName);
             if (element != null) return element;
             throw new IncorrectOperationException("Cannot rename " + name + " to " + newName);
         }

@@ -35,13 +35,13 @@ public class DResolveUtil {
         List<PsiNamedElement> result = ContainerUtil.newArrayList();
         final PsiFile psiFile = e == null ? null : e.getContainingFile().getOriginalFile();
         // find definition in current file
-        if (psiFile instanceof DLanguageFile) {
-            findDefinitionNode((DLanguageFile) psiFile, name, e, result);
+        if (psiFile instanceof DLangFile) {
+            findDefinitionNode((DLangFile) psiFile, name, e, result);
         }
         // find definition in imported files
         for (String potentialModule : potentialModules) {
-            List<DLanguageFile> files = DModuleIndex.getFilesByModuleName(project, potentialModule, GlobalSearchScope.allScope(project));
-            for (DLanguageFile f : files) {
+            List<DLangFile> files = DModuleIndex.getFilesByModuleName(project, potentialModule, GlobalSearchScope.allScope(project));
+            for (DLangFile f : files) {
                 final boolean returnAllReferences = name == null;
                 final boolean inLocalModule = f != null && f.equals(psiFile);
                 final boolean inImportedModule = f != null && potentialModules.contains(f.getModuleName());
@@ -61,12 +61,12 @@ public class DResolveUtil {
      * @param e the usage of the defined function/class/template etc.
      * @param result the results are added to the is arraylist
      */
-    public static void findDefinitionNode(@Nullable DLanguageFile file, @Nullable String name, @Nullable PsiNamedElement e, @NotNull List<PsiNamedElement> result) {
+    public static void findDefinitionNode(@Nullable DLangFile file, @Nullable String name, @Nullable PsiNamedElement e, @NotNull List<PsiNamedElement> result) {
         if (file == null) return;
         // start with empty list of potential named elements
         Collection<DNamedElement> declarationElements = new ArrayList<>();
 
-        if (e instanceof DLanguageIdentifier) {
+        if (e instanceof DLangIdentifier) {
 
             List<Declaration> declarations = new ArrayList<>();
             final Collection<DNamedElement> elements = StubIndex.getElements(DAllNameIndex.KEY, e.getName(), e.getProject(), GlobalSearchScope.fileScope(file), DNamedElement.class);
@@ -77,8 +77,8 @@ public class DResolveUtil {
             }
 
             for (DNamedElement candidateDeclaration : declarations) {
-                if(candidateDeclaration instanceof DLanguageAutoDeclarationY){
-                    if(((DLanguageAutoDeclarationY) candidateDeclaration).actuallyIsDeclaration()){
+                if (candidateDeclaration instanceof DLangAutoDeclarationY) {
+                    if (((DLangAutoDeclarationY) candidateDeclaration).actuallyIsDeclaration()) {
                         declarationElements.add(candidateDeclaration);
                     }
                     continue;
@@ -93,7 +93,7 @@ public class DResolveUtil {
         while (true) {
             if(parent == null)
                 break;
-            if(parent instanceof DLanguageNewExpression || parent instanceof DLanguageNewExpressionWithArgs)
+            if (parent instanceof DLangNewExpression || parent instanceof DLangNewExpressionWithArgs)
                 resolvingConstructor = true;
             parent = parent.getParent();
         }
@@ -102,11 +102,11 @@ public class DResolveUtil {
         for (DNamedElement namedElement : declarationElements) {
             //non void initializer
             if(resolvingConstructor) {
-                if (namedElement instanceof DLanguageConstructor) {
-                    DLanguageConstructor constructor = (DLanguageConstructor) namedElement;
+                if (namedElement instanceof DLangConstructor) {
+                    DLangConstructor constructor = (DLangConstructor) namedElement;
                     result.add(constructor);
                 }
-            } else if (name == null || (name.equals(namedElement.getName()) && !(e.equals(namedElement)) && !(namedElement instanceof DLanguageConstructor))) {
+            } else if (name == null || (name.equals(namedElement.getName()) && !(e.equals(namedElement)) && !(namedElement instanceof DLangConstructor))) {
                 result.add(namedElement);
             }
         }
@@ -117,9 +117,9 @@ public class DResolveUtil {
      * is null.
      */
     @NotNull
-    public static List<PsiNamedElement> findDefinitionNodes(@Nullable DLanguageFile dLanguageFile, @Nullable String name) {
+    public static List<PsiNamedElement> findDefinitionNodes(@Nullable DLangFile dLangFile, @Nullable String name) {
         List<PsiNamedElement> ret = ContainerUtil.newArrayList();
-        findDefinitionNode(dLanguageFile, name, null, ret);
+        findDefinitionNode(dLangFile, name, null, ret);
         return ret;
     }
 
@@ -136,7 +136,7 @@ public class DResolveUtil {
      * Finds name definitions that are within the scope of a file, including imports (to some degree).
      */
     @NotNull
-    public static List<PsiNamedElement> findDefinitionNodes(@NotNull DLanguageFile psiFile) {
+    public static List<PsiNamedElement> findDefinitionNodes(@NotNull DLangFile psiFile) {
         List<PsiNamedElement> result = findDefinitionNodes(psiFile, null);
         result.addAll(findDefinitionNode(psiFile.getProject(), null, null));
         return result;

@@ -1,11 +1,11 @@
 D Language File
   MODULE_DECLARATION
-    PsiElement(DLanguageTokenType.module)('module')
-    DLanguageModuleFullyQualifiedNameImpl(MODULE_FULLY_QUALIFIED_NAME)
+    PsiElement(DLangTokenType.module)('module')
+    DLangModuleFullyQualifiedNameImpl(MODULE_FULLY_QUALIFIED_NAME)
       IDENTIFIER
-        PsiElement(DLanguageTokenType.ID)('c')
-      PsiElement(DLanguageTokenType..)('.')
-      DLanguageModuleFullyQualifiedNameImpl(MODULE_FULLY_QUALIFIED_NAME)
+        PsiElement(DLangTokenType.ID)('c')
+      PsiElement(DLangTokenType..)('.')
+      DLangModuleFullyQualifiedNameImpl(MODULE_FULLY_QUALIFIED_NAME)
         IDENTIFIER
-          PsiElement(DLanguageTokenType.ID)('stdio')
-    PsiElement(DLanguageTokenType.;)(';')
+          PsiElement(DLangTokenType.ID)('stdio')
+    PsiElement(DLangTokenType.;)(';')

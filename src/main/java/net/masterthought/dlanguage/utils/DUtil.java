@@ -41,11 +41,11 @@ public class DUtil {
      * Precondition: Element is in a Haskell file.
      */
     public static boolean definitionNode(@NotNull PsiNamedElement e) {
-        if (e instanceof DLanguageIdentifier) return definitionNode((DLanguageIdentifier) e);
+        if (e instanceof DLangIdentifier) return definitionNode((DLangIdentifier) e);
         return e instanceof Declaration;
     }
 
-    public static boolean definitionNode(@NotNull DLanguageIdentifier e) {
+    public static boolean definitionNode(@NotNull DLangIdentifier e) {
         return true;
     }
 
@@ -68,7 +68,7 @@ public class DUtil {
 
 //    @Nullable
 //    public static String getQualifiedPrefix(@NotNull PsiElement e) {
-//        final PsiElement q = PsiTreeUtil.getParentOfType(e, DLanguageFuncDeclaration.class);
+//        final PsiElement q = PsiTreeUtil.getParentOfType(e, DLangFuncDeclaration.class);
 //        if (q == null) {
 //            return null;
 //        }
@@ -95,11 +95,11 @@ public class DUtil {
 
 
     public static boolean isDunitTestFile(PsiFile psiFile) {
-        Collection<DLanguageClassDeclaration> cds = PsiTreeUtil.findChildrenOfType(psiFile, DLanguageClassDeclaration.class);
-        for (DLanguageClassDeclaration cd : cds) {
+        Collection<DLangClassDeclaration> cds = PsiTreeUtil.findChildrenOfType(psiFile, DLangClassDeclaration.class);
+        for (DLangClassDeclaration cd : cds) {
             // if a class contains the UnitTest mixin assume its a valid d-unit test class
-            Collection<DLanguageTemplateMixin> tmis = PsiTreeUtil.findChildrenOfType(cd, DLanguageTemplateMixin.class);
-            for (DLanguageTemplateMixin tmi : tmis) {
+            Collection<DLangTemplateMixin> tmis = PsiTreeUtil.findChildrenOfType(cd, DLangTemplateMixin.class);
+            for (DLangTemplateMixin tmi : tmis) {
                 if (tmi.getText().contains("UnitTest")) {
                     return true;
                 }
@@ -113,16 +113,16 @@ public class DUtil {
      * @return the class or struct containing this constructor/method. returns null if not found
      */
     public static DNamedElement getParentClassOrStruct(PsiElement namedElement) {
-        return PsiTreeUtil.getParentOfType(namedElement, DLanguageClassDeclaration.class, DLanguageStructDeclaration.class);
+        return PsiTreeUtil.getParentOfType(namedElement, DLangClassDeclaration.class, DLangStructDeclaration.class);
     }
 
-    public static DLanguageFuncDeclaration getParentFunction(PsiElement namedElement){
-        return PsiTreeUtil.getParentOfType(namedElement,DLanguageFuncDeclaration.class);
+    public static DLangFuncDeclaration getParentFunction(PsiElement namedElement) {
+        return PsiTreeUtil.getParentOfType(namedElement, DLangFuncDeclaration.class);
     }
 
 //    public static boolean isPublic(DNamedElement symbol) {
 //        //search for "public:" and "public{}"
-//        final DLanguageProtectionAttribute protectionAttribute = findChildOfType(symbol, DLanguageProtectionAttribute.class);
+//        final DLangProtectionAttribute protectionAttribute = findChildOfType(symbol, DLangProtectionAttribute.class);
 //        try {
 //            if (protectionAttribute.getText().equals("public")) {
 //                return true;
@@ -137,14 +137,14 @@ public class DUtil {
 //    }
 //
 //    private static boolean searchForPublic(PsiElement symbol) {
-//        if (symbol instanceof DLanguageAttributeSpecifier)
-//            if (((DLanguageAttributeSpecifier) symbol).getAttribute().getProtectionAttribute() != null && ((DLanguageAttributeSpecifier) symbol).getAttribute().getProtectionAttribute().getText().equals("public"))
+//        if (symbol instanceof DLangAttributeSpecifier)
+//            if (((DLangAttributeSpecifier) symbol).getAttribute().getProtectionAttribute() != null && ((DLangAttributeSpecifier) symbol).getAttribute().getProtectionAttribute().getText().equals("public"))
 //                return true;
-//        if (symbol instanceof DLanguageClassDeclaration || symbol instanceof DLanguageTemplateInstance || symbol instanceof DLanguageModuleDeclaration || symbol instanceof DLanguageFuncDeclaration || symbol instanceof DLanguageInterface || symbol instanceof DLanguageStructDeclaration)
+//        if (symbol instanceof DLangClassDeclaration || symbol instanceof DLangTemplateInstance || symbol instanceof DLangModuleDeclaration || symbol instanceof DLangFuncDeclaration || symbol instanceof DLangInterface || symbol instanceof DLangStructDeclaration)
 //            return false;
 //        if (symbol == null)
 //            return false;
-//        if (null != findChildOfType(symbol, DLanguageModuleDeclaration.class))
+//        if (null != findChildOfType(symbol, DLangModuleDeclaration.class))
 //            return false;
 //        return searchForPublic(symbol.getParent());
 //    }
@@ -197,12 +197,12 @@ public class DUtil {
     }
 
     @NotNull
-    public static DLanguageIdentifier getEndOfIdentifierList(DLanguageQualifiedIdentifierList list) {
-        return (DLanguageIdentifier) (list.getChildren()[list.getChildren().length - 1]);//if not identifier through
+    public static DLangIdentifier getEndOfIdentifierList(DLangQualifiedIdentifierList list) {
+        return (DLangIdentifier) (list.getChildren()[list.getChildren().length - 1]);//if not identifier through
     }
 
     @NotNull
-    public static DLanguageIdentifier getEndOfIdentifierList(DLanguageModuleFullyQualifiedName list) {
+    public static DLangIdentifier getEndOfIdentifierList(DLangModuleFullyQualifiedName list) {
         if (list.getModuleFullyQualifiedName() == null) {
             return list.getIdentifier();
         }
@@ -210,7 +210,7 @@ public class DUtil {
     }
 
     @NotNull
-    public static DLanguageIdentifier getEndOfIdentifierList(DLanguageIdentifierList list) {
+    public static DLangIdentifier getEndOfIdentifierList(DLangIdentifierList list) {
         if (list.getIdentifierList() == null) {
             return list.getIdentifier();
         }
@@ -219,26 +219,26 @@ public class DUtil {
 
     static List<Mixin> getMixins(PsiElement elementToSearch) {
         List<Mixin> mixins = new ArrayList<>();
-        if (elementToSearch instanceof DLanguageMixinDeclaration) {
-            final DLanguageMixinDeclaration mixin = (DLanguageMixinDeclaration) elementToSearch;
+        if (elementToSearch instanceof DLangMixinDeclaration) {
+            final DLangMixinDeclaration mixin = (DLangMixinDeclaration) elementToSearch;
             mixins.add(mixin);
         }
-        if (elementToSearch instanceof DLanguageTemplateMixin) {
-            final DLanguageTemplateMixin mixin = (DLanguageTemplateMixin) elementToSearch;
+        if (elementToSearch instanceof DLangTemplateMixin) {
+            final DLangTemplateMixin mixin = (DLangTemplateMixin) elementToSearch;
             mixins.add(mixin);
         }
-        if (elementToSearch instanceof DLanguageMixinExpression) {
-            final DLanguageMixinExpression mixin = (DLanguageMixinExpression) elementToSearch;
+        if (elementToSearch instanceof DLangMixinExpression) {
+            final DLangMixinExpression mixin = (DLangMixinExpression) elementToSearch;
             mixins.add(mixin);
         }
-        if (elementToSearch instanceof DLanguageMixinStatement) {
-            final DLanguageMixinStatement mixin = (DLanguageMixinStatement) elementToSearch;
+        if (elementToSearch instanceof DLangMixinStatement) {
+            final DLangMixinStatement mixin = (DLangMixinStatement) elementToSearch;
             mixins.add(mixin);
         }
         return mixins;
     }
 
-    public static HasVisibility.Visibility protectionToVisibilty(DLanguageProtectionAttribute protectionAttribute) {
+    public static HasVisibility.Visibility protectionToVisibilty(DLangProtectionAttribute protectionAttribute) {
         final String text = protectionAttribute.getText();
         if (text.equals("private"))
             return private_;
