@@ -60,13 +60,14 @@ public class DPsiImplUtil {
     }
 
     @Nullable
+    //todo theres a standard version of this in PsiTreeUtil
     public static PsiElement findParentOfType(PsiElement element, Class className) {
         if (className.isInstance(element)) {
             return element;
         } else {
             try {
                 return findParentOfType(element.getParent(), className);
-            } catch(Exception e){
+            } catch (Exception e) {
                 return null;
             }
         }
@@ -77,10 +78,10 @@ public class DPsiImplUtil {
         PsiNamedElement funcDecl = (PsiNamedElement) findParentOfType(o, DLangFuncDeclaration.class);
         PsiNamedElement classDecl = (PsiNamedElement) findParentOfType(o, DLangClassDeclaration.class);
         String description = "";
-        if(funcDecl != null){
+        if (funcDecl != null) {
             description = " [Function] (" + funcDecl.getName() + ")";
         }
-        if(classDecl != null){
+        if (classDecl != null) {
             description = " [Class] (" + classDecl.getName() + ")";
         }
         //todo complete this
@@ -123,9 +124,6 @@ public class DPsiImplUtil {
     // ------------- Identifier ------------------ //
 
     // ------------- Function Definition ------------------ //
-//    public String getFullName(DLangFuncDeclaration e){
-//        return getFullName(e);
-//    }
 
     @NotNull
     public static String getName(@NotNull DLangFuncDeclaration o) {
@@ -140,7 +138,7 @@ public class DPsiImplUtil {
         return keyNode != null ? keyNode.getPsi() : null;
     }
 
-    @Nullable
+    @NotNull
     public static PsiElement setName(@NotNull DLangFuncDeclaration o, @NotNull String newName) {
         o.getIdentifier().setName(newName);
         return o;
@@ -154,7 +152,7 @@ public class DPsiImplUtil {
     @NotNull
     public static ItemPresentation getPresentation(final DLangFuncDeclaration o) {
         return new ItemPresentation() {
-            @Nullable
+            @NotNull
             @Override
             public String getPresentableText() {
                 return o.getName();
@@ -180,13 +178,18 @@ public class DPsiImplUtil {
 
     @NotNull
     public static List<DLangParameter> getArguments(DLangFuncDeclaration o) {
-        return Arrays.asList(getChildrenOfType(o.getFuncDeclaratorSuffix().getParameters(), DLangParameter.class));
+        if (o.getFuncDeclaratorSuffix().getParameters().getParameterList() == null) {
+            return Collections.emptyList();
+        }
+        return o.getFuncDeclaratorSuffix().getParameters().getParameterList().getParameterList();
     }
 
+    @NotNull
     public static List<DLangTemplateParameter> getTemplateArguments(DLangFuncDeclaration o) {
-        if (o.getFuncDeclaratorSuffix().getTemplateParameters() != null)
-            return Arrays.asList(getChildrenOfType(o.getFuncDeclaratorSuffix().getTemplateParameters(), DLangTemplateParameter.class));
-        return new ArrayList<>();
+        if (o.getFuncDeclaratorSuffix().getTemplateParameters() == null || o.getFuncDeclaratorSuffix().getTemplateParameters().getTemplateParameterList() == null) {
+            return Collections.emptyList();
+        }
+        return o.getFuncDeclaratorSuffix().getTemplateParameters().getTemplateParameterList().getTemplateParameterList();
     }
 
     @NotNull
@@ -228,12 +231,11 @@ public class DPsiImplUtil {
     public static String getName(@NotNull DLangClassDeclaration o) {
         DLangClassDeclStub stub = o.getStub();
         if (stub != null) return StringUtil.notNullize(stub.getName());
-
-        if (o.getIdentifier() != null) {
-            return o.getIdentifier().getText();
-        } else {
-            return "not found";
+        if (o.getIdentifier() == null) {
+            //noinspection ConstantConditions
+            return o.getClassTemplateDeclaration().getIdentifier().getText();
         }
+        return o.getIdentifier().getText();
     }
 
     @Nullable
@@ -242,14 +244,12 @@ public class DPsiImplUtil {
         return keyNode != null ? keyNode.getPsi() : null;
     }
 
-    @Nullable
+    @NotNull
     public static PsiElement setName(@NotNull DLangClassDeclaration o, @NotNull String newName) {
         if (o.getIdentifier() != null)
             o.getIdentifier().setName(newName);
         else if (o.getClassTemplateDeclaration() != null)
             o.getClassTemplateDeclaration().getIdentifier().setName(newName);
-        else
-            return null;
         return o;
     }
 
@@ -261,7 +261,7 @@ public class DPsiImplUtil {
     @NotNull
     public static ItemPresentation getPresentation(final DLangClassDeclaration o) {
         return new ItemPresentation() {
-            @Nullable
+            @NotNull
             @Override
             public String getPresentableText() {
                 return o.getName();
@@ -290,12 +290,15 @@ public class DPsiImplUtil {
         return getChildOfType(o, DLangProtectionAttribute.class);
     }
 
+    @NotNull
     public static List<CanInherit> whatInheritsFrom(@NotNull DLangClassDeclaration o) {
         final DLangBaseClassList baseClassList = o.getBaseClassList();
         if (baseClassList == null)
             return Collections.emptyList();
         ArrayList<CanInherit> res = new ArrayList<>();
         ArrayList<DLangBasicType> basicTypes = new ArrayList<>();
+        if (baseClassList.getSuperClass() == null)
+            return Collections.emptyList();
         basicTypes.add(baseClassList.getSuperClass().getBasicType());
         for (DLangInterface interface_ : findChildrenOfType(baseClassList.getInterfaces(), DLangInterface.class)) {
             basicTypes.add(interface_.getBasicType());
@@ -319,12 +322,15 @@ public class DPsiImplUtil {
         return res;
     }
 
+    @NotNull
     public static Map<String, DLangIdentifier> getSuperClassNames(@NotNull DLangClassDeclaration o) {
         final DLangBaseClassList baseClassList = o.getBaseClassList();
         if (baseClassList == null)
             return Collections.emptyMap();
         Map<String, DLangIdentifier> res = new HashMap<>();
         ArrayList<DLangBasicType> basicTypes = new ArrayList<>();
+        if (baseClassList.getSuperClass() == null)
+            return Collections.emptyMap();
         basicTypes.add(baseClassList.getSuperClass().getBasicType());
         for (DLangInterface interface_ : findChildrenOfType(baseClassList.getInterfaces(), DLangInterface.class)) {
             basicTypes.add(interface_.getBasicType());
@@ -351,7 +357,7 @@ public class DPsiImplUtil {
         if (o.getIdentifier() != null) {
             return o.getIdentifier().getText();
         } else {
-            return "not found";
+            return "anon struct";
         }
     }
 
@@ -361,12 +367,10 @@ public class DPsiImplUtil {
         return keyNode != null ? keyNode.getPsi() : null;
     }
 
-    @Nullable
+    @NotNull
     public static PsiElement setName(@NotNull DLangStructDeclaration o, @NotNull String newName) {
         if (o.getIdentifier() != null)
             o.getIdentifier().setName(newName);
-        else
-            return null;
         return o;
     }
 
@@ -418,7 +422,7 @@ public class DPsiImplUtil {
         if (o.getIdentifier() != null) {
             return o.getIdentifier().getText();
         } else {
-            return "not found";
+            return "anon enum";
         }
     }
 
@@ -428,12 +432,12 @@ public class DPsiImplUtil {
         return keyNode != null ? keyNode.getPsi() : null;
     }
 
-    @Nullable
+    @NotNull
     public static PsiElement setName(@NotNull DLangEnumDeclaration o, @NotNull String newName) {
         if (o.getIdentifier() != null) {
             o.getIdentifier().setName(newName);
         } else if (o.getAnonymousEnumDeclaration() != null) {
-            return null;
+            throw new IllegalStateException("somehow smeon tried to rename anonymous enum");
         }
         return o;
     }
@@ -446,7 +450,7 @@ public class DPsiImplUtil {
     @NotNull
     public static ItemPresentation getPresentation(final DLangEnumDeclaration o) {
         return new ItemPresentation() {
-            @Nullable
+            @NotNull
             @Override
             public String getPresentableText() {
                 return o.getName();
@@ -485,8 +489,10 @@ public class DPsiImplUtil {
 
         if (o.getIdentifier() != null) {
             return o.getIdentifier().getText();
+        } else if (o.getUnionTemplateDeclaration() != null) {
+            return o.getUnionTemplateDeclaration().getIdentifier().getText();
         } else {
-            return "not found";
+            return "anon union declaration";
         }
     }
 
@@ -496,14 +502,13 @@ public class DPsiImplUtil {
         return keyNode != null ? keyNode.getPsi() : null;
     }
 
-    @Nullable
+    @NotNull
     public static PsiElement setName(@NotNull DLangUnionDeclaration o, @NotNull String newName) {
         if (o.getIdentifier() != null) {
             o.getIdentifier().setName(newName);
         } else if (o.getUnionTemplateDeclaration() != null) {
             o.getUnionTemplateDeclaration().getIdentifier().setName(newName);
-        } else
-            return null;
+        }
         return o;
     }
 
@@ -515,7 +520,7 @@ public class DPsiImplUtil {
     @NotNull
     public static ItemPresentation getPresentation(final DLangUnionDeclaration o) {
         return new ItemPresentation() {
-            @Nullable
+            @NotNull
             @Override
             public String getPresentableText() {
                 return o.getName();
@@ -552,12 +557,7 @@ public class DPsiImplUtil {
     public static String getName(@NotNull DLangTemplateDeclaration o) {
         DLangTemplateDeclStub stub = o.getStub();
         if (stub != null) return StringUtil.notNullize(stub.getName());
-
-        if (o.getIdentifier() != null) {
-            return o.getIdentifier().getText();
-        } else {
-            return "not found";
-        }
+        return o.getIdentifier().getText();
     }
 
     @Nullable
@@ -566,7 +566,7 @@ public class DPsiImplUtil {
         return keyNode != null ? keyNode.getPsi() : null;
     }
 
-    @Nullable
+    @NotNull
     public static PsiElement setName(@NotNull DLangTemplateDeclaration o, @NotNull String newName) {
         o.getIdentifier().setName(newName);
         return o;
@@ -580,7 +580,7 @@ public class DPsiImplUtil {
     @NotNull
     public static ItemPresentation getPresentation(final DLangTemplateDeclaration o) {
         return new ItemPresentation() {
-            @Nullable
+            @NotNull
             @Override
             public String getPresentableText() {
                 return o.getName();
@@ -608,6 +608,7 @@ public class DPsiImplUtil {
     // ------------- Constructor ------------------ //
     @NotNull
     public static String getName(@NotNull DLangConstructor o) {
+        //noinspection ConstantConditions
         return DUtil.getParentClassOrStruct(o).getName();
     }
 
@@ -617,7 +618,7 @@ public class DPsiImplUtil {
         return keyNode != null ? keyNode.getPsi() : null;
     }
 
-    @Nullable
+    @NotNull
     public static PsiElement setName(@NotNull DLangConstructor o, @NotNull String newName) {
         DUtil.getParentClassOrStruct(o).setName(newName);
         return o;
@@ -631,7 +632,7 @@ public class DPsiImplUtil {
     @NotNull
     public static ItemPresentation getPresentation(final DLangConstructor o) {
         return new ItemPresentation() {
-            @Nullable
+            @NotNull
             @Override
             public String getPresentableText() {
                 String string = "";
@@ -663,9 +664,15 @@ public class DPsiImplUtil {
     @NotNull
     public static List<DLangParameter> getArguments(@NotNull DLangConstructor o) {
         if (o.getConstructorTemplate() == null) {
-            return Arrays.asList(getChildrenOfType(o.getParameters(), DLangParameter.class));
+            if (o.getParameters() == null || o.getParameters().getParameterList() == null) {
+                return Collections.emptyList();
+            }
+            return o.getParameters().getParameterList().getParameterList();
         } else {
-            return Arrays.asList(getChildrenOfType(o.getConstructorTemplate().getParameters(), DLangParameter.class));
+            if (o.getConstructorTemplate().getParameters().getParameterList() == null) {
+                return Collections.emptyList();
+            }
+            return o.getConstructorTemplate().getParameters().getParameterList().getParameterList();
         }
     }
     // ------------- Constructor ------------------ //
@@ -673,23 +680,7 @@ public class DPsiImplUtil {
     // ------------- Destructor ------------------ //
     @NotNull
     public static String getName(@NotNull DLangDestructor o) {
-        return "~this";
-//        DLangDestructorStub stub = o.getStub();
-//        if (stub != null) return StringUtil.notNullize(stub.getName());
-//
-//        PsiElement parent = o.getParent();
-//
-//
-//        while (!(parent instanceof DLangClassDeclaration)) {
-//            parent = parent.getParent();
-//        }
-
-//        return ((DLangClassDeclaration)parent).getName() + "constructor";
-//        if (o.getIdentifier() != null) {
-//            return o.getIdentifier().getText();
-//        } else {
-//            return "not found";
-//        }
+        return "destructors don't really have names";//todo destructors should not be named elements
     }
 
     @Nullable
@@ -698,7 +689,7 @@ public class DPsiImplUtil {
         return keyNode != null ? keyNode.getPsi() : null;
     }
 
-    @Nullable
+    @NotNull
     public static PsiElement setName(@NotNull DLangDestructor o, @NotNull String newName) {
         getParentClassOrStruct(o).setName(newName);
         return o;
@@ -712,7 +703,7 @@ public class DPsiImplUtil {
     @NotNull
     public static ItemPresentation getPresentation(final DLangDestructor o) {
         return new ItemPresentation() {
-            @Nullable
+            @NotNull
             @Override
             public String getPresentableText() {
                 String string = "";
@@ -750,9 +741,8 @@ public class DPsiImplUtil {
 
         if (o.getIdentifier() != null) {
             return o.getIdentifier().getText();
-        } else {
-            return "not found";
         }
+        return "not found";//todo one alias declaration can have multiple names so there should be some refactoring of Alias declaration being a named element
     }
 
     @Nullable
@@ -761,7 +751,7 @@ public class DPsiImplUtil {
         return keyNode != null ? keyNode.getPsi() : null;
     }
 
-    @Nullable
+    @NotNull
     public static PsiElement setName(@NotNull DLangAliasDeclaration o, @NotNull String newName) {
         if (o.getIdentifier() != null) {
             o.getIdentifier().setName(newName);
@@ -775,10 +765,10 @@ public class DPsiImplUtil {
             } else if (o.getDeclarator().getAltDeclarator().getAltDeclaratorX().getIdentifier() != null) {
                 o.getDeclarator().getAltDeclarator().getAltDeclaratorX().getIdentifier().setName(newName);
             } else {
-                return null;
+                throw new IllegalStateException("renaming failed");//todo see todo above about refactoring alias declaration named elements
             }
         } else {
-            return null;
+            throw new IllegalStateException("renaming failed");
         }
         return o;
     }
@@ -791,7 +781,7 @@ public class DPsiImplUtil {
     @NotNull
     public static ItemPresentation getPresentation(final DLangAliasDeclaration o) {
         return new ItemPresentation() {
-            @Nullable
+            @NotNull
             @Override
             public String getPresentableText() {
                 return o.getName();
@@ -837,11 +827,7 @@ public class DPsiImplUtil {
             return "";
         }
 
-        if (o.getModuleFullyQualifiedName().getText() != null) {
-            return o.getModuleFullyQualifiedName().getText();
-        } else {
-            return "not found";
-        }
+        return o.getModuleFullyQualifiedName().getText();
     }
 
     @Nullable
@@ -850,10 +836,9 @@ public class DPsiImplUtil {
         return keyNode != null ? keyNode.getPsi() : null;
     }
 
-    @Nullable
+    @NotNull
     public static PsiElement setName(@NotNull DLangModuleDeclaration o, @NotNull String newName) {
         PsiElement e = DElementFactory.createDLangModuleFromText(o.getProject(), newName);
-        if (e == null) return null;
         o.replace(e);
         return o;
     }
@@ -866,7 +851,7 @@ public class DPsiImplUtil {
     @NotNull
     public static ItemPresentation getPresentation(final DLangModuleDeclaration o) {
         return new ItemPresentation() {
-            @Nullable
+            @NotNull
             @Override
             public String getPresentableText() {
                 return o.getName();
@@ -890,7 +875,7 @@ public class DPsiImplUtil {
         };
     }
 
-    @Contract("null -> null")
+    @NotNull
     public static DLangProtectionAttribute getProtection(DLangModuleDeclaration o) {
         return getChildOfType(o, DLangProtectionAttribute.class);
     }
@@ -903,6 +888,10 @@ public class DPsiImplUtil {
     public static String getName(@NotNull DLangInterfaceDeclaration o) {
         DLangInterfaceDeclStub stub = o.getStub();
         if (stub != null) return StringUtil.notNullize(stub.getName());
+        if (o.getInterfaceTemplateDeclaration() != null) {
+            return o.getInterfaceTemplateDeclaration().getIdentifier().getText();
+        }
+        //noinspection ConstantConditions
         return o.getIdentifier().getText();
     }
 
@@ -912,14 +901,12 @@ public class DPsiImplUtil {
         return keyNode != null ? keyNode.getPsi() : null;
     }
 
-    @Nullable
+    @NotNull
     public static PsiElement setName(@NotNull DLangInterfaceDeclaration o, @NotNull String newName) {
         if (o.getIdentifier() != null) {
             o.getIdentifier().setName(newName);
         } else if (o.getInterfaceTemplateDeclaration() != null) {
             o.getInterfaceTemplateDeclaration().getIdentifier().setName(newName);
-        } else {
-            return null;
         }
         return o;
     }
@@ -932,7 +919,7 @@ public class DPsiImplUtil {
     @NotNull
     public static ItemPresentation getPresentation(final @NotNull DLangInterfaceDeclaration o) {
         return new ItemPresentation() {
-            @Nullable
+            @NotNull
             @Override
             public String getPresentableText() {
                 return o.getName();
@@ -956,6 +943,7 @@ public class DPsiImplUtil {
         };
     }
 
+    @NotNull
     public static List<CanInherit> whatInheritsFrom(@NotNull DLangInterfaceDeclaration o) {
         DLangBaseInterfaceList baseInterfaceList = o.getBaseInterfaceList();
         if (o.getInterfaceTemplateDeclaration() != null)
@@ -987,6 +975,7 @@ public class DPsiImplUtil {
         return res;
     }
 
+    @NotNull
     public static Map<String, DLangIdentifier> getSuperClassNames(@NotNull DLangInterfaceDeclaration o) {
         DLangBaseInterfaceList baseInterfaceList = o.getBaseInterfaceList();
         if (o.getInterfaceTemplateDeclaration() != null)
@@ -1009,6 +998,7 @@ public class DPsiImplUtil {
         return res;
     }
 
+    @NotNull
     public static List<DLangTemplateParameter> getTemplateArguments(@NotNull DLangInterfaceDeclaration o) {
         if (o.getInterfaceTemplateDeclaration() == null)
             return Collections.emptyList();
@@ -1029,7 +1019,7 @@ public class DPsiImplUtil {
         return keyNode != null ? keyNode.getPsi() : null;
     }
 
-    @Nullable
+    @NotNull
     public static PsiElement setName(@NotNull DLangLabeledStatement o, @NotNull String newName) {
         o.getIdentifier().setName(newName);
         return o;
@@ -1043,7 +1033,7 @@ public class DPsiImplUtil {
     @NotNull
     public static ItemPresentation getPresentation(final @NotNull DLangLabeledStatement o) {
         return new ItemPresentation() {
-            @Nullable
+            @NotNull
             @Override
             public String getPresentableText() {
                 return o.getName();
@@ -1083,7 +1073,7 @@ public class DPsiImplUtil {
         return keyNode != null ? keyNode.getPsi() : null;
     }
 
-    @Nullable
+    @NotNull
     public static PsiElement setName(@NotNull DLangTemplateMixinDeclaration o, @NotNull String newName) {
         o.getIdentifier().setName(newName);
         return o;
@@ -1097,7 +1087,7 @@ public class DPsiImplUtil {
     @NotNull
     public static ItemPresentation getPresentation(final DLangTemplateMixinDeclaration o) {
         return new ItemPresentation() {
-            @Nullable
+            @NotNull
             @Override
             public String getPresentableText() {
                 return o.getName();
@@ -1124,6 +1114,7 @@ public class DPsiImplUtil {
     // -------------- Mixin Template Resolving ------------------- //
 
     @Nullable
+    @Deprecated
     public static Mixinable getMixinableDeclaration(@NotNull DLangMixinDeclaration t) {
         if (t.getTemplateInstance() != null) {
             if (t.getTemplateInstance().getIdentifier() == null)
@@ -1137,6 +1128,7 @@ public class DPsiImplUtil {
     }
 
     @Nullable
+    @Deprecated
     public static Mixinable getMixinableDeclaration(@NotNull DLangTemplateMixin t) {
         final PsiElement definitionNodes = getEndOfIdentifierList(t.getMixinTemplateName().getQualifiedIdentifierList()).getReference().resolve();
         if (definitionNodes instanceof Mixinable) {
@@ -1145,7 +1137,8 @@ public class DPsiImplUtil {
         return null;
     }
 
-    @Nullable
+    @NotNull
+    @Deprecated
     public static String getName(@NotNull DLangMixinDeclaration t) {
         if (t.getTemplateInstance() != null) {
             if (t.getTemplateInstance().getIdentifier() == null)
@@ -1156,16 +1149,19 @@ public class DPsiImplUtil {
     }
 
     @NotNull
+    @Deprecated
     public static String getName(@NotNull DLangTemplateMixin t) {
         return getEndOfIdentifierList(t.getMixinTemplateName().getQualifiedIdentifierList()).getName();
     }
 
     @Nullable
+    @Deprecated
     public static String getName(@NotNull DLangMixinExpression t) {
         return findChildOfType(t, DLangIdentifier.class).getName();
     }
 
     @Nullable
+    @Deprecated
     public static String getName(@NotNull DLangMixinStatement t) {
         return findChildOfType(t, DLangIdentifier.class).getName();
     }
@@ -1178,25 +1174,19 @@ public class DPsiImplUtil {
     public static String getName(@NotNull DLangDeclaratorInitializer o) {
         DLangDeclaratorInitializerStub stub = o.getStub();
         if (stub != null) return StringUtil.notNullize(stub.getName());
-
-        if (getIdentifier(o) != null) {
-            return getIdentifier(o).getText();
-        } else {
-            return "not found";
-        }
+        return getIdentifier(o).getText();
     }
 
-    @Nullable
+    @NotNull
     private static DLangIdentifier getIdentifier(DLangDeclaratorInitializer o) {
         if (o.getAltDeclarator() != null) {
             final DLangAltDeclarator altDeclarator = o.getAltDeclarator();
             return getIdentifier(altDeclarator);
-        }
-        if (o.getVarDeclarator() != null) {
+        } else /*if (o.getVarDeclarator() != null) */ {
             final DLangVarDeclarator varDeclarator = o.getVarDeclarator();
+            assert varDeclarator != null;
             return varDeclarator.getIdentifier();
         }
-        return null;
     }
 
     private static DLangIdentifier getIdentifier(DLangAltDeclarator altDeclarator) {
@@ -1217,10 +1207,8 @@ public class DPsiImplUtil {
         return keyNode != null ? keyNode.getPsi() : null;
     }
 
-    @Nullable
+    @NotNull
     public static PsiElement setName(@NotNull DLangDeclaratorInitializer o, @NotNull String newName) {
-        if (getIdentifier(o) == null)
-            return null;
         getIdentifier(o).setName(newName);
         return o;
     }
@@ -1233,7 +1221,7 @@ public class DPsiImplUtil {
     @NotNull
     public static ItemPresentation getPresentation(final DLangDeclaratorInitializer o) {
         return new ItemPresentation() {
-            @Nullable
+            @NotNull
             @Override
             public String getPresentableText() {
                 return o.getName();
@@ -1287,12 +1275,7 @@ public class DPsiImplUtil {
     public static String getName(@NotNull DLangAutoDeclarationY o) {
         DLangAutoDeclStub stub = o.getStub();
         if (stub != null) return StringUtil.notNullize(stub.getName());
-
-        if (o.getIdentifier() != null) {
-            return o.getIdentifier().getText();
-        } else {
-            return "not found";
-        }
+        return o.getIdentifier().getText();
     }
 
     @Nullable
@@ -1301,7 +1284,7 @@ public class DPsiImplUtil {
         return keyNode != null ? keyNode.getPsi() : null;
     }
 
-    @Nullable
+    @NotNull
     public static PsiElement setName(@NotNull DLangAutoDeclarationY o, @NotNull String newName) {
         o.getIdentifier().setName(newName);
         return o;
@@ -1315,7 +1298,7 @@ public class DPsiImplUtil {
     @NotNull
     public static ItemPresentation getPresentation(final DLangAutoDeclarationY o) {
         return new ItemPresentation() {
-            @Nullable
+            @NotNull
             @Override
             public String getPresentableText() {
                 return o.getName();
@@ -1360,7 +1343,7 @@ public class DPsiImplUtil {
     // ------------- Static Constructor ------------------//
     @NotNull
     public static String getName(@NotNull DLangStaticConstructor o) {
-        return "this";
+        return "this";//todo static constructors don't really have names, therefore they shouldn't be named elements
 //        DLangStaticConstructorStub stub = o.getStub();
 //        if (stub != null) return StringUtil.notNullize(stub.getName());
 //
@@ -1385,9 +1368,9 @@ public class DPsiImplUtil {
         return keyNode != null ? keyNode.getPsi() : null;
     }
 
-    @Nullable
+    @NotNull
     public static PsiElement setName(@NotNull DLangStaticConstructor o, @NotNull String newName) {
-        throw new UnsupportedOperationException("you should not be renaming static constructors");
+        throw new UnsupportedOperationException("you should not be renaming static constructors");//todo static constructors don't really have names, therefore they shouldn't be named elements
     }
 
     @NotNull
@@ -1398,7 +1381,7 @@ public class DPsiImplUtil {
     @NotNull
     public static ItemPresentation getPresentation(final DLangStaticConstructor o) {
         return new ItemPresentation() {
-            @Nullable
+            @NotNull
             @Override
             public String getPresentableText() {
                 String string = "";
@@ -1434,7 +1417,7 @@ public class DPsiImplUtil {
 
     @NotNull
     public static String getName(@NotNull DLangSharedStaticConstructor o) {
-        return "this";//not sure about wether or not this should be "this" or not. Copy paste the bellow back in at a later date, but the classeclaration part should also include structs/templates/modules. todo
+        return "this";//todo static constructors don't really have names, therefore they shouldn't be named elements
 //        DLangSharedStaticConstructorStub stub = o.getStub();
 //        if (stub != null) return StringUtil.notNullize(stub.getName());
 //
@@ -1459,9 +1442,9 @@ public class DPsiImplUtil {
         return keyNode != null ? keyNode.getPsi() : null;
     }
 
-    @Nullable
+    @NotNull
     public static PsiElement setName(@NotNull DLangSharedStaticConstructor o, @NotNull String newName) {
-        throw new UnsupportedOperationException("you should not be renaming static constructors");
+        throw new UnsupportedOperationException("you should not be renaming static constructors");//todo static constructors don't really have names, therefore they shouldn't be named elements
     }
 
     @NotNull
@@ -1472,7 +1455,7 @@ public class DPsiImplUtil {
     @NotNull
     public static ItemPresentation getPresentation(final DLangSharedStaticConstructor o) {
         return new ItemPresentation() {
-            @Nullable
+            @NotNull
             @Override
             public String getPresentableText() {
                 String string = "";
@@ -1506,7 +1489,7 @@ public class DPsiImplUtil {
     // ------------- Static Destructor ------------------ //
     @NotNull
     public static String getName(@NotNull DLangStaticDestructor o) {
-        return "~this";
+        return "~this";//todo static destructors don't really have names, therefore they shouldn't be named elements
 //        DLangStaticDestructorStub stub = o.getStub();
 //        if (stub != null) return StringUtil.notNullize(stub.getName());
 //
@@ -1531,9 +1514,9 @@ public class DPsiImplUtil {
         return keyNode != null ? keyNode.getPsi() : null;
     }
 
-    @Nullable
+    @NotNull
     public static PsiElement setName(@NotNull DLangStaticDestructor o, @NotNull String newName) {
-        throw new UnsupportedOperationException("you should not be renaming static destructors");
+        throw new UnsupportedOperationException("you should not be renaming static destructors");//todo static destructors don't really have names, therefore they shouldn't be named elements
     }
 
     @NotNull
@@ -1544,7 +1527,7 @@ public class DPsiImplUtil {
     @NotNull
     public static ItemPresentation getPresentation(final DLangStaticDestructor o) {
         return new ItemPresentation() {
-            @Nullable
+            @NotNull
             @Override
             public String getPresentableText() {
                 String string = "";
@@ -1575,7 +1558,7 @@ public class DPsiImplUtil {
 
     @NotNull
     public static String getName(@NotNull DLangSharedStaticDestructor o) {
-        return "~this";
+        return "~this";//todo static constructors don't really have names, therefore they shouldn't be named elements
 //        DLangSharedStaticDestructorStub stub = o.getStub();
 //        if (stub != null) return StringUtil.notNullize(stub.getName());
 //
@@ -1603,9 +1586,9 @@ public class DPsiImplUtil {
         return keyNode != null ? keyNode.getPsi() : null;
     }
 
-    @Nullable
+    @NotNull
     public static PsiElement setName(@NotNull DLangSharedStaticDestructor o, @NotNull String newName) {
-        throw new UnsupportedOperationException("you should not be renaming static constructors");
+        throw new UnsupportedOperationException("you should not be renaming static constructors");//todo static destructors don't really have names, therefore they shouldn't be named elements
     }
 
     @NotNull
@@ -1616,7 +1599,7 @@ public class DPsiImplUtil {
     @NotNull
     public static ItemPresentation getPresentation(final DLangSharedStaticDestructor o) {
         return new ItemPresentation() {
-            @Nullable
+            @NotNull
             @Override
             public String getPresentableText() {
                 String string = "";
@@ -1653,12 +1636,7 @@ public class DPsiImplUtil {
     public static String getName(@NotNull DLangImport o) {
         DLangImportDeclStub stub = o.getStub();
         if (stub != null) return StringUtil.notNullize(stub.getName());
-
-        if (o.getModuleFullyQualifiedName().getText() != null) {
-            return o.getModuleFullyQualifiedName().getText();
-        } else {
-            return "not found";
-        }
+        return o.getModuleFullyQualifiedName().getText();
     }
 
     @Nullable
@@ -1667,10 +1645,9 @@ public class DPsiImplUtil {
         return keyNode != null ? keyNode.getPsi() : null;
     }
 
-    @Nullable
+    @NotNull
     public static PsiElement setName(@NotNull DLangImport o, @NotNull String newName) {
         PsiElement e = DElementFactory.createDLangImportFromText(o.getProject(), newName);
-        if (e == null) return null;
         o.replace(e);
         return o;
     }
@@ -1683,7 +1660,7 @@ public class DPsiImplUtil {
     @NotNull
     public static ItemPresentation getPresentation(final DLangImport o) {
         return new ItemPresentation() {
-            @Nullable
+            @NotNull
             @Override
             public String getPresentableText() {
                 return o.getName();
@@ -1716,6 +1693,7 @@ public class DPsiImplUtil {
 
     // ------------ Template Parameter Declaration ----------------- //
 
+    @NotNull
     private static DLangIdentifier getIdentifier(@NotNull DLangTemplateParameter o) {
         final DLangTemplateAliasParameter templateAliasParameter = o.getTemplateAliasParameter();
         final DLangTemplateThisParameter templateThisParameter = o.getTemplateThisParameter();
@@ -1724,7 +1702,7 @@ public class DPsiImplUtil {
             final DLangIdentifier identifier = templateAliasParameter.getIdentifier();
             if (identifier != null)
                 return identifier;
-            return null;//todo
+            return DUtil.getEndOfIdentifierList(templateAliasParameter.getTypeList().get(0).getBasicType().getIdentifierList());
         }
         if (templateThisParameter != null) {
             return getIdentifier(templateThisParameter.getTemplateTypeParameter());
@@ -1733,6 +1711,7 @@ public class DPsiImplUtil {
         return getIdentifier(templateTypeParameter);
     }
 
+    @NotNull
     private static DLangIdentifier getIdentifier(@NotNull DLangTemplateTypeParameter templateTypeParameter) {
         if (templateTypeParameter.getIdentifier() != null) {
             return templateTypeParameter.getIdentifier();
@@ -1753,10 +1732,9 @@ public class DPsiImplUtil {
         return keyNode != null ? keyNode.getPsi() : null;
     }
 
-    @Nullable
+    @NotNull
     public static PsiElement setName(@NotNull DLangTemplateParameter o, @NotNull String newName) {
         PsiElement e = DElementFactory.createDLangIdentifierFromText(o.getProject(), newName);
-        if (e == null) return null;
         getIdentifier(o).replace(e);
         return o;
     }
@@ -1769,7 +1747,7 @@ public class DPsiImplUtil {
     @NotNull
     public static ItemPresentation getPresentation(final DLangTemplateParameter o) {
         return new ItemPresentation() {
-            @Nullable
+            @NotNull
             @Override
             public String getPresentableText() {
                 return o.getName();
@@ -1803,13 +1781,12 @@ public class DPsiImplUtil {
     // ------------  Parameter Declaration ----------------- //
 
     private static DLangIdentifier getIdentifier(@NotNull DLangParameter o) {
-        //todo
+        //todo improve this
         if (o.getDeclarator() == null) {
             if (o.getIdentifier() != null) {
                 return o.getIdentifier();
             }
-            return null;
-//            return DUtil.getEndOfIdentifierList(o.getType().getBasicType().getIdentifierList());
+            return DUtil.getEndOfIdentifierList(o.getType().getBasicType().getIdentifierList());
 
         }
         if (o.getDeclarator().getAltDeclarator() != null) {
@@ -1834,10 +1811,9 @@ public class DPsiImplUtil {
         return keyNode != null ? keyNode.getPsi() : null;
     }
 
-    @Nullable
+    @NotNull
     public static PsiElement setName(@NotNull DLangParameter o, @NotNull String newName) {
         PsiElement e = DElementFactory.createDLangIdentifierFromText(o.getProject(), newName);
-        if (e == null) return null;
         getIdentifier(o).replace(e);
         return o;
     }
@@ -1850,7 +1826,7 @@ public class DPsiImplUtil {
     @NotNull
     public static ItemPresentation getPresentation(final DLangParameter o) {
         return new ItemPresentation() {
-            @Nullable
+            @NotNull
             @Override
             public String getPresentableText() {
                 return o.getName();
@@ -1901,10 +1877,9 @@ public class DPsiImplUtil {
         return keyNode != null ? keyNode.getPsi() : null;
     }
 
-    @Nullable
+    @NotNull
     public static PsiElement setName(@NotNull DLangForeachType o, @NotNull String newName) {
         PsiElement e = DElementFactory.createDLangIdentifierFromText(o.getProject(), newName);
-        if (e == null) return null;
         getIdentifier(o).replace(e);
         return o;
     }
@@ -1917,7 +1892,7 @@ public class DPsiImplUtil {
     @NotNull
     public static ItemPresentation getPresentation(final DLangForeachType o) {
         return new ItemPresentation() {
-            @Nullable
+            @NotNull
             @Override
             public String getPresentableText() {
                 return o.getName();
@@ -1942,8 +1917,6 @@ public class DPsiImplUtil {
     }
 
     // ------------ Foreach Type Declaration ----------------- //
-
-
 
 
     // -------------------- Visibility --------------------- //

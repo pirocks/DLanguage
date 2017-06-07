@@ -1852,7 +1852,7 @@ AliasDeclarationX ::=
     AliasDeclarationY [',' AliasDeclarationX]
 
 AliasDeclarationY ::=
-    Identifier TemplateParameters? '=' ( StorageClasses? Type | FunctionLiteral)
+    Identifier TemplateParameters? '=' ( StorageClasses? Type | FunctionLiteral)//todo this should be named
 
 AutoDeclaration ::=
     StorageClasses? AutoDeclarationX ';'
