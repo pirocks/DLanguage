@@ -33,7 +33,7 @@ public interface DLangTemplateParameter extends DNamedElement, Declaration, Stub
   @NotNull
   PsiReference getReference();
 
-  @Nullable
+  @NotNull
   PsiElement setName(String newName);
 
   @NotNull

@@ -96,7 +96,7 @@ public class DLangDestructorImpl extends DNamedStubbedPsiElementBase<DLangDestru
     return DPsiImplUtil.getReference(this);
   }
 
-  @Nullable
+  @NotNull
   public PsiElement setName(String newName) {
     return DPsiImplUtil.setName(this, newName);
   }

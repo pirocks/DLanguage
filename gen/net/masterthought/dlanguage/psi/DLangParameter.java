@@ -51,7 +51,7 @@ public interface DLangParameter extends DNamedElement, Declaration, StubBasedPsi
   @NotNull
   PsiReference getReference();
 
-  @Nullable
+  @NotNull
   PsiElement setName(String newName);
 
   @NotNull

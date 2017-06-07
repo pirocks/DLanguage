@@ -13,4 +13,8 @@ public interface DLangScopeStatement extends PsiElement {
   @Nullable
   DLangNonEmptyStatement getNonEmptyStatement();
 
+  //WARNING: processDeclarations(...) is skipped
+  //matching processDeclarations(DLangScopeStatement, ...)
+  //methods are not found in DPsiImplUtil
+
 }

@@ -16,4 +16,8 @@ public interface DLangStatement extends PsiElement {
   @Nullable
   PsiElement getOpScolon();
 
+  //WARNING: processDeclarations(...) is skipped
+  //matching processDeclarations(DLangStatement, ...)
+  //methods are not found in DPsiImplUtil
+
 }

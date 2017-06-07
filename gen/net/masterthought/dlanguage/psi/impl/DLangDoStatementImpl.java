@@ -10,6 +10,8 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static net.masterthought.dlanguage.psi.DLangTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import net.masterthought.dlanguage.psi.*;
+import com.intellij.psi.ResolveState;
+import com.intellij.psi.scope.PsiScopeProcessor;
 
 public class DLangDoStatementImpl extends ASTWrapperPsiElement implements DLangDoStatement {
 
@@ -66,6 +68,10 @@ public class DLangDoStatementImpl extends ASTWrapperPsiElement implements DLangD
   @Nullable
   public PsiElement getOpScolon() {
     return findChildByType(OP_SCOLON);
+  }
+
+  public void processDeclarations(PsiScopeProcessor processor, ResolveState state, PsiElement lastParent, PsiElement place) {
+    DPsiImplUtil.processDeclarations(this, processor, state, lastParent, place);
   }
 
 }

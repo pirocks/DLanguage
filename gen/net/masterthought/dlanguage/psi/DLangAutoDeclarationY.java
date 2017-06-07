@@ -40,7 +40,7 @@ public interface DLangAutoDeclarationY extends DNamedElement, VariableDeclaratio
   @NotNull
   PsiReference getReference();
 
-  @Nullable
+  @NotNull
   PsiElement setName(String newName);
 
   @NotNull

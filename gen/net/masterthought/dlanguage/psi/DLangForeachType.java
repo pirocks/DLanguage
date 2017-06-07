@@ -36,7 +36,7 @@ public interface DLangForeachType extends DNamedElement, Declaration, StubBasedP
   @NotNull
   PsiReference getReference();
 
-  @Nullable
+  @NotNull
   PsiElement setName(String newName);
 
   @NotNull

@@ -31,7 +31,7 @@ public interface DLangLabeledStatement extends DNamedElement, StatementContainer
   @NotNull
   PsiReference getReference();
 
-  @Nullable
+  @NotNull
   PsiElement setName(String newName);
 
   @NotNull

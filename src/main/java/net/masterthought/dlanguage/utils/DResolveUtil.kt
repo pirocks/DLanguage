@@ -1,15 +1,12 @@
 package net.masterthought.dlanguage.utils
 
-import com.intellij.extapi.psi.StubBasedPsiElementBase
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.stubs.NamedStubBase
 import com.intellij.psi.stubs.Stub
-import com.intellij.psi.stubs.StubBase
 import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.PsiTreeUtil.findChildrenOfType
@@ -18,7 +15,6 @@ import net.masterthought.dlanguage.psi.*
 import net.masterthought.dlanguage.psi.impl.DLangIdentifierImpl
 import net.masterthought.dlanguage.psi.interfaces.DNamedElement
 import net.masterthought.dlanguage.psi.interfaces.Declaration
-import net.masterthought.dlanguage.psi.interfaces.VariableDeclaration
 import net.masterthought.dlanguage.psi.references.DReference
 import net.masterthought.dlanguage.stubs.DLangImportDeclStub
 import net.masterthought.dlanguage.stubs.index.DTopLevelDeclarationIndex
@@ -84,6 +80,9 @@ object DResolveUtil {
     }
 
     fun resolveThroughLocalScope(identifier: DLangIdentifier): DNamedElement? {
+        val scopeDelimiter = listOf(DLangFuncDeclaration::class.java, DLangForeachStatement::class.java, DLangWhileStatement::class.java, DLangForStatement::class.java, DLangDoStatement::class.java, DLangIfStatement::class.java, DLangBlockStatement::class.java, DLangSwitchStatement::class.java, DLangFinalSwitchStatement::class.java, DLangWithStatement::class.java, DLangSynchronizedStatement::class.java, DLangTryStatement::class.java, DLangForeachRangeStatement::class.java, DLangConditionalStatement::class.java, DLangFunctionBody::class.java, DLangClassDeclaration::class.java, DLangTemplateDeclaration::class.java, DLangStructDeclaration::class.java, DLangTemplateMixinDeclaration::class.java)
+
+
         val orderMatters = listOf(DLangFuncDeclaration::class.java, DLangUnitTesting::class.java, DLangForeachStatement::class.java, DLangWhileStatement::class.java, DLangForStatement::class.java, DLangDoStatement::class.java, DLangIfStatement::class.java, DLangBlockStatement::class.java, DLangSwitchStatement::class.java, DLangFinalSwitchStatement::class.java, DLangWithStatement::class.java, DLangSynchronizedStatement::class.java, DLangTryStatement::class.java, DLangForeachRangeStatement::class.java, DLangConditionalStatement::class.java, DLangFunctionBody::class.java)
         val orderDoesNotMatter = listOf(DLangClassDeclaration::class.java, DLangTemplateDeclaration::class.java, DLangStructDeclaration::class.java, DLangTemplateMixinDeclaration::class.java)
         fun declarationOrderMatters(element: PsiElement): Boolean {
@@ -94,7 +93,6 @@ object DResolveUtil {
             }
             return false
         }
-
         fun scopeElement(element: PsiElement): Boolean {
             for (clazz in orderMatters) {
                 if (clazz.isInstance(element)) {
@@ -108,10 +106,6 @@ object DResolveUtil {
             }
             return false
         }
-
-        stubTreeCheck(identifier)
-        var current: PsiElement = identifier
-
         fun getParents(element: PsiElement): List<PsiElement> {
             val parents = mutableListOf<PsiElement>()
             var currentElement = element
@@ -125,47 +119,15 @@ object DResolveUtil {
             return parents
 
         }
-
+        stubTreeCheck(identifier)
+        var current: PsiElement = identifier
         val parents = getParents(current)
         while (true) {
-
             if (scopeElement(current)) {
-
-                val stubs: MutableList<Stub> = mutableListOf()
-                for (stubBasedPsiElementBase in findChildrenOfType(current, StubBasedPsiElementBase::class.java)) {
-                    if (stubBasedPsiElementBase.greenStub == null) {
-                        stubTreeCheck(identifier)
-                    }
-                    stubs.add(stubBasedPsiElementBase.greenStub!!)
-                }
-                if (declarationOrderMatters(current)) {
-                    for (stub in stubs) {
-                        if (stub is NamedStubBase<*> && stub.psi is Declaration) {
-                            if (stub.name.equals(identifier.name)) {
-                                if (stub.psi is VariableDeclaration) {
-                                    if (!(stub.psi as VariableDeclaration).actuallyIsDeclaration()) {
-                                        continue
-                                    }
-                                }
-                                return (stub.psi as DNamedElement)
-                            }
-                        }
-                        if (stub is StubBase<*> && stub.psi in parents) {
-                            break
-                        }
-                    }
-                } else {
-                    for (stub in stubs) {
-                        if (stub is NamedStubBase<*> && stub.psi is Declaration) {
-                            if (stub.name.equals(identifier.name)) {
-                                if (stub.psi is VariableDeclaration) {
-                                    if (!(stub.psi as VariableDeclaration).actuallyIsDeclaration()) {
-                                        continue
-                                    }
-                                }
-                                return (stub.psi as DNamedElement)
-                            }
-                        }
+                fun getChildrenDeclarations(element: PsiElement) {
+                    val declarations: MutableList<Declaration> = mutableListOf()
+                    for (declaration in findChildrenOfType(element, Declaration::class.java)) {
+                        declarations.add(declaration)
                     }
                 }
             }

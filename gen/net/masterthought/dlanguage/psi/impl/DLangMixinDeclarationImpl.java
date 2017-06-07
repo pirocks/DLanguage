@@ -62,7 +62,8 @@ public class DLangMixinDeclarationImpl extends ASTWrapperPsiElement implements D
     return notNullChild(findChildByType(OP_SCOLON));
   }
 
-  @Nullable
+  @NotNull
+  @Deprecated
   public String getName() {
     return DPsiImplUtil.getName(this);
   }

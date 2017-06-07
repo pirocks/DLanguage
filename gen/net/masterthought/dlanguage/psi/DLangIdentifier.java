@@ -24,7 +24,7 @@ public interface DLangIdentifier extends DNamedElement, StubBasedPsiElement<DLan
   @NotNull
   PsiReference getReference();
 
-  @Nullable
+  @NotNull
   PsiElement setName(String newName);
 
   @NotNull

@@ -106,7 +106,7 @@ public class DLangParameterImpl extends DNamedStubbedPsiElementBase<DLangParamet
     return DPsiImplUtil.getReference(this);
   }
 
-  @Nullable
+  @NotNull
   public PsiElement setName(String newName) {
     return DPsiImplUtil.setName(this, newName);
   }

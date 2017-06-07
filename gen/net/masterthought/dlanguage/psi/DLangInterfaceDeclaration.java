@@ -50,7 +50,7 @@ public interface DLangInterfaceDeclaration extends StatementContainer, DNamedEle
   @NotNull
   PsiReference getReference();
 
-  @Nullable
+  @NotNull
   PsiElement setName(String newName);
 
   @NotNull
@@ -60,10 +60,13 @@ public interface DLangInterfaceDeclaration extends StatementContainer, DNamedEle
 
   boolean isSomeVisibility(Visibility visibility);
 
+  @NotNull
   List<CanInherit> whatInheritsFrom();
 
+  @NotNull
   List<DLangTemplateParameter> getTemplateArguments();
 
+  @NotNull
   Map<String, DLangIdentifier> getSuperClassNames();
 
 }

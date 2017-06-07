@@ -92,7 +92,7 @@ public class DLangInterfaceDeclarationImpl extends DNamedStubbedPsiElementBase<D
     return DPsiImplUtil.getReference(this);
   }
 
-  @Nullable
+  @NotNull
   public PsiElement setName(String newName) {
     return DPsiImplUtil.setName(this, newName);
   }
@@ -110,14 +110,17 @@ public class DLangInterfaceDeclarationImpl extends DNamedStubbedPsiElementBase<D
     return DPsiImplUtil.isSomeVisibility(this, visibility);
   }
 
+  @NotNull
   public List<CanInherit> whatInheritsFrom() {
     return DPsiImplUtil.whatInheritsFrom(this);
   }
 
+  @NotNull
   public List<DLangTemplateParameter> getTemplateArguments() {
     return DPsiImplUtil.getTemplateArguments(this);
   }
 
+  @NotNull
   public Map<String, DLangIdentifier> getSuperClassNames() {
     return DPsiImplUtil.getSuperClassNames(this);
   }

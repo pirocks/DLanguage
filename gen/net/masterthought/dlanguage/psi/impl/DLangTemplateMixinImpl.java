@@ -57,6 +57,7 @@ public class DLangTemplateMixinImpl extends ASTWrapperPsiElement implements DLan
   }
 
   @NotNull
+  @Deprecated
   public String getName() {
     return DPsiImplUtil.getName(this);
   }

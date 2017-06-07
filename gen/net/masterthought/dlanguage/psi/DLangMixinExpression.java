@@ -21,6 +21,7 @@ public interface DLangMixinExpression extends Mixin {
   PsiElement getOpParRight();
 
   @Nullable
+  @Deprecated
   String getName();
 
 }

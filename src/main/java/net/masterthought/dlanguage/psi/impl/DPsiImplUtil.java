@@ -5,6 +5,7 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
+import com.intellij.psi.scope.PsiScopeProcessor;
 import net.masterthought.dlanguage.icons.DLangIcons;
 import net.masterthought.dlanguage.psi.*;
 import net.masterthought.dlanguage.psi.interfaces.*;
@@ -46,10 +47,9 @@ public class DPsiImplUtil {
         return keyNode != null ? keyNode.getPsi() : null;
     }
 
-    @Nullable
+    @NotNull
     public static PsiElement setName(@NotNull DLangIdentifier o, @NotNull String newName) {
         PsiElement e = DElementFactory.createDLangIdentifierFromText(o.getProject(), newName);
-        if (e == null) return null;
         o.replace(e);
         return o;
     }
@@ -91,7 +91,7 @@ public class DPsiImplUtil {
     @NotNull
     public static ItemPresentation getPresentation(final DLangIdentifier o) {
         return new ItemPresentation() {
-            @Nullable
+            @NotNull
             @Override
             public String getPresentableText() {
                 return o.getName() + getParentDeclarationDescription(o);
@@ -382,7 +382,7 @@ public class DPsiImplUtil {
     @NotNull
     public static ItemPresentation getPresentation(final DLangStructDeclaration o) {
         return new ItemPresentation() {
-            @Nullable
+            @NotNull
             @Override
             public String getPresentableText() {
                 return o.getName();
@@ -608,7 +608,9 @@ public class DPsiImplUtil {
     // ------------- Constructor ------------------ //
     @NotNull
     public static String getName(@NotNull DLangConstructor o) {
-        //noinspection ConstantConditions
+        if (DUtil.getParentClassOrStruct(o) == null) {
+            throw new IllegalStateException("somehow this constructor is not in a class/struct");
+        }
         return DUtil.getParentClassOrStruct(o).getName();
     }
 
@@ -2056,6 +2058,154 @@ public class DPsiImplUtil {
 
     // -------------------- Visibility --------------------- //
 
+    // -------------------- Scope processing --------------- //
+    public static boolean processDeclarations(DLangFuncDeclaration element, @NotNull PsiScopeProcessor processor,
+                                              @NotNull ResolveState state,
+                                              PsiElement lastParent,
+                                              @NotNull PsiElement place) {
+        //todo handle place
+        for (DLangParameter parameter : element.getArguments()) {
+            if (processor.execute(parameter, state)) {
+                return true;
+            }
+        }
+        for (DLangTemplateParameter templateParameter : element.getTemplateArguments()) {
+            if (processor.execute(templateParameter, state)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean processDeclarations(DLangForeachStatement element, @NotNull PsiScopeProcessor processor,
+                                              @NotNull ResolveState state,
+                                              PsiElement lastParent,
+                                              @NotNull PsiElement place) {
+        //todo handle place
+        element.getForeachTypeList().getForeachType()
+    }
+
+    public static boolean processDeclarations(DLangWhileStatement element, @NotNull PsiScopeProcessor processor,
+                                              @NotNull ResolveState state,
+                                              PsiElement lastParent,
+                                              @NotNull PsiElement place) {
+
+    }
+
+    public static boolean processDeclarations(DLangForStatement element, @NotNull PsiScopeProcessor processor,
+                                              @NotNull ResolveState state,
+                                              PsiElement lastParent,
+                                              @NotNull PsiElement place) {
+
+    }
+
+    public static boolean processDeclarations(DLangDoStatement element, @NotNull PsiScopeProcessor processor,
+                                              @NotNull ResolveState state,
+                                              PsiElement lastParent,
+                                              @NotNull PsiElement place) {
+
+    }
+
+    public static boolean processDeclarations(DLangIfStatement element, @NotNull PsiScopeProcessor processor,
+                                              @NotNull ResolveState state,
+                                              PsiElement lastParent,
+                                              @NotNull PsiElement place) {
+
+    }
+
+    public static boolean processDeclarations(DLangBlockStatement element, @NotNull PsiScopeProcessor processor,
+                                              @NotNull ResolveState state,
+                                              PsiElement lastParent,
+                                              @NotNull PsiElement place) {
+
+    }
+
+    public static boolean processDeclarations(DLangSwitchStatement element, @NotNull PsiScopeProcessor processor,
+                                              @NotNull ResolveState state,
+                                              PsiElement lastParent,
+                                              @NotNull PsiElement place) {
+
+    }
+
+    public static boolean processDeclarations(DLangFinalSwitchStatement element, @NotNull PsiScopeProcessor processor,
+                                              @NotNull ResolveState state,
+                                              PsiElement lastParent,
+                                              @NotNull PsiElement place) {
+
+    }
+
+    public static boolean processDeclarations(DLangWithStatement element, @NotNull PsiScopeProcessor processor,
+                                              @NotNull ResolveState state,
+                                              PsiElement lastParent,
+                                              @NotNull PsiElement place) {
+
+    }
+
+    public static boolean processDeclarations(DLangSynchronizedStatement element, @NotNull PsiScopeProcessor processor,
+                                              @NotNull ResolveState state,
+                                              PsiElement lastParent,
+                                              @NotNull PsiElement place) {
+
+    }
+
+    public static boolean processDeclarations(DLangTryStatement element, @NotNull PsiScopeProcessor processor,
+                                              @NotNull ResolveState state,
+                                              PsiElement lastParent,
+                                              @NotNull PsiElement place) {
+
+    }
+
+    public static boolean processDeclarations(DLangForeachRangeStatement element, @NotNull PsiScopeProcessor processor,
+                                              @NotNull ResolveState state,
+                                              PsiElement lastParent,
+                                              @NotNull PsiElement place) {
+
+    }
+
+    public static boolean processDeclarations(DLangConditionalStatement element, @NotNull PsiScopeProcessor processor,
+                                              @NotNull ResolveState state,
+                                              PsiElement lastParent,
+                                              @NotNull PsiElement place) {
+
+    }
+
+    public static boolean processDeclarations(DLangFunctionBody element, @NotNull PsiScopeProcessor processor,
+                                              @NotNull ResolveState state,
+                                              PsiElement lastParent,
+                                              @NotNull PsiElement place) {
+
+    }
+
+    public static boolean processDeclarations(DLangClassDeclaration element, @NotNull PsiScopeProcessor processor,
+                                              @NotNull ResolveState state,
+                                              PsiElement lastParent,
+                                              @NotNull PsiElement place) {
+
+    }
+
+    public static boolean processDeclarations(DLangTemplateDeclaration element, @NotNull PsiScopeProcessor processor,
+                                              @NotNull ResolveState state,
+                                              PsiElement lastParent,
+                                              @NotNull PsiElement place) {
+
+    }
+
+    public static boolean processDeclarations(DLangStructDeclaration element, @NotNull PsiScopeProcessor processor,
+                                              @NotNull ResolveState state,
+                                              PsiElement lastParent,
+                                              @NotNull PsiElement place) {
+
+    }
+
+    public static boolean processDeclarations(DLangTemplateMixinDeclaration element, @NotNull PsiScopeProcessor processor,
+                                              @NotNull ResolveState state,
+                                              PsiElement lastParent,
+                                              @NotNull PsiElement place) {
+
+    }
+    // -------------------- Scope processing --------------- //
+
+
     // -------------------- Misc --------------------- //
     public static String getFullName(DNamedElement e) {
         if (e == null)
@@ -2065,5 +2215,7 @@ public class DPsiImplUtil {
         return getFullName(e.getParentContainer()) + "." + e.getName();
     }
     // -------------------- Misc --------------------- //
+
+
 }
 

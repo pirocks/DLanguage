@@ -68,7 +68,7 @@ public class DLangImportImpl extends DNamedStubbedPsiElementBase<DLangImportDecl
     return DPsiImplUtil.getReference(this);
   }
 
-  @Nullable
+  @NotNull
   public PsiElement setName(String newName) {
     return DPsiImplUtil.setName(this, newName);
   }

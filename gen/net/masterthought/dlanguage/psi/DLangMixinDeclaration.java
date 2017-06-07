@@ -26,7 +26,8 @@ public interface DLangMixinDeclaration extends Mixin {
   @NotNull
   PsiElement getOpScolon();
 
-  @Nullable
+  @NotNull
+  @Deprecated
   String getName();
 
 }

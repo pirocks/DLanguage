@@ -40,7 +40,7 @@ public interface DLangModuleDeclaration extends DNamedElement, GlobalDeclaration
   @NotNull
   PsiReference getReference();
 
-  @Nullable
+  @NotNull
   PsiElement setName(String newName);
 
   @NotNull

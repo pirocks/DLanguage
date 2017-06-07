@@ -102,7 +102,7 @@ public class DLangSharedStaticConstructorImpl extends StubBasedPsiElementBase<DL
     return DPsiImplUtil.getReference(this);
   }
 
-  @Nullable
+  @NotNull
   public PsiElement setName(String newName) {
     return DPsiImplUtil.setName(this, newName);
   }

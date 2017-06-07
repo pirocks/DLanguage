@@ -47,7 +47,7 @@ public interface DLangUnionDeclaration extends StatementContainer, DNamedElement
   @NotNull
   PsiReference getReference();
 
-  @Nullable
+  @NotNull
   PsiElement setName(String newName);
 
   @NotNull

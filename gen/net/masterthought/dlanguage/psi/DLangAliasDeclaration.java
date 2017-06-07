@@ -67,7 +67,7 @@ public interface DLangAliasDeclaration extends DNamedElement, HasVisibility, Dec
   @NotNull
   PsiReference getReference();
 
-  @Nullable
+  @NotNull
   PsiElement setName(String newName);
 
   @NotNull

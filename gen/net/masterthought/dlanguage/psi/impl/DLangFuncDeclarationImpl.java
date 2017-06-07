@@ -12,6 +12,8 @@ import net.masterthought.dlanguage.stubs.DLangFuncDeclStub;
 import net.masterthought.dlanguage.psi.*;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.ResolveState;
+import com.intellij.psi.scope.PsiScopeProcessor;
 import net.masterthought.dlanguage.psi.interfaces.containers.Container;
 import net.masterthought.dlanguage.psi.interfaces.HasVisibility.Visibility;
 import com.intellij.psi.stubs.IStubElementType;
@@ -102,7 +104,7 @@ public class DLangFuncDeclarationImpl extends DNamedStubbedPsiElementBase<DLangF
     return DPsiImplUtil.getReference(this);
   }
 
-  @Nullable
+  @NotNull
   public PsiElement setName(String newName) {
     return DPsiImplUtil.setName(this, newName);
   }
@@ -125,6 +127,7 @@ public class DLangFuncDeclarationImpl extends DNamedStubbedPsiElementBase<DLangF
     return DPsiImplUtil.isSomeVisibility(this, visibility);
   }
 
+  @NotNull
   public List<DLangTemplateParameter> getTemplateArguments() {
     return DPsiImplUtil.getTemplateArguments(this);
   }
@@ -160,6 +163,10 @@ public class DLangFuncDeclarationImpl extends DNamedStubbedPsiElementBase<DLangF
 
   public boolean isPropertyFunction() {
     return DPsiImplUtil.isPropertyFunction(this);
+  }
+
+  public void processDeclarations(PsiScopeProcessor processor, ResolveState state, PsiElement lastParent, PsiElement place) {
+    DPsiImplUtil.processDeclarations(this, processor, state, lastParent, place);
   }
 
 }

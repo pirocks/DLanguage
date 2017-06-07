@@ -43,7 +43,7 @@ public interface DLangDeclaratorInitializer extends DNamedElement, VariableDecla
   @NotNull
   PsiReference getReference();
 
-  @Nullable
+  @NotNull
   PsiElement setName(String newName);
 
   @NotNull

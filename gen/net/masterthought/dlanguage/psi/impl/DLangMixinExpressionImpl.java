@@ -51,6 +51,7 @@ public class DLangMixinExpressionImpl extends ASTWrapperPsiElement implements DL
   }
 
   @Nullable
+  @Deprecated
   public String getName() {
     return DPsiImplUtil.getName(this);
   }

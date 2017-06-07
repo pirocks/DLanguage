@@ -24,6 +24,7 @@ public interface DLangTemplateMixin extends Mixin {
   PsiElement getOpScolon();
 
   @NotNull
+  @Deprecated
   String getName();
 
 }

@@ -45,7 +45,7 @@ public interface DLangEnumDeclaration extends DNamedElement, HasVisibility, Decl
   @NotNull
   PsiReference getReference();
 
-  @Nullable
+  @NotNull
   PsiElement setName(String newName);
 
   @NotNull
