@@ -8,13 +8,13 @@ import net.masterthought.dlanguage.psi.interfaces.DNamedElement;
 import net.masterthought.dlanguage.psi.interfaces.HasVisibility;
 import net.masterthought.dlanguage.psi.interfaces.Declaration;
 import com.intellij.psi.StubBasedPsiElement;
-import net.masterthought.dlanguage.stubs.DLangEnumDeclarationStub;
+import net.masterthought.dlanguage.stubs.DLangEnumDeclStub;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.PsiReference;
 import net.masterthought.dlanguage.psi.interfaces.containers.Container;
 import net.masterthought.dlanguage.psi.interfaces.HasVisibility.Visibility;
 
-public interface DLangEnumDeclaration extends DNamedElement, HasVisibility, Declaration, StubBasedPsiElement<DLangEnumDeclarationStub> {
+public interface DLangEnumDeclaration extends DNamedElement, HasVisibility, Declaration, StubBasedPsiElement<DLangEnumDeclStub> {
 
   @Nullable
   DLangAnonymousEnumDeclaration getAnonymousEnumDeclaration();

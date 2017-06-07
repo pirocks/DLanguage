@@ -10,13 +10,13 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Created by francis nixon.
  */
-public class DLangTemplateMixinDeclarationStub extends NamedStubBase<DLangTemplateMixinDeclaration> {
+public class DLangTemplateMixinDeclStub extends NamedStubBase<DLangTemplateMixinDeclaration> {
 
-    public DLangTemplateMixinDeclarationStub(StubElement parent, @NotNull IStubElementType elementType, StringRef name) {
+    public DLangTemplateMixinDeclStub(StubElement parent, @NotNull IStubElementType elementType, StringRef name) {
         super(parent, elementType, name);
     }
 
-    public DLangTemplateMixinDeclarationStub(StubElement parent, IStubElementType elementType, String name) {
+    public DLangTemplateMixinDeclStub(StubElement parent, IStubElementType elementType, String name) {
         super(parent, elementType, name);
     }
 }

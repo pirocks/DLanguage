@@ -10,14 +10,14 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Created by francis nixon on 1/11/2017.
  */
-public class DLangTemplateDeclarationStub extends NamedStubBase<DLangTemplateDeclaration>
+public class DLangTemplateDeclStub extends NamedStubBase<DLangTemplateDeclaration>
 {
 
-    public DLangTemplateDeclarationStub(StubElement parent, @NotNull IStubElementType elementType, StringRef name) {
+    public DLangTemplateDeclStub(StubElement parent, @NotNull IStubElementType elementType, StringRef name) {
         super(parent, elementType, name);
     }
 
-    public DLangTemplateDeclarationStub(StubElement parent, IStubElementType elementType, String name) {
+    public DLangTemplateDeclStub(StubElement parent, IStubElementType elementType, String name) {
         super(parent, elementType, name);
     }
 }

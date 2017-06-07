@@ -13,19 +13,19 @@ import net.masterthought.dlanguage.psi.interfaces.HasTemplateArguments;
 import net.masterthought.dlanguage.psi.interfaces.Mixinable;
 import net.masterthought.dlanguage.psi.interfaces.Declaration;
 import com.intellij.psi.StubBasedPsiElement;
-import net.masterthought.dlanguage.stubs.DLangTemplateMixinDeclarationStub;
+import net.masterthought.dlanguage.stubs.DLangTemplateMixinDeclStub;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.PsiReference;
 import net.masterthought.dlanguage.psi.interfaces.containers.Container;
 import net.masterthought.dlanguage.psi.interfaces.HasVisibility.Visibility;
 
-public interface DLangTemplateMixinDeclaration extends DNamedElement, StatementContainer, MixinContainer, GlobalDeclarationContainer, HasVisibility, HasTemplateArguments, Mixinable, Declaration, StubBasedPsiElement<DLangTemplateMixinDeclarationStub> {
+public interface DLangTemplateMixinDeclaration extends DNamedElement, StatementContainer, MixinContainer, GlobalDeclarationContainer, HasVisibility, HasTemplateArguments, Mixinable, Declaration, StubBasedPsiElement<DLangTemplateMixinDeclStub> {
+
+  @Nullable
+  DLangAggregateBody getAggregateBody();
 
   @Nullable
   DLangConstraint getConstraint();
-
-  @Nullable
-  DLangDeclDefs getDeclDefs();
 
   @NotNull
   DLangIdentifier getIdentifier();
@@ -38,12 +38,6 @@ public interface DLangTemplateMixinDeclaration extends DNamedElement, StatementC
 
   @NotNull
   PsiElement getKwTemplate();
-
-  @Nullable
-  PsiElement getOpBracesLeft();
-
-  @Nullable
-  PsiElement getOpBracesRight();
 
   @NotNull
   String getName();

@@ -11516,7 +11516,7 @@ public class DLangParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'template' Identifier TemplateParameters Constraint? '{' DeclDefs? '}'
+  // 'template' Identifier TemplateParameters Constraint? AggregateBody
   public static boolean TemplateDeclaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "TemplateDeclaration")) return false;
     if (!nextTokenIs(b, KW_TEMPLATE)) return false;
@@ -11527,9 +11527,7 @@ public class DLangParser implements PsiParser, LightPsiParser {
     p = r; // pin = 2
     r = r && report_error_(b, TemplateParameters(b, l + 1));
     r = p && report_error_(b, TemplateDeclaration_3(b, l + 1)) && r;
-    r = p && report_error_(b, consumeToken(b, OP_BRACES_LEFT)) && r;
-    r = p && report_error_(b, TemplateDeclaration_5(b, l + 1)) && r;
-    r = p && consumeToken(b, OP_BRACES_RIGHT) && r;
+    r = p && AggregateBody(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -11538,13 +11536,6 @@ public class DLangParser implements PsiParser, LightPsiParser {
   private static boolean TemplateDeclaration_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "TemplateDeclaration_3")) return false;
     Constraint(b, l + 1);
-    return true;
-  }
-
-  // DeclDefs?
-  private static boolean TemplateDeclaration_5(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "TemplateDeclaration_5")) return false;
-    DeclDefs(b, l + 1);
     return true;
   }
 
@@ -11599,7 +11590,7 @@ public class DLangParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'mixin' 'template' Identifier TemplateParameters Constraint? '{' DeclDefs? '}'
+  // 'mixin' 'template' Identifier TemplateParameters Constraint? AggregateBody
   public static boolean TemplateMixinDeclaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "TemplateMixinDeclaration")) return false;
     if (!nextTokenIs(b, KW_MIXIN)) return false;
@@ -11610,9 +11601,7 @@ public class DLangParser implements PsiParser, LightPsiParser {
     p = r; // pin = 3
     r = r && report_error_(b, TemplateParameters(b, l + 1));
     r = p && report_error_(b, TemplateMixinDeclaration_4(b, l + 1)) && r;
-    r = p && report_error_(b, consumeToken(b, OP_BRACES_LEFT)) && r;
-    r = p && report_error_(b, TemplateMixinDeclaration_6(b, l + 1)) && r;
-    r = p && consumeToken(b, OP_BRACES_RIGHT) && r;
+    r = p && AggregateBody(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -11621,13 +11610,6 @@ public class DLangParser implements PsiParser, LightPsiParser {
   private static boolean TemplateMixinDeclaration_4(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "TemplateMixinDeclaration_4")) return false;
     Constraint(b, l + 1);
-    return true;
-  }
-
-  // DeclDefs?
-  private static boolean TemplateMixinDeclaration_6(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "TemplateMixinDeclaration_6")) return false;
-    DeclDefs(b, l + 1);
     return true;
   }
 

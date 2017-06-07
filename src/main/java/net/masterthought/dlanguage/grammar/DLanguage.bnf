@@ -17,8 +17,8 @@
 
 
   // used to extend to use stubs
-  extends("Identifier|LabeledStatement|FuncDeclaration|ClassDeclaration|InterfaceDeclaration|TemplateDeclaration|Constructor|Destructor|StructDeclaration|AliasDeclaration|ModuleDeclaration|TemplateMixinDeclaration|DeclaratorInitializer|AutoDeclarationY|UnionDeclaration|EnumDeclaration|Import")="net.masterthought.dlanguage.psi.impl.DNamedStubbedPsiElementBase<?>"
-  elementTypeFactory("Identifier|LabeledStatement|FuncDeclaration|ClassDeclaration|InterfaceDeclaration|TemplateDeclaration|Constructor|Destructor|StructDeclaration|AliasDeclaration|ModuleDeclaration|TemplateMixinDeclaration|DeclaratorInitializer|AutoDeclarationY|UnionDeclaration|EnumDeclaration|Import|UnitTesting")="net.masterthought.dlanguage.psi.impl.DElementTypeFactory.factory"
+  extends("Identifier|LabeledStatement|FuncDeclaration|ClassDeclaration|InterfaceDeclaration|TemplateDeclaration|Constructor|Destructor|StructDeclaration|AliasDeclaration|ModuleDeclaration|TemplateMixinDeclaration|DeclaratorInitializer|AutoDeclarationY|UnionDeclaration|EnumDeclaration|Import|TemplateParameter|Parameter|ForeachType")="net.masterthought.dlanguage.psi.impl.DNamedStubbedPsiElementBase<?>"
+  elementTypeFactory("Identifier|LabeledStatement|FuncDeclaration|ClassDeclaration|InterfaceDeclaration|TemplateDeclaration|Constructor|Destructor|StructDeclaration|AliasDeclaration|ModuleDeclaration|TemplateMixinDeclaration|DeclaratorInitializer|AutoDeclarationY|UnionDeclaration|EnumDeclaration|Import|UnitTesting|TemplateParameter|Parameter|ForeachType")="net.masterthought.dlanguage.psi.impl.DElementTypeFactory.factory"
 
 
   generateTokenAccessors=true
@@ -242,7 +242,7 @@ ModuleDeclaration ::=
     Attribute? 'module' ModuleFullyQualifiedName ';'{
         pin = 2
         methods=[getName getFullName getNameIdentifier getReference setName getPresentation isSomeVisibility]
-        stubClass="net.masterthought.dlanguage.stubs.DLangModuleDeclarationStub"
+        stubClass="net.masterthought.dlanguage.stubs.DLangModuleDeclStub"
         implements = ["net.masterthought.dlanguage.psi.interfaces.DNamedElement" "net.masterthought.dlanguage.psi.interfaces.containers.GlobalDeclarationContainer" "net.masterthought.dlanguage.psi.interfaces.HasVisibility" "net.masterthought.dlanguage.psi.interfaces.Declaration" ]
     }
 
@@ -281,7 +281,7 @@ Import ::=
     (Identifier '=')? ModuleFullyQualifiedName{
      methods=[getName getNameIdentifier getReference setName getPresentation isSomeVisibility]
      pin = 2
-     stubClass="net.masterthought.dlanguage.stubs.DLangImportDeclarationStub"
+     stubClass="net.masterthought.dlanguage.stubs.DLangImportDeclStub"
      implements = ["net.masterthought.dlanguage.psi.interfaces.DNamedElement" "net.masterthought.dlanguage.psi.interfaces.HasVisibility"]
   }
 
@@ -914,7 +914,11 @@ ForeachType ::=
    ForeachTypeAttribute Identifier
    | ForeachTypeAttributes? Type? Identifier // this needs to be above for ForeachTypeAttributes? Type? Identifier
    | Type? ForeachTypeAttributes? Identifier
-   | Identifier
+   | Identifier{
+        methods=[getName getFullName getNameIdentifier getReference setName getPresentation]
+        stubClass="net.masterthought.dlanguage.stubs.DLangForeachTypeStub"
+        implements = ["net.masterthought.dlanguage.psi.interfaces.DNamedElement" "net.masterthought.dlanguage.psi.interfaces.Declaration" ]
+   }
 
 ForeachTypeAttributes ::=
     ForeachTypeAttribute [ForeachTypeAttributes]
@@ -1840,7 +1844,7 @@ AliasDeclaration ::=
   | 'alias' AliasDeclarationX ';'{
      //pin(".*")=3//todo find a way of decreasing/adding this pin to improve parser performance
      methods=[getName getFullName getNameIdentifier getReference setName getPresentation isSomeVisibility actuallyIsDeclaration getDeclarationType]
-     stubClass="net.masterthought.dlanguage.stubs.DLangAliasDeclarationStub"
+     stubClass="net.masterthought.dlanguage.stubs.DLangAliasDeclStub"
      implements=["net.masterthought.dlanguage.psi.interfaces.DNamedElement" "net.masterthought.dlanguage.psi.interfaces.HasVisibility" "net.masterthought.dlanguage.psi.interfaces.Declaration"]
 }
 
@@ -1859,7 +1863,7 @@ AutoDeclarationX ::=
 AutoDeclarationY ::=
     Identifier TemplateParameters? '=' Initializer{
         methods = [getName getFullName getNameIdentifier getReference setName getPresentation isSomeVisibility actuallyIsDeclaration getVariableDeclarationType]
-        stubClass="net.masterthought.dlanguage.stubs.DLangAutoDeclarationStub"
+        stubClass="net.masterthought.dlanguage.stubs.DLangAutoDeclStub"
         implements = ["net.masterthought.dlanguage.psi.interfaces.DNamedElement" "net.masterthought.dlanguage.psi.interfaces.VariableDeclaration" "net.masterthought.dlanguage.psi.interfaces.Declaration"]
     }
 
@@ -1981,7 +1985,7 @@ FuncDeclaration ::=
     | AutoFuncDeclaration {
       methods=[getName getFullName getNameIdentifier getReference setName getPresentation getArguments isSomeVisibility getTemplateArguments getProtection getArguments isSystem isNoGC isTrusted hasCustomProperty isSafe getCustomProperty isPropertyFunction]
       implements = ["net.masterthought.dlanguage.psi.interfaces.containers.StatementContainer" "net.masterthought.dlanguage.psi.interfaces.DNamedElement" "net.masterthought.dlanguage.psi.interfaces.HasVisibility" "net.masterthought.dlanguage.psi.interfaces.HasProperty" "net.masterthought.dlanguage.psi.interfaces.HasTemplateArguments" "net.masterthought.dlanguage.psi.interfaces.HasArguments" "net.masterthought.dlanguage.psi.interfaces.Declaration"]
-      stubClass="net.masterthought.dlanguage.stubs.DLangFuncDeclarationStub"
+      stubClass="net.masterthought.dlanguage.stubs.DLangFuncDeclStub"
     }
 
 private AutoFuncDeclaration ::=
@@ -2006,6 +2010,11 @@ Parameter ::=
        | InOut? Type '=' AssignExpression
        | InOut? 'alias' Identifier '=' AssignExpression
        | InOut? Type ('...')?//why is this '...'? necesary. surely Parameterlist covers this
+       {
+            methods=[getName getFullName getNameIdentifier getReference setName getPresentation ]
+                     implements = ["net.masterthought.dlanguage.psi.interfaces.DNamedElement"  "net.masterthought.dlanguage.psi.interfaces.Declaration"]
+                     stubClass="net.masterthought.dlanguage.stubs.DLangParameterStub"
+       }
 
 
 InOut ::=
@@ -2180,7 +2189,7 @@ ClassDeclaration ::=
 //       pin(".*") = 3
        methods=[getName getFullName getNameIdentifier getReference setName getPresentation isSomeVisibility getProtection whatInheritsFrom getSuperClassNames]
        implements = ["net.masterthought.dlanguage.psi.interfaces.containers.StatementContainer" "net.masterthought.dlanguage.psi.interfaces.containers.MixinContainer" "net.masterthought.dlanguage.psi.interfaces.DNamedElement" "net.masterthought.dlanguage.psi.interfaces.HasVisibility" "net.masterthought.dlanguage.psi.interfaces.HasTemplateArguments" "net.masterthought.dlanguage.psi.interfaces.CanInherit" "net.masterthought.dlanguage.psi.interfaces.Declaration"]
-       stubClass="net.masterthought.dlanguage.stubs.DLangClassDeclarationStub"
+       stubClass="net.masterthought.dlanguage.stubs.DLangClassDeclStub"
        }
 
 ClassTemplateDeclaration ::=
@@ -2196,7 +2205,7 @@ InterfaceDeclaration ::=
     //pin(".*") = 1
         methods=[getName getFullName getNameIdentifier getReference setName getPresentation isSomeVisibility whatInheritsFrom getTemplateArguments getSuperClassNames]
        implements = ["net.masterthought.dlanguage.psi.interfaces.containers.StatementContainer" "net.masterthought.dlanguage.psi.interfaces.DNamedElement" "net.masterthought.dlanguage.psi.interfaces.containers.MixinContainer" "net.masterthought.dlanguage.psi.interfaces.HasVisibility" "net.masterthought.dlanguage.psi.interfaces.HasTemplateArguments" "net.masterthought.dlanguage.psi.interfaces.CanInherit" "net.masterthought.dlanguage.psi.interfaces.Declaration"]
-       stubClass="net.masterthought.dlanguage.stubs.DLangInterfaceDeclarationStub"
+       stubClass="net.masterthought.dlanguage.stubs.DLangInterfaceDeclStub"
     }
 
 
@@ -2210,7 +2219,7 @@ StructDeclaration ::=
     //pin(".*") = 1
       methods=[getName getFullName getNameIdentifier getReference setName getPresentation isSomeVisibility getTemplateArguments]
     implements = ["net.masterthought.dlanguage.psi.interfaces.containers.StatementContainer" "net.masterthought.dlanguage.psi.interfaces.DNamedElement" "net.masterthought.dlanguage.psi.interfaces.containers.MixinContainer" "net.masterthought.dlanguage.psi.interfaces.HasVisibility" "net.masterthought.dlanguage.psi.interfaces.HasTemplateArguments" "net.masterthought.dlanguage.psi.interfaces.Declaration"]
-    stubClass="net.masterthought.dlanguage.stubs.DLangStructDeclarationStub"
+    stubClass="net.masterthought.dlanguage.stubs.DLangStructDeclStub"
    }
 
 UnionDeclaration ::=
@@ -2221,7 +2230,7 @@ UnionDeclaration ::=
         //pin(".*") = 1
         methods = [getName getFullName getNameIdentifier getReference setName getPresentation isSomeVisibility getTemplateArguments]
         implements = ["net.masterthought.dlanguage.psi.interfaces.containers.StatementContainer" "net.masterthought.dlanguage.psi.interfaces.DNamedElement" "net.masterthought.dlanguage.psi.interfaces.HasVisibility" "net.masterthought.dlanguage.psi.interfaces.HasTemplateArguments" "net.masterthought.dlanguage.psi.interfaces.Declaration"]
-         stubClass="net.masterthought.dlanguage.stubs.DLangUnionDeclarationStub"
+         stubClass="net.masterthought.dlanguage.stubs.DLangUnionDeclStub"
     }
 
 UnionTemplateDeclaration ::=
@@ -2282,7 +2291,7 @@ EnumDeclaration ::=
     | AnonymousEnumDeclaration{
       methods = [getName getFullName getNameIdentifier getReference setName getPresentation isSomeVisibility]
       implements = ["net.masterthought.dlanguage.psi.interfaces.DNamedElement" "net.masterthought.dlanguage.psi.interfaces.HasVisibility" "net.masterthought.dlanguage.psi.interfaces.Declaration"]
-       stubClass="net.masterthought.dlanguage.stubs.DLangEnumDeclarationStub"
+       stubClass="net.masterthought.dlanguage.stubs.DLangEnumDeclStub"
   }
 
 EnumBaseType ::=
@@ -2307,7 +2316,7 @@ TemplateDeclaration ::=
     pin= 2
       methods=[getName getFullName getNameIdentifier getReference setName getPresentation getTemplateArguments isSomeVisibility ]
     implements = ["net.masterthought.dlanguage.psi.interfaces.DNamedElement" "net.masterthought.dlanguage.psi.interfaces.containers.StatementContainer" "net.masterthought.dlanguage.psi.interfaces.containers.MixinContainer" "net.masterthought.dlanguage.psi.interfaces.containers.GlobalDeclarationContainer" "net.masterthought.dlanguage.psi.interfaces.HasVisibility" "net.masterthought.dlanguage.psi.interfaces.HasTemplateArguments" "net.masterthought.dlanguage.psi.interfaces.Mixinable" "net.masterthought.dlanguage.psi.interfaces.Declaration"]
-      stubClass="net.masterthought.dlanguage.stubs.DLangTemplateDeclarationStub"
+      stubClass="net.masterthought.dlanguage.stubs.DLangTemplateDeclStub"
     }
 
 TemplateParameters ::=
@@ -2369,10 +2378,15 @@ TemplateSingleArgument ::=
     | AssignExpression
 
 
+//this needs updating becuase it has been updated in the d grammar
  TemplateParameter ::=
      TemplateTypeParameter
      | TemplateAliasParameter
-     | TemplateThisParameter
+     | TemplateThisParameter{
+        methods=[getName getFullName getNameIdentifier getReference setName getPresentation ]//getTemplateArguments getPublicSyTypesmbols]
+            implements = ["net.masterthought.dlanguage.psi.interfaces.DNamedElement" "net.masterthought.dlanguage.psi.interfaces.Declaration"]
+                stubClass="net.masterthought.dlanguage.stubs.DLangTemplateParameterStub"
+     }
 
  TemplateTypeParameter ::=
      Type Identifier? '...'? [(':' Type)? ('=' Type)?] [(':' AssignExpression)? TemplateValueParameterDefault?]
@@ -2391,7 +2405,7 @@ TemplateMixinDeclaration ::=
     pin = 3
         methods=[getName getFullName getNameIdentifier getReference setName getPresentation isSomeVisibility ]//getTemplateArguments getPublicSyTypesmbols]
     implements = ["net.masterthought.dlanguage.psi.interfaces.DNamedElement" "net.masterthought.dlanguage.psi.interfaces.containers.StatementContainer" "net.masterthought.dlanguage.psi.interfaces.containers.MixinContainer" "net.masterthought.dlanguage.psi.interfaces.containers.GlobalDeclarationContainer" "net.masterthought.dlanguage.psi.interfaces.HasVisibility" "net.masterthought.dlanguage.psi.interfaces.HasTemplateArguments" "net.masterthought.dlanguage.psi.interfaces.Mixinable" "net.masterthought.dlanguage.psi.interfaces.Declaration"]
-        stubClass="net.masterthought.dlanguage.stubs.DLangTemplateMixinDeclarationStub"
+        stubClass="net.masterthought.dlanguage.stubs.DLangTemplateMixinDeclStub"
     }
 
 TemplateMixin ::=

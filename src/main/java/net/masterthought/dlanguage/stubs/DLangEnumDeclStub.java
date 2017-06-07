@@ -9,12 +9,12 @@ import net.masterthought.dlanguage.psi.DLangEnumDeclaration;
 /**
  * Created by francis on 3/9/2017.
  */
-public class DLangEnumDeclarationStub extends NamedStubBase<DLangEnumDeclaration> {
-    public DLangEnumDeclarationStub(StubElement parent, IStubElementType elementType, StringRef name) {
+public class DLangEnumDeclStub extends NamedStubBase<DLangEnumDeclaration> {
+    public DLangEnumDeclStub(StubElement parent, IStubElementType elementType, StringRef name) {
         super(parent, elementType, name);
     }
 
-    public DLangEnumDeclarationStub(StubElement parent, IStubElementType elementType, String name) {
+    public DLangEnumDeclStub(StubElement parent, IStubElementType elementType, String name) {
         super(parent, elementType, name);
     }
 }

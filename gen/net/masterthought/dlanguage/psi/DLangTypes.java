@@ -132,7 +132,7 @@ public interface DLangTypes {
   IElementType FOREACH_AGGREGATE = new DLangElementType("FOREACH_AGGREGATE");
   IElementType FOREACH_RANGE_STATEMENT = new DLangElementType("FOREACH_RANGE_STATEMENT");
   IElementType FOREACH_STATEMENT = new DLangElementType("FOREACH_STATEMENT");
-  IElementType FOREACH_TYPE = new DLangElementType("FOREACH_TYPE");
+  IElementType FOREACH_TYPE = DElementTypeFactory.factory("FOREACH_TYPE");
   IElementType FOREACH_TYPE_ATTRIBUTE = new DLangElementType("FOREACH_TYPE_ATTRIBUTE");
   IElementType FOREACH_TYPE_ATTRIBUTES = new DLangElementType("FOREACH_TYPE_ATTRIBUTES");
   IElementType FOREACH_TYPE_LIST = new DLangElementType("FOREACH_TYPE_LIST");
@@ -202,7 +202,7 @@ public interface DLangTypes {
   IElementType OPERANDS = new DLangElementType("OPERANDS");
   IElementType OR_OR_EXPRESSION = new DLangElementType("OR_OR_EXPRESSION");
   IElementType OUT_STATEMENT = new DLangElementType("OUT_STATEMENT");
-  IElementType PARAMETER = new DLangElementType("PARAMETER");
+  IElementType PARAMETER = DElementTypeFactory.factory("PARAMETER");
   IElementType PARAMETERS = new DLangElementType("PARAMETERS");
   IElementType PARAMETER_ATTRIBUTES = new DLangElementType("PARAMETER_ATTRIBUTES");
   IElementType PARAMETER_LIST = new DLangElementType("PARAMETER_LIST");
@@ -259,7 +259,7 @@ public interface DLangTypes {
   IElementType TEMPLATE_INSTANCE = new DLangElementType("TEMPLATE_INSTANCE");
   IElementType TEMPLATE_MIXIN = new DLangElementType("TEMPLATE_MIXIN");
   IElementType TEMPLATE_MIXIN_DECLARATION = DElementTypeFactory.factory("TEMPLATE_MIXIN_DECLARATION");
-  IElementType TEMPLATE_PARAMETER = new DLangElementType("TEMPLATE_PARAMETER");
+  IElementType TEMPLATE_PARAMETER = DElementTypeFactory.factory("TEMPLATE_PARAMETER");
   IElementType TEMPLATE_PARAMETERS = new DLangElementType("TEMPLATE_PARAMETERS");
   IElementType TEMPLATE_PARAMETER_LIST = new DLangElementType("TEMPLATE_PARAMETER_LIST");
   IElementType TEMPLATE_SINGLE_ARGUMENT = new DLangElementType("TEMPLATE_SINGLE_ARGUMENT");

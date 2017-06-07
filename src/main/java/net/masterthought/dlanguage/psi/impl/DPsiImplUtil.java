@@ -4,10 +4,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiNamedElement;
-import com.intellij.psi.PsiReference;
+import com.intellij.psi.*;
 import net.masterthought.dlanguage.icons.DLangIcons;
 import net.masterthought.dlanguage.psi.*;
 import net.masterthought.dlanguage.psi.interfaces.*;
@@ -86,6 +83,7 @@ public class DPsiImplUtil {
         if(classDecl != null){
             description = " [Class] (" + classDecl.getName() + ")";
         }
+        //todo complete this
         return description;
     }
 
@@ -117,7 +115,7 @@ public class DPsiImplUtil {
     }
 
     public static void delete(DLangIdentifier identifier) {
-        final List<PsiNamedElement> definitionNode = DResolveUtil.findDefinitionNode(identifier.getProject(), identifier.getName(), identifier);
+        final List<PsiNamedElement> definitionNode = DResolveUtil.INSTANCE.findDefinitionNode(identifier.getProject(), identifier);
         if (definitionNode.size() != 1)
             throw new IllegalStateException();
         definitionNode.get(0).delete();
@@ -131,7 +129,7 @@ public class DPsiImplUtil {
 
     @NotNull
     public static String getName(@NotNull DLangFuncDeclaration o) {
-        DLangFuncDeclarationStub stub = o.getStub();
+        DLangFuncDeclStub stub = o.getStub();
         if (stub != null) return StringUtil.notNullize(stub.getName());
         return o.getIdentifier().getText();
     }
@@ -228,7 +226,7 @@ public class DPsiImplUtil {
     // ------------- Class Definition ------------------ //
     @NotNull
     public static String getName(@NotNull DLangClassDeclaration o) {
-        DLangClassDeclarationStub stub = o.getStub();
+        DLangClassDeclStub stub = o.getStub();
         if (stub != null) return StringUtil.notNullize(stub.getName());
 
         if (o.getIdentifier() != null) {
@@ -307,11 +305,11 @@ public class DPsiImplUtil {
             assert (basicType.getTypeVector() == null);
             assert (basicType.getTypeof() == null);
             final DLangIdentifierList identifierList = basicType.getIdentifierList();
-            final List<PsiNamedElement> definitionNodesSimple = DResolveUtil.findDefinitionNodes((DLangFile) identifierList.getContainingFile(), getEndOfIdentifierList(identifierList).getName());
+            final ResolveResult[] definitionNodesSimple = ((DReference) getEndOfIdentifierList(identifierList).getReference()).multiResolve(false);
             Set<CanInherit> definitionNodes = new HashSet<>();
-            for (PsiElement node : definitionNodesSimple) {
-                if (definitionNodes instanceof CanInherit)
-                    definitionNodes.add((CanInherit) definitionNodes);
+            for (ResolveResult node : definitionNodesSimple) {
+                if (node.getElement() instanceof CanInherit)
+                    definitionNodes.add((CanInherit) node.getElement());
             }
             assert (definitionNodes.size() == 1);
             res.add((CanInherit) definitionNodes.toArray()[0]);
@@ -347,7 +345,7 @@ public class DPsiImplUtil {
     // ------------- Struct Definition ------------------ //
     @NotNull
     public static String getName(@NotNull DLangStructDeclaration o) {
-        DLangStructDeclarationStub stub = o.getStub();
+        DLangStructDeclStub stub = o.getStub();
         if (stub != null) return StringUtil.notNullize(stub.getName());
 
         if (o.getIdentifier() != null) {
@@ -414,7 +412,7 @@ public class DPsiImplUtil {
     // ------------- Enum Definition ------------------ //
     @NotNull
     public static String getName(@NotNull DLangEnumDeclaration o) {
-        DLangEnumDeclarationStub stub = o.getStub();
+        DLangEnumDeclStub stub = o.getStub();
         if (stub != null) return StringUtil.notNullize(stub.getName());
 
         if (o.getIdentifier() != null) {
@@ -482,7 +480,7 @@ public class DPsiImplUtil {
     // ------------- Union Definition ------------------ //
     @NotNull
     public static String getName(@NotNull DLangUnionDeclaration o) {
-        DLangUnionDeclarationStub stub = o.getStub();
+        DLangUnionDeclStub stub = o.getStub();
         if (stub != null) return StringUtil.notNullize(stub.getName());
 
         if (o.getIdentifier() != null) {
@@ -552,7 +550,7 @@ public class DPsiImplUtil {
     // ------------- Template Definition ------------------ //
     @NotNull
     public static String getName(@NotNull DLangTemplateDeclaration o) {
-        DLangTemplateDeclarationStub stub = o.getStub();
+        DLangTemplateDeclStub stub = o.getStub();
         if (stub != null) return StringUtil.notNullize(stub.getName());
 
         if (o.getIdentifier() != null) {
@@ -610,9 +608,7 @@ public class DPsiImplUtil {
     // ------------- Constructor ------------------ //
     @NotNull
     public static String getName(@NotNull DLangConstructor o) {
-        if (DUtil.getParentClassOrStruct(o) != null)
-            return DUtil.getParentClassOrStruct(o).getName();
-        return "";
+        return DUtil.getParentClassOrStruct(o).getName();
     }
 
     @Nullable
@@ -749,7 +745,7 @@ public class DPsiImplUtil {
     // ------------- Alias Definition ------------------ //
     @NotNull
     public static String getName(@NotNull DLangAliasDeclaration o) {
-        DLangAliasDeclarationStub stub = o.getStub();
+        DLangAliasDeclStub stub = o.getStub();
         if (stub != null) return StringUtil.notNullize(stub.getName());
 
         if (o.getIdentifier() != null) {
@@ -833,7 +829,7 @@ public class DPsiImplUtil {
 
     @NotNull
     public static String getName(@NotNull DLangModuleDeclaration o) {
-        DLangModuleDeclarationStub stub = o.getStub();
+        DLangModuleDeclStub stub = o.getStub();
         if (stub != null) return StringUtil.notNullize(stub.getName());
 
         if (o.getModuleFullyQualifiedName() == null) {
@@ -905,11 +901,8 @@ public class DPsiImplUtil {
     // ------------- Interface Definition ------------------ //
     @NotNull
     public static String getName(@NotNull DLangInterfaceDeclaration o) {
-        DLangInterfaceDeclarationStub stub = o.getStub();
+        DLangInterfaceDeclStub stub = o.getStub();
         if (stub != null) return StringUtil.notNullize(stub.getName());
-        if (o.getIdentifier() == null) {
-            return "";
-        }
         return o.getIdentifier().getText();
     }
 
@@ -980,11 +973,11 @@ public class DPsiImplUtil {
             assert (basicType.getTypeVector() == null);
             assert (basicType.getTypeof() == null);
             final DLangIdentifierList identifierList = basicType.getIdentifierList();
-            final List<PsiNamedElement> definitionNodesSimple = DResolveUtil.findDefinitionNodes((DLangFile) identifierList.getContainingFile(), getEndOfIdentifierList(identifierList).getName());
+            final ResolveResult[] definitionNodesSimple = ((DReference) getEndOfIdentifierList(identifierList).getReference()).multiResolve(false);
             Set<CanInherit> definitionNodes = new HashSet<>();
-            for (PsiElement node : definitionNodesSimple) {
-                if (definitionNodes instanceof CanInherit)
-                    definitionNodes.add((CanInherit) definitionNodes);
+            for (ResolveResult node : definitionNodesSimple) {
+                if (node.getElement() instanceof CanInherit)
+                    definitionNodes.add((CanInherit) node.getElement());
             }
             assert (definitionNodes.size() == 1);
             res.add((CanInherit) definitionNodes.toArray()[0]);
@@ -1079,7 +1072,7 @@ public class DPsiImplUtil {
     // ------------- Mixin Declaration ------------------ //
     @NotNull
     public static String getName(@NotNull DLangTemplateMixinDeclaration o) {
-        DLangTemplateMixinDeclarationStub stub = o.getStub();
+        DLangTemplateMixinDeclStub stub = o.getStub();
         if (stub != null) return StringUtil.notNullize(stub.getName());
         return o.getIdentifier().getText();//doesn't have any one name??
     }
@@ -1197,14 +1190,25 @@ public class DPsiImplUtil {
     private static DLangIdentifier getIdentifier(DLangDeclaratorInitializer o) {
         if (o.getAltDeclarator() != null) {
             final DLangAltDeclarator altDeclarator = o.getAltDeclarator();
-            if (altDeclarator.getIdentifier() != null) return altDeclarator.getIdentifier();
-            else return altDeclarator.getAltDeclaratorX().getIdentifier();
+            return getIdentifier(altDeclarator);
         }
         if (o.getVarDeclarator() != null) {
             final DLangVarDeclarator varDeclarator = o.getVarDeclarator();
             return varDeclarator.getIdentifier();
         }
         return null;
+    }
+
+    private static DLangIdentifier getIdentifier(DLangAltDeclarator altDeclarator) {
+        if (altDeclarator.getIdentifier() != null) return altDeclarator.getIdentifier();
+        else
+            return getIdentifier(altDeclarator.getAltDeclaratorX());
+    }
+
+    private static DLangIdentifier getIdentifier(DLangAltDeclaratorX altDeclaratorX) {
+        if (altDeclaratorX.getIdentifier() != null)
+            return altDeclaratorX.getIdentifier();
+        return getIdentifier(altDeclaratorX.getAltDeclarator());
     }
 
     @Nullable
@@ -1281,7 +1285,7 @@ public class DPsiImplUtil {
     // ------------- Auto Declaration Y ------------------ //
     @NotNull
     public static String getName(@NotNull DLangAutoDeclarationY o) {
-        DLangAutoDeclarationStub stub = o.getStub();
+        DLangAutoDeclStub stub = o.getStub();
         if (stub != null) return StringUtil.notNullize(stub.getName());
 
         if (o.getIdentifier() != null) {
@@ -1643,11 +1647,11 @@ public class DPsiImplUtil {
 
     // ------------- Shared Static Destructor ------------- //
 
-    // ------------ Module Declaration ----------------- //
+    // ------------ Import Declaration ----------------- //
 
     @NotNull
     public static String getName(@NotNull DLangImport o) {
-        DLangImportDeclarationStub stub = o.getStub();
+        DLangImportDeclStub stub = o.getStub();
         if (stub != null) return StringUtil.notNullize(stub.getName());
 
         if (o.getModuleFullyQualifiedName().getText() != null) {
@@ -1708,7 +1712,239 @@ public class DPsiImplUtil {
         return getChildOfType(o, DLangProtectionAttribute.class);
     }
 
-    // ------------ Module Declaration ----------------- //
+    // ------------ Import Declaration ----------------- //
+
+    // ------------ Template Parameter Declaration ----------------- //
+
+    private static DLangIdentifier getIdentifier(@NotNull DLangTemplateParameter o) {
+        final DLangTemplateAliasParameter templateAliasParameter = o.getTemplateAliasParameter();
+        final DLangTemplateThisParameter templateThisParameter = o.getTemplateThisParameter();
+        final DLangTemplateTypeParameter templateTypeParameter = o.getTemplateTypeParameter();
+        if (templateAliasParameter != null) {
+            final DLangIdentifier identifier = templateAliasParameter.getIdentifier();
+            if (identifier != null)
+                return identifier;
+            return null;//todo
+        }
+        if (templateThisParameter != null) {
+            return getIdentifier(templateThisParameter.getTemplateTypeParameter());
+        }
+        assert templateTypeParameter != null;
+        return getIdentifier(templateTypeParameter);
+    }
+
+    private static DLangIdentifier getIdentifier(@NotNull DLangTemplateTypeParameter templateTypeParameter) {
+        if (templateTypeParameter.getIdentifier() != null) {
+            return templateTypeParameter.getIdentifier();
+        }
+        return DUtil.getEndOfIdentifierList(templateTypeParameter.getTypeList().get(0).getBasicType().getIdentifierList());
+    }
+
+    @NotNull
+    public static String getName(@NotNull DLangTemplateParameter o) {
+        DLangTemplateParameterStub stub = o.getStub();
+        if (stub != null) return StringUtil.notNullize(stub.getName());
+        return getIdentifier(o).getName();
+    }
+
+    @Nullable
+    public static PsiElement getNameIdentifier(@NotNull DLangTemplateParameter o) {
+        ASTNode keyNode = o.getNode();
+        return keyNode != null ? keyNode.getPsi() : null;
+    }
+
+    @Nullable
+    public static PsiElement setName(@NotNull DLangTemplateParameter o, @NotNull String newName) {
+        PsiElement e = DElementFactory.createDLangIdentifierFromText(o.getProject(), newName);
+        if (e == null) return null;
+        getIdentifier(o).replace(e);
+        return o;
+    }
+
+    @NotNull
+    public static PsiReference getReference(@NotNull DLangTemplateParameter o) {
+        return new DReference(o, TextRange.from(0, getName(o).length()));
+    }
+
+    @NotNull
+    public static ItemPresentation getPresentation(final DLangTemplateParameter o) {
+        return new ItemPresentation() {
+            @Nullable
+            @Override
+            public String getPresentableText() {
+                return o.getName();
+            }
+
+            /**
+             * This is needed to decipher between files when resolving multiple references.
+             */
+            @Nullable
+            @Override
+            public String getLocationString() {
+                final PsiFile psiFile = o.getContainingFile();
+                return psiFile instanceof DLangFile ? ((DLangFile) psiFile).getModuleOrFileName() : null;
+            }
+
+            @Nullable
+            @Override
+            public Icon getIcon(boolean unused) {
+                return DLangIcons.FILE;
+            }
+        };
+    }
+
+    @Contract("null -> null")
+    public static DLangProtectionAttribute getProtection(DLangTemplateParameter o) {
+        return getChildOfType(o, DLangProtectionAttribute.class);
+    }
+
+    // ------------ Template Parameter Declaration ----------------- //
+
+    // ------------  Parameter Declaration ----------------- //
+
+    private static DLangIdentifier getIdentifier(@NotNull DLangParameter o) {
+        //todo
+        if (o.getDeclarator() == null) {
+            if (o.getIdentifier() != null) {
+                return o.getIdentifier();
+            }
+            return null;
+//            return DUtil.getEndOfIdentifierList(o.getType().getBasicType().getIdentifierList());
+
+        }
+        if (o.getDeclarator().getAltDeclarator() != null) {
+            return getIdentifier(o.getDeclarator().getAltDeclarator());
+        }
+        if (o.getDeclarator().getVarDeclarator() != null) {
+            return o.getDeclarator().getVarDeclarator().getIdentifier();
+        }
+        return null;
+    }
+
+    @NotNull
+    public static String getName(@NotNull DLangParameter o) {
+        DLangParameterStub stub = o.getStub();
+        if (stub != null) return StringUtil.notNullize(stub.getName());
+        return getIdentifier(o).getName();
+    }
+
+    @Nullable
+    public static PsiElement getNameIdentifier(@NotNull DLangParameter o) {
+        ASTNode keyNode = o.getNode();
+        return keyNode != null ? keyNode.getPsi() : null;
+    }
+
+    @Nullable
+    public static PsiElement setName(@NotNull DLangParameter o, @NotNull String newName) {
+        PsiElement e = DElementFactory.createDLangIdentifierFromText(o.getProject(), newName);
+        if (e == null) return null;
+        getIdentifier(o).replace(e);
+        return o;
+    }
+
+    @NotNull
+    public static PsiReference getReference(@NotNull DLangParameter o) {
+        return new DReference(o, TextRange.from(0, getName(o).length()));
+    }
+
+    @NotNull
+    public static ItemPresentation getPresentation(final DLangParameter o) {
+        return new ItemPresentation() {
+            @Nullable
+            @Override
+            public String getPresentableText() {
+                return o.getName();
+            }
+
+            /**
+             * This is needed to decipher between files when resolving multiple references.
+             */
+            @Nullable
+            @Override
+            public String getLocationString() {
+                final PsiFile psiFile = o.getContainingFile();
+                return psiFile instanceof DLangFile ? ((DLangFile) psiFile).getModuleOrFileName() : null;
+            }
+
+            @Nullable
+            @Override
+            public Icon getIcon(boolean unused) {
+                return DLangIcons.FILE;
+            }
+        };
+    }
+
+    @Contract("null -> null")
+    public static DLangProtectionAttribute getProtection(DLangParameter o) {
+        return getChildOfType(o, DLangProtectionAttribute.class);
+    }
+
+    // ------------  Parameter Declaration ----------------- //
+
+    // ------------ Foreach Type Declaration ----------------- //
+
+    @NotNull
+    private static DLangIdentifier getIdentifier(@NotNull DLangForeachType o) {
+        return o.getIdentifier();
+    }
+
+    @NotNull
+    public static String getName(@NotNull DLangForeachType o) {
+        DLangForeachTypeStub stub = o.getStub();
+        if (stub != null) return StringUtil.notNullize(stub.getName());
+        return getIdentifier(o).getName();
+    }
+
+    @Nullable
+    public static PsiElement getNameIdentifier(@NotNull DLangForeachType o) {
+        ASTNode keyNode = o.getNode();
+        return keyNode != null ? keyNode.getPsi() : null;
+    }
+
+    @Nullable
+    public static PsiElement setName(@NotNull DLangForeachType o, @NotNull String newName) {
+        PsiElement e = DElementFactory.createDLangIdentifierFromText(o.getProject(), newName);
+        if (e == null) return null;
+        getIdentifier(o).replace(e);
+        return o;
+    }
+
+    @NotNull
+    public static PsiReference getReference(@NotNull DLangForeachType o) {
+        return new DReference(o, TextRange.from(0, getName(o).length()));
+    }
+
+    @NotNull
+    public static ItemPresentation getPresentation(final DLangForeachType o) {
+        return new ItemPresentation() {
+            @Nullable
+            @Override
+            public String getPresentableText() {
+                return o.getName();
+            }
+
+            /**
+             * This is needed to decipher between files when resolving multiple references.
+             */
+            @Nullable
+            @Override
+            public String getLocationString() {
+                final PsiFile psiFile = o.getContainingFile();
+                return psiFile instanceof DLangFile ? ((DLangFile) psiFile).getModuleOrFileName() : null;
+            }
+
+            @Nullable
+            @Override
+            public Icon getIcon(boolean unused) {
+                return DLangIcons.FILE;
+            }
+        };
+    }
+
+    // ------------ Foreach Type Declaration ----------------- //
+
+
+
 
     // -------------------- Visibility --------------------- //
 

@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static net.masterthought.dlanguage.psi.DLangTypes.*;
-import net.masterthought.dlanguage.stubs.DLangTemplateDeclarationStub;
+import net.masterthought.dlanguage.stubs.DLangTemplateDeclStub;
 import net.masterthought.dlanguage.psi.*;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.PsiReference;
@@ -16,9 +16,9 @@ import net.masterthought.dlanguage.psi.interfaces.containers.Container;
 import net.masterthought.dlanguage.psi.interfaces.HasVisibility.Visibility;
 import com.intellij.psi.stubs.IStubElementType;
 
-public class DLangTemplateDeclarationImpl extends DNamedStubbedPsiElementBase<DLangTemplateDeclarationStub> implements DLangTemplateDeclaration {
+public class DLangTemplateDeclarationImpl extends DNamedStubbedPsiElementBase<DLangTemplateDeclStub> implements DLangTemplateDeclaration {
 
-  public DLangTemplateDeclarationImpl(DLangTemplateDeclarationStub stub, IStubElementType type) {
+  public DLangTemplateDeclarationImpl(DLangTemplateDeclStub stub, IStubElementType type) {
     super(stub, type);
   }
 
@@ -37,14 +37,14 @@ public class DLangTemplateDeclarationImpl extends DNamedStubbedPsiElementBase<DL
 
   @Override
   @Nullable
-  public DLangConstraint getConstraint() {
-    return PsiTreeUtil.getChildOfType(this, DLangConstraint.class);
+  public DLangAggregateBody getAggregateBody() {
+    return PsiTreeUtil.getChildOfType(this, DLangAggregateBody.class);
   }
 
   @Override
   @Nullable
-  public DLangDeclDefs getDeclDefs() {
-    return PsiTreeUtil.getChildOfType(this, DLangDeclDefs.class);
+  public DLangConstraint getConstraint() {
+    return PsiTreeUtil.getChildOfType(this, DLangConstraint.class);
   }
 
   @Override
@@ -63,18 +63,6 @@ public class DLangTemplateDeclarationImpl extends DNamedStubbedPsiElementBase<DL
   @NotNull
   public PsiElement getKwTemplate() {
     return notNullChild(findChildByType(KW_TEMPLATE));
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getOpBracesLeft() {
-    return findChildByType(OP_BRACES_LEFT);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getOpBracesRight() {
-    return findChildByType(OP_BRACES_RIGHT);
   }
 
   @NotNull

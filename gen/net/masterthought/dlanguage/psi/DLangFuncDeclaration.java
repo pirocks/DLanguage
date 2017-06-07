@@ -12,13 +12,13 @@ import net.masterthought.dlanguage.psi.interfaces.HasTemplateArguments;
 import net.masterthought.dlanguage.psi.interfaces.HasArguments;
 import net.masterthought.dlanguage.psi.interfaces.Declaration;
 import com.intellij.psi.StubBasedPsiElement;
-import net.masterthought.dlanguage.stubs.DLangFuncDeclarationStub;
+import net.masterthought.dlanguage.stubs.DLangFuncDeclStub;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.PsiReference;
 import net.masterthought.dlanguage.psi.interfaces.containers.Container;
 import net.masterthought.dlanguage.psi.interfaces.HasVisibility.Visibility;
 
-public interface DLangFuncDeclaration extends StatementContainer, DNamedElement, HasVisibility, HasProperty, HasTemplateArguments, HasArguments, Declaration, StubBasedPsiElement<DLangFuncDeclarationStub> {
+public interface DLangFuncDeclaration extends StatementContainer, DNamedElement, HasVisibility, HasProperty, HasTemplateArguments, HasArguments, Declaration, StubBasedPsiElement<DLangFuncDeclStub> {
 
   @Nullable
   DLangBasicType getBasicType();

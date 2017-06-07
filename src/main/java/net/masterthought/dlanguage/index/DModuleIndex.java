@@ -28,7 +28,7 @@ public class DModuleIndex extends ScalarIndexExtension<String> {
         }
     };
     private static final ID<String, Void> D_MODULE_INDEX = ID.create("DModuleIndex");
-    private static final int INDEX_VERSION = 0;
+    private static final int INDEX_VERSION = 1;
     private static final EnumeratorStringDescriptor KEY_DESCRIPTOR = new EnumeratorStringDescriptor();
     private static final MyDataIndexer INDEXER = new MyDataIndexer();
 

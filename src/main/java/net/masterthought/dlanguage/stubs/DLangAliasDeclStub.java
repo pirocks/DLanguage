@@ -6,12 +6,12 @@ import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.io.StringRef;
 import net.masterthought.dlanguage.psi.DLangAliasDeclaration;
 
-public class DLangAliasDeclarationStub extends NamedStubBase<DLangAliasDeclaration> {
-    public DLangAliasDeclarationStub(StubElement parent, IStubElementType elementType, StringRef name) {
+public class DLangAliasDeclStub extends NamedStubBase<DLangAliasDeclaration> {
+    public DLangAliasDeclStub(StubElement parent, IStubElementType elementType, StringRef name) {
         super(parent, elementType, name);
     }
 
-    public DLangAliasDeclarationStub(StubElement parent, IStubElementType elementType, String name) {
+    public DLangAliasDeclStub(StubElement parent, IStubElementType elementType, String name) {
         super(parent, elementType, name);
     }
 }

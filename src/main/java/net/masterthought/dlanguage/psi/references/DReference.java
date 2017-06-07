@@ -3,19 +3,19 @@ package net.masterthought.dlanguage.psi.references;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.ContainerUtil;
-import net.masterthought.dlanguage.index.DModuleIndex;
 import net.masterthought.dlanguage.psi.*;
 import net.masterthought.dlanguage.psi.impl.DPsiImplUtil;
+import net.masterthought.dlanguage.utils.DResolveUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 
-import static net.masterthought.dlanguage.utils.DResolveUtil.findDefinitionNode;
 
 /**
  * Resolves references to elements.
@@ -48,7 +48,10 @@ public class DReference extends PsiReferenceBase<PsiNamedElement> implements Psi
 //            if (!myElement.equals(Iterables.getLast(qconid.getConidList()))) { return EMPTY_RESOLVE_RESULT; }
 //        }
         Project project = myElement.getProject();
-        final List<PsiNamedElement> namedElements = findDefinitionNode(project, name, myElement);
+        if (!(myElement instanceof DLangIdentifier)) {
+            return new ResolveResult[0];
+        }
+        final List<PsiNamedElement> namedElements = DResolveUtil.INSTANCE.findDefinitionNode(project, (DLangIdentifier) myElement);
         // Guess 20 variants tops most of the time in any real code base.
         final Collection<PsiElement> identifiers = new HashSet<>();
         for (PsiElement namedElement : namedElements) {
@@ -159,25 +162,27 @@ public class DReference extends PsiReferenceBase<PsiNamedElement> implements Psi
 //            variants.add(namedElement.getName());
 //        }
 //        return variants.toArray();
-        PsiNamedElement e = getElement();
-        Project project = e.getProject();
-        final Set<String> potentialModules =
-            DPsiUtil.parseImports(e.getContainingFile());
 
+
+//        PsiNamedElement e = getElement();
+//        Project project = e.getProject();
+//        final Set<String> potentialModules =
+//            DPsiUtil.parseImports(e.getContainingFile());
+//
         List<PsiNamedElement> declarations = ContainerUtil.newArrayList();
-        final PsiFile psiFile = e.getContainingFile().getOriginalFile();
-        // find definition in current file
-        if (psiFile instanceof DLangFile) {
-            findDefinitionNode((DLangFile) psiFile, null, e, declarations);
-            declarations.addAll(PsiTreeUtil.findChildrenOfType(psiFile, DLangIdentifier.class));
-        }
-        // find definition in imported files
-        for (String potentialModule : potentialModules) {
-            List<DLangFile> files = DModuleIndex.getFilesByModuleName(project, potentialModule, GlobalSearchScope.allScope(project));
-            for (DLangFile f : files) {
-                findDefinitionNode(f, null, e, declarations);
-            }
-        }
+//        final PsiFile psiFile = e.getContainingFile().getOriginalFile();
+//        // find definition in current file
+//        if (psiFile instanceof DLangFile) {
+//            findDefinitionNode((DLangFile) psiFile, null, e, declarations);
+//            declarations.addAll(PsiTreeUtil.findChildrenOfType(psiFile, DLangIdentifier.class));
+//        }
+//        // find definition in imported files
+//        for (String potentialModule : potentialModules) {
+//            List<DLangFile> files = DModuleIndex.getFilesByModuleName(project, potentialModule, GlobalSearchScope.allScope(project));
+//            for (DLangFile f : files) {
+//                findDefinitionNode(f, null, e, declarations);
+//            }
+//        }
         ArrayList<String> result = new ArrayList<>();
         int i = 0;
         for (PsiNamedElement declaration : declarations) {

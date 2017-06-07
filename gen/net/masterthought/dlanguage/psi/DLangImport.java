@@ -7,13 +7,13 @@ import com.intellij.psi.PsiElement;
 import net.masterthought.dlanguage.psi.interfaces.DNamedElement;
 import net.masterthought.dlanguage.psi.interfaces.HasVisibility;
 import com.intellij.psi.StubBasedPsiElement;
-import net.masterthought.dlanguage.stubs.DLangImportDeclarationStub;
+import net.masterthought.dlanguage.stubs.DLangImportDeclStub;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.PsiReference;
 import net.masterthought.dlanguage.psi.interfaces.containers.Container;
 import net.masterthought.dlanguage.psi.interfaces.HasVisibility.Visibility;
 
-public interface DLangImport extends DNamedElement, HasVisibility, StubBasedPsiElement<DLangImportDeclarationStub> {
+public interface DLangImport extends DNamedElement, HasVisibility, StubBasedPsiElement<DLangImportDeclStub> {
 
   @Nullable
   DLangIdentifier getIdentifier();

@@ -10,13 +10,13 @@ import net.masterthought.dlanguage.psi.interfaces.HasVisibility;
 import net.masterthought.dlanguage.psi.interfaces.HasTemplateArguments;
 import net.masterthought.dlanguage.psi.interfaces.Declaration;
 import com.intellij.psi.StubBasedPsiElement;
-import net.masterthought.dlanguage.stubs.DLangUnionDeclarationStub;
+import net.masterthought.dlanguage.stubs.DLangUnionDeclStub;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.PsiReference;
 import net.masterthought.dlanguage.psi.interfaces.containers.Container;
 import net.masterthought.dlanguage.psi.interfaces.HasVisibility.Visibility;
 
-public interface DLangUnionDeclaration extends StatementContainer, DNamedElement, HasVisibility, HasTemplateArguments, Declaration, StubBasedPsiElement<DLangUnionDeclarationStub> {
+public interface DLangUnionDeclaration extends StatementContainer, DNamedElement, HasVisibility, HasTemplateArguments, Declaration, StubBasedPsiElement<DLangUnionDeclStub> {
 
   @Nullable
   DLangAggregateBody getAggregateBody();

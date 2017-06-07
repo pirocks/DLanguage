@@ -8,10 +8,17 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static net.masterthought.dlanguage.psi.DLangTypes.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
+import net.masterthought.dlanguage.stubs.DLangParameterStub;
 import net.masterthought.dlanguage.psi.*;
+import com.intellij.navigation.ItemPresentation;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.stubs.IStubElementType;
 
-public class DLangParameterImpl extends ASTWrapperPsiElement implements DLangParameter {
+public class DLangParameterImpl extends DNamedStubbedPsiElementBase<DLangParameterStub> implements DLangParameter {
+
+  public DLangParameterImpl(DLangParameterStub stub, IStubElementType type) {
+    super(stub, type);
+  }
 
   public DLangParameterImpl(ASTNode node) {
     super(node);
@@ -47,7 +54,7 @@ public class DLangParameterImpl extends ASTWrapperPsiElement implements DLangPar
   @Override
   @Nullable
   public DLangIdentifier getIdentifier() {
-    return PsiTreeUtil.getChildOfType(this, DLangIdentifier.class);
+    return PsiTreeUtil.getStubChildOfType(this, DLangIdentifier.class);
   }
 
   @Override
@@ -78,6 +85,35 @@ public class DLangParameterImpl extends ASTWrapperPsiElement implements DLangPar
   @Nullable
   public PsiElement getOpTripledot() {
     return findChildByType(OP_TRIPLEDOT);
+  }
+
+  @NotNull
+  public String getName() {
+    return DPsiImplUtil.getName(this);
+  }
+
+  public String getFullName() {
+    return DPsiImplUtil.getFullName(this);
+  }
+
+  @Nullable
+  public PsiElement getNameIdentifier() {
+    return DPsiImplUtil.getNameIdentifier(this);
+  }
+
+  @NotNull
+  public PsiReference getReference() {
+    return DPsiImplUtil.getReference(this);
+  }
+
+  @Nullable
+  public PsiElement setName(String newName) {
+    return DPsiImplUtil.setName(this, newName);
+  }
+
+  @NotNull
+  public ItemPresentation getPresentation() {
+    return DPsiImplUtil.getPresentation(this);
   }
 
 }

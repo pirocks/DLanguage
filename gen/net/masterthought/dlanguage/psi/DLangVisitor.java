@@ -492,7 +492,8 @@ public class DLangVisitor extends PsiElementVisitor {
   }
 
   public void visitForeachType(@NotNull DLangForeachType o) {
-    visitPsiElement(o);
+    visitDNamedElement(o);
+    // visitDeclaration(o);
   }
 
   public void visitForeachTypeAttribute(@NotNull DLangForeachTypeAttribute o) {
@@ -785,7 +786,8 @@ public class DLangVisitor extends PsiElementVisitor {
   }
 
   public void visitParameter(@NotNull DLangParameter o) {
-    visitPsiElement(o);
+    visitDNamedElement(o);
+    // visitDeclaration(o);
   }
 
   public void visitParameterAttributes(@NotNull DLangParameterAttributes o) {
@@ -1044,7 +1046,8 @@ public class DLangVisitor extends PsiElementVisitor {
   }
 
   public void visitTemplateParameter(@NotNull DLangTemplateParameter o) {
-    visitPsiElement(o);
+    visitDNamedElement(o);
+    // visitDeclaration(o);
   }
 
   public void visitTemplateParameterList(@NotNull DLangTemplateParameterList o) {

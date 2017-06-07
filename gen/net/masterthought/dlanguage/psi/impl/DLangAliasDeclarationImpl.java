@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static net.masterthought.dlanguage.psi.DLangTypes.*;
-import net.masterthought.dlanguage.stubs.DLangAliasDeclarationStub;
+import net.masterthought.dlanguage.stubs.DLangAliasDeclStub;
 import net.masterthought.dlanguage.psi.*;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.PsiReference;
@@ -17,9 +17,9 @@ import net.masterthought.dlanguage.psi.interfaces.HasVisibility.Visibility;
 import net.masterthought.dlanguage.psi.interfaces.Type;
 import com.intellij.psi.stubs.IStubElementType;
 
-public class DLangAliasDeclarationImpl extends DNamedStubbedPsiElementBase<DLangAliasDeclarationStub> implements DLangAliasDeclaration {
+public class DLangAliasDeclarationImpl extends DNamedStubbedPsiElementBase<DLangAliasDeclStub> implements DLangAliasDeclaration {
 
-  public DLangAliasDeclarationImpl(DLangAliasDeclarationStub stub, IStubElementType type) {
+  public DLangAliasDeclarationImpl(DLangAliasDeclStub stub, IStubElementType type) {
     super(stub, type);
   }
 
