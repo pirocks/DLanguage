@@ -2227,7 +2227,9 @@ AggregateDeclaration ::=
     ClassDeclaration
     | InterfaceDeclaration
     | StructDeclaration
-    | UnionDeclaration
+    | UnionDeclaration{
+    methods = [processDeclarations]
+    }
 
 ClassDeclaration ::=
     'class' Identifier ';'

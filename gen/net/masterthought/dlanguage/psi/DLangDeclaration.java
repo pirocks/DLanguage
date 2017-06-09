@@ -4,6 +4,8 @@ package net.masterthought.dlanguage.psi;
 import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.ResolveState;
+import com.intellij.psi.scope.PsiScopeProcessor;
 
 public interface DLangDeclaration extends PsiElement {
 
@@ -27,5 +29,7 @@ public interface DLangDeclaration extends PsiElement {
 
   @Nullable
   DLangVarDeclarations getVarDeclarations();
+
+  boolean processDeclarations(PsiScopeProcessor processor, ResolveState state, PsiElement lastParent, PsiElement place);
 
 }

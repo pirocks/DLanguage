@@ -7,10 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface DLangStatementListNoCaseNoDefault extends PsiElement {
 
-  @Nullable
-  DLangStatementListNoCaseNoDefault getStatementListNoCaseNoDefault();
-
   @NotNull
-  DLangStatementNoCaseNoDefault getStatementNoCaseNoDefault();
+  List<DLangStatementNoCaseNoDefault> getStatementNoCaseNoDefaultList();
 
 }

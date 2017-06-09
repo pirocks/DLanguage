@@ -10746,7 +10746,7 @@ public class DLangParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // StatementNoCaseNoDefault [StatementListNoCaseNoDefault]
+  // StatementNoCaseNoDefault StatementNoCaseNoDefault*
   public static boolean StatementListNoCaseNoDefault(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "StatementListNoCaseNoDefault")) return false;
     boolean r;
@@ -10757,10 +10757,15 @@ public class DLangParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // [StatementListNoCaseNoDefault]
+  // StatementNoCaseNoDefault*
   private static boolean StatementListNoCaseNoDefault_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "StatementListNoCaseNoDefault_1")) return false;
-    StatementListNoCaseNoDefault(b, l + 1);
+    int c = current_position_(b);
+    while (true) {
+      if (!StatementNoCaseNoDefault(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "StatementListNoCaseNoDefault_1", c)) break;
+      c = current_position_(b);
+    }
     return true;
   }
 

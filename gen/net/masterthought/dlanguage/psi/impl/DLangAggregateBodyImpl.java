@@ -10,6 +10,8 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static net.masterthought.dlanguage.psi.DLangTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import net.masterthought.dlanguage.psi.*;
+import com.intellij.psi.ResolveState;
+import com.intellij.psi.scope.PsiScopeProcessor;
 
 public class DLangAggregateBodyImpl extends ASTWrapperPsiElement implements DLangAggregateBody {
 
@@ -42,6 +44,10 @@ public class DLangAggregateBodyImpl extends ASTWrapperPsiElement implements DLan
   @NotNull
   public PsiElement getOpBracesRight() {
     return notNullChild(findChildByType(OP_BRACES_RIGHT));
+  }
+
+  public boolean processDeclarations(PsiScopeProcessor processor, ResolveState state, PsiElement lastParent, PsiElement place) {
+    return DPsiImplUtil.processDeclarations(this, processor, state, lastParent, place);
   }
 
 }

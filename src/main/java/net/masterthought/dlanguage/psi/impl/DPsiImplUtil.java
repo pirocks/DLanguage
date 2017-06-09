@@ -2628,7 +2628,7 @@ public class DPsiImplUtil {
                                               PsiElement lastParent,
                                               @NotNull PsiElement place) {
         if (element.getBlockStatement() != null) {
-
+            element.getBlockStatement().processDeclarations(processor, state, lastParent, place);
         }
         if (element.getNonEmptyStatement() != null) {
             final DLangNonEmptyStatement nonEmptyStatement = element.getNonEmptyStatement();
@@ -2650,80 +2650,76 @@ public class DPsiImplUtil {
                     }
                 }
                 if (statement.getDeclarationStatement() != null) {
-                    statement.getDeclarationStatement().getDeclaration().processDeclarations()
+                    statement.getDeclarationStatement().getDeclaration().processDeclarations(processor, state, lastParent, place);
                 }
                 if (statement.getBlockStatement() != null) {
-                    processor.execute(statement.getBlockStatement(), state);
+                    statement.getBlockStatement().processDeclarations(processor, state, lastParent, place);
                 }
                 if (statement.getIfStatement() != null) {
-                    processor.execute(statement.getIfStatement(), state);
+                    final DLangIfCondition condition = statement.getIfStatement().getIfCondition();
+                    //todo add return
+                    if (condition != null) {
+                        if (condition.getConditionVarDeclarator() != null) {
+                            processor.execute(condition.getConditionVarDeclarator(), state);
+                        }
+                        if (condition.getConditionVarDeclaration() != null) {
+                            processor.execute(condition.getConditionVarDeclaration(), state);
+                        }
+                        if (condition.getConditionAutoDeclaration() != null) {
+                            processor.execute(condition.getConditionAutoDeclaration(), state);
+                        }
+                    }
                 }
-                if (statement.getWhileStatement() != null) {
-                    processor.execute(statement.getWhileStatement(), state);
-                }
-                if (statement.getDoStatement() != null) {
-                    processor.execute(statement.getDoStatement(), state);
-                }
+                //todo do/while statements should support truthy values etc
+//                if (statement.getWhileStatement() != null) {
+//                    processor.execute(statement.getWhileStatement(), state);
+//                }
+//                if (statement.getDoStatement() != null) {
+//                    processor.execute(statement.getDoStatement(), state);
+//                }
                 if (statement.getForStatement() != null) {
-                    processor.execute(statement.getForStatement(), state);
+                    statement.getForStatement().processDeclarations(processor, state, lastParent, place);
                 }
                 if (statement.getForeachStatement() != null) {
-                    processor.execute(statement.getForeachStatement(), state);
+                    statement.getForStatement().processDeclarations(processor, state, lastParent, place);
                 }
                 if (statement.getSwitchStatement() != null) {
-                    processor.execute(statement.getSwitchStatement(), state);
+                    statement.getSwitchStatement().processDeclarations(processor, state, lastParent, place);
                 }
                 if (statement.getFinalSwitchStatement() != null) {
-                    processor.execute(statement.getFinalSwitchStatement(), state);
+                    statement.getFinalSwitchStatement().processDeclarations(processor, state, lastParent, place);
                 }
-                if (statement.getContinueStatement() != null) {
-                    processor.execute(statement.getContinueStatement(), state);
-                }
-                if (statement.getBreakStatement() != null) {
-                    processor.execute(statement.getBreakStatement(), state);
-                }
-                if (statement.getReturnStatement() != null) {
-                    processor.execute(statement.getReturnStatement(), state);
-                }
-                if (statement.getGotoStatement() != null) {
-                    processor.execute(statement.getGotoStatement(), state);
-                }
-                if (statement.getWithStatement() != null) {
-                    processor.execute(statement.getWithStatement(), state);
-                }
+//                if (statement.getWithStatement() != null) {
+//                    processor.execute(statement.getWithStatement(), state);
+//                }//todo idk how with statements work in d
                 if (statement.getSynchronizedStatement() != null) {
-                    processor.execute(statement.getSynchronizedStatement(), state);
+                    //todo implement
                 }
                 if (statement.getTryStatement() != null) {
-                    processor.execute(statement.getTryStatement(), state);
-                }
-                if (statement.getScopeGuardStatement() != null) {
-                    processor.execute(statement.getScopeGuardStatement(), state);
-                }
-                if (statement.getThrowStatement() != null) {
-                    processor.execute(statement.getThrowStatement(), state);
-                }
-                if (statement.getAsmStatement() != null) {
-                    processor.execute(statement.getAsmStatement(), state);
+                    if (statement.getTryStatement().getCatches() != null) {
+                        for (DLangCatch catch_ : statement.getTryStatement().getCatches().getCatchList()) {
+                            processor.execute(catch_.getCatchParameter(), state);
+                        }
+
+                    }
                 }
                 if (statement.getPragmaStatement() != null) {
-                    processor.execute(statement.getPragmaStatement(), state);
+                    if (statement.getPragmaStatement().getStatement() != null) {
+                        statement.getPragmaStatement().getStatement().processDeclarations(processor, state, lastParent, place);
+                    }
                 }
                 if (statement.getMixinStatement() != null) {
-                    processor.execute(statement.getMixinStatement(), state);
+                    //todo handle mixins
                 }
                 if (statement.getForeachRangeStatement() != null) {
-                    processor.execute(statement.getForeachRangeStatement(), state);
+                    statement.getForeachRangeStatement().processDeclarations(processor, state, lastParent, place);
                 }
                 if (statement.getConditionalStatement() != null) {
-                    processor.execute(statement.getConditionalStatement(), state);
+                    statement.getConditionalStatement().processDeclarations(processor, state, lastParent, place);
                 }
-                if (statement.getExpressionStatement() != null) {
-                    processor.execute(statement.getExpressionStatement(), state);
-                }
-
             }
         }
+        return true;
     }
 
     public static boolean processDeclarations(DLangDeclaration element, @NotNull PsiScopeProcessor processor,
@@ -2752,7 +2748,9 @@ public class DPsiImplUtil {
             }
         }
         if (element.getAggregateDeclaration() != null) {
-            //todo
+            if (!element.getAggregateDeclaration().processDeclarations(processor, state, lastParent, place)) {
+                return false;
+            }
         }
         if (element.getImportDeclaration() != null) {
             if (!processor.execute(element.getImportDeclaration(), state)) {
@@ -2762,21 +2760,60 @@ public class DPsiImplUtil {
         if (element.getTemplateDeclaration() != null) {
             //todo
         }
+        return true;
     }
 
-    /*public static boolean processDeclarations(DLangStructDeclaration element, @NotNull PsiScopeProcessor processor,
+    public static boolean processDeclarations(DLangAggregateDeclaration element, @NotNull PsiScopeProcessor processor,
                                               @NotNull ResolveState state,
                                               PsiElement lastParent,
                                               @NotNull PsiElement place) {
+        if (element.getClassDeclaration() != null) {
+            processor.execute(element.getClassDeclaration(), state);
+        }
+        if (element.getInterfaceDeclaration() != null) {
+            processor.execute(element.getInterfaceDeclaration(), state);
+        }
+        if (element.getUnionDeclaration() != null) {
+            processor.execute(element.getUnionDeclaration(), state);
+        }
+        if (element.getStructDeclaration() != null) {
+            processor.execute(element.getStructDeclaration(), state);
+        }
+        return true;
+    }
 
+    public static boolean processDeclarations(DLangStructDeclaration element, @NotNull PsiScopeProcessor processor,
+                                              @NotNull ResolveState state,
+                                              PsiElement lastParent,
+                                              @NotNull PsiElement place) {
+        if (element.getTemplateParameters() != null) {
+            if (element.getTemplateParameters().getTemplateParameterList() != null) {
+                for (DLangTemplateParameter templateParameter : element.getTemplateParameters().getTemplateParameterList().getTemplateParameterList()) {
+                    if (!processor.execute(templateParameter, state)) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     public static boolean processDeclarations(DLangTemplateMixinDeclaration element, @NotNull PsiScopeProcessor processor,
                                               @NotNull ResolveState state,
                                               PsiElement lastParent,
                                               @NotNull PsiElement place) {
+        if (element.getTemplateParameters() != null) {
+            if (element.getTemplateParameters().getTemplateParameterList() != null) {
+                for (DLangTemplateParameter templateParameter : element.getTemplateParameters().getTemplateParameterList().getTemplateParameterList()) {
+                    if (!processor.execute(templateParameter, state)) {
+                        return false;
+                    }
+                }
 
-    }*/
+            }
+        }
+        return true;
+    }
     // -------------------- Scope processing --------------- //
 
 

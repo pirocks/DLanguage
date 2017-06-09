@@ -27,15 +27,9 @@ public class DLangStatementListNoCaseNoDefaultImpl extends ASTWrapperPsiElement 
   }
 
   @Override
-  @Nullable
-  public DLangStatementListNoCaseNoDefault getStatementListNoCaseNoDefault() {
-    return PsiTreeUtil.getChildOfType(this, DLangStatementListNoCaseNoDefault.class);
-  }
-
-  @Override
   @NotNull
-  public DLangStatementNoCaseNoDefault getStatementNoCaseNoDefault() {
-    return notNullChild(PsiTreeUtil.getChildOfType(this, DLangStatementNoCaseNoDefault.class));
+  public List<DLangStatementNoCaseNoDefault> getStatementNoCaseNoDefaultList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DLangStatementNoCaseNoDefault.class);
   }
 
 }

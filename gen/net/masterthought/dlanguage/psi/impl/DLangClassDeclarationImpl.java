@@ -12,6 +12,8 @@ import net.masterthought.dlanguage.stubs.DLangClassDeclStub;
 import net.masterthought.dlanguage.psi.*;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.ResolveState;
+import com.intellij.psi.scope.PsiScopeProcessor;
 import net.masterthought.dlanguage.psi.interfaces.containers.Container;
 import net.masterthought.dlanguage.psi.interfaces.CanInherit;
 import java.util.Map;
@@ -122,6 +124,10 @@ public class DLangClassDeclarationImpl extends DNamedStubbedPsiElementBase<DLang
   @NotNull
   public Map<String, DLangIdentifier> getSuperClassNames() {
     return DPsiImplUtil.getSuperClassNames(this);
+  }
+
+  public boolean processDeclarations(PsiScopeProcessor processor, ResolveState state, PsiElement lastParent, PsiElement place) {
+    return DPsiImplUtil.processDeclarations(this, processor, state, lastParent, place);
   }
 
 }
