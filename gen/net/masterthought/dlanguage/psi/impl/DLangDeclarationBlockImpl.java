@@ -10,6 +10,8 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static net.masterthought.dlanguage.psi.DLangTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import net.masterthought.dlanguage.psi.*;
+import com.intellij.psi.ResolveState;
+import com.intellij.psi.scope.PsiScopeProcessor;
 
 public class DLangDeclarationBlockImpl extends ASTWrapperPsiElement implements DLangDeclarationBlock {
 
@@ -48,6 +50,10 @@ public class DLangDeclarationBlockImpl extends ASTWrapperPsiElement implements D
   @Nullable
   public PsiElement getOpBracesRight() {
     return findChildByType(OP_BRACES_RIGHT);
+  }
+
+  public boolean processDeclarations(PsiScopeProcessor processor, ResolveState state, PsiElement lastParent, PsiElement place) {
+    return DPsiImplUtil.processDeclarations(this, processor, state, lastParent, place);
   }
 
 }

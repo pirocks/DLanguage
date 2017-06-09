@@ -233,6 +233,15 @@ public class DLangParser implements PsiParser, LightPsiParser {
     else if (t == CONDITION) {
       r = Condition(b, 0);
     }
+    else if (t == CONDITION_AUTO_DECLARATION) {
+      r = ConditionAutoDeclaration(b, 0);
+    }
+    else if (t == CONDITION_VAR_DECLARATION) {
+      r = ConditionVarDeclaration(b, 0);
+    }
+    else if (t == CONDITION_VAR_DECLARATOR) {
+      r = ConditionVarDeclarator(b, 0);
+    }
     else if (t == CONDITIONAL_DECLARATION) {
       r = ConditionalDeclaration(b, 0);
     }
@@ -3848,6 +3857,57 @@ public class DLangParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // 'auto' Identifier '=' Expression
+  public static boolean ConditionAutoDeclaration(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "ConditionAutoDeclaration")) return false;
+    if (!nextTokenIs(b, KW_AUTO)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, KW_AUTO);
+    r = r && Identifier(b, l + 1);
+    r = r && consumeToken(b, OP_EQ);
+    r = r && Expression(b, l + 1);
+    exit_section_(b, m, CONDITION_AUTO_DECLARATION, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // TypeCtors Identifier '=' Expression
+  public static boolean ConditionVarDeclaration(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "ConditionVarDeclaration")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, CONDITION_VAR_DECLARATION, "<condition var declaration>");
+    r = TypeCtors(b, l + 1);
+    r = r && Identifier(b, l + 1);
+    r = r && consumeToken(b, OP_EQ);
+    r = r && Expression(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // TypeCtors? BasicType Declarator '=' Expression
+  public static boolean ConditionVarDeclarator(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "ConditionVarDeclarator")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, CONDITION_VAR_DECLARATOR, "<condition var declarator>");
+    r = ConditionVarDeclarator_0(b, l + 1);
+    r = r && BasicType(b, l + 1);
+    r = r && Declarator(b, l + 1);
+    r = r && consumeToken(b, OP_EQ);
+    r = r && Expression(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // TypeCtors?
+  private static boolean ConditionVarDeclarator_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "ConditionVarDeclarator_0")) return false;
+    TypeCtors(b, l + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
   // Condition DeclarationBlock ('else' DeclarationBlock)?
   //     | Condition ':' DeclDefs?
   //     | Condition DeclarationBlock 'else' ':' DeclDefs?
@@ -3966,7 +4026,7 @@ public class DLangParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // Condition (Statement | BlockStatement | DeclarationBlock) ('else' (Statement | DeclarationBlock))?
+  // Condition (Statement | DeclarationBlock) ('else' (Statement | DeclarationBlock))?
   public static boolean ConditionalStatement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "ConditionalStatement")) return false;
     boolean r;
@@ -3978,13 +4038,12 @@ public class DLangParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // Statement | BlockStatement | DeclarationBlock
+  // Statement | DeclarationBlock
   private static boolean ConditionalStatement_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "ConditionalStatement_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = Statement(b, l + 1);
-    if (!r) r = BlockStatement(b, l + 1);
     if (!r) r = DeclarationBlock(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
@@ -5290,7 +5349,7 @@ public class DLangParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ForeachType [',' ForeachTypeList]
+  // ForeachType (',' ForeachType)*
   public static boolean ForeachTypeList(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "ForeachTypeList")) return false;
     boolean r;
@@ -5301,20 +5360,25 @@ public class DLangParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // [',' ForeachTypeList]
+  // (',' ForeachType)*
   private static boolean ForeachTypeList_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "ForeachTypeList_1")) return false;
-    ForeachTypeList_1_0(b, l + 1);
+    int c = current_position_(b);
+    while (true) {
+      if (!ForeachTypeList_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "ForeachTypeList_1", c)) break;
+      c = current_position_(b);
+    }
     return true;
   }
 
-  // ',' ForeachTypeList
+  // ',' ForeachType
   private static boolean ForeachTypeList_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "ForeachTypeList_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, OP_COMMA);
-    r = r && ForeachTypeList(b, l + 1);
+    r = r && ForeachType(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -5893,66 +5957,19 @@ public class DLangParser implements PsiParser, LightPsiParser {
 
   /* ********************************************************** */
   // Expression
-  //     | 'auto' Identifier '=' Expression
-  //     | TypeCtors Identifier '=' Expression
-  //     | TypeCtors? BasicType Declarator '=' Expression
+  //     | ConditionAutoDeclaration
+  //     | ConditionVarDeclaration
+  //     | ConditionVarDeclarator
   public static boolean IfCondition(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "IfCondition")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, IF_CONDITION, "<if condition>");
     r = Expression(b, l + 1);
-    if (!r) r = IfCondition_1(b, l + 1);
-    if (!r) r = IfCondition_2(b, l + 1);
-    if (!r) r = IfCondition_3(b, l + 1);
+    if (!r) r = ConditionAutoDeclaration(b, l + 1);
+    if (!r) r = ConditionVarDeclaration(b, l + 1);
+    if (!r) r = ConditionVarDeclarator(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
-  }
-
-  // 'auto' Identifier '=' Expression
-  private static boolean IfCondition_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "IfCondition_1")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, KW_AUTO);
-    r = r && Identifier(b, l + 1);
-    r = r && consumeToken(b, OP_EQ);
-    r = r && Expression(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // TypeCtors Identifier '=' Expression
-  private static boolean IfCondition_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "IfCondition_2")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = TypeCtors(b, l + 1);
-    r = r && Identifier(b, l + 1);
-    r = r && consumeToken(b, OP_EQ);
-    r = r && Expression(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // TypeCtors? BasicType Declarator '=' Expression
-  private static boolean IfCondition_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "IfCondition_3")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = IfCondition_3_0(b, l + 1);
-    r = r && BasicType(b, l + 1);
-    r = r && Declarator(b, l + 1);
-    r = r && consumeToken(b, OP_EQ);
-    r = r && Expression(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // TypeCtors?
-  private static boolean IfCondition_3_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "IfCondition_3_0")) return false;
-    TypeCtors(b, l + 1);
-    return true;
   }
 
   /* ********************************************************** */
@@ -10889,7 +10906,7 @@ public class DLangParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'static' 'if' '(' AssignExpression ')'
+  // 'static' 'if' '(' AssignExpression ')' (DeclarationBlock)? StaticElseCondition?
   public static boolean StaticIfCondition(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "StaticIfCondition")) return false;
     if (!nextTokenIs(b, KW_STATIC)) return false;
@@ -10898,9 +10915,35 @@ public class DLangParser implements PsiParser, LightPsiParser {
     r = consumeTokens(b, 3, KW_STATIC, KW_IF, OP_PAR_LEFT);
     p = r; // pin = 3
     r = r && report_error_(b, AssignExpression(b, l + 1));
-    r = p && consumeToken(b, OP_PAR_RIGHT) && r;
+    r = p && report_error_(b, consumeToken(b, OP_PAR_RIGHT)) && r;
+    r = p && report_error_(b, StaticIfCondition_5(b, l + 1)) && r;
+    r = p && StaticIfCondition_6(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
+  }
+
+  // (DeclarationBlock)?
+  private static boolean StaticIfCondition_5(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "StaticIfCondition_5")) return false;
+    StaticIfCondition_5_0(b, l + 1);
+    return true;
+  }
+
+  // (DeclarationBlock)
+  private static boolean StaticIfCondition_5_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "StaticIfCondition_5_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = DeclarationBlock(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // StaticElseCondition?
+  private static boolean StaticIfCondition_6(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "StaticIfCondition_6")) return false;
+    StaticElseCondition(b, l + 1);
+    return true;
   }
 
   /* ********************************************************** */

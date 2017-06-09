@@ -32,7 +32,7 @@ D Language File
             DLangParametersImpl(PARAMETERS)
               PsiElement(DLangTokenType.()('(')
               DLangParameterListImpl(PARAMETER_LIST)
-                DLangParameterImpl(PARAMETER)
+                PARAMETER
                   DLangBasicTypeImpl(BASIC_TYPE)
                     DLangIdentifierListImpl(IDENTIFIER_LIST)
                       IDENTIFIER
@@ -48,7 +48,7 @@ D Language File
                         DLangSpecialKeywordImpl(SPECIAL_KEYWORD)
                           PsiElement(DLangTokenType.__FILE__)('__FILE__')
                 PsiElement(DLangTokenType.,)(',')
-                DLangParameterImpl(PARAMETER)
+                PARAMETER
                   DLangBasicTypeImpl(BASIC_TYPE)
                     DLangIdentifierListImpl(IDENTIFIER_LIST)
                       IDENTIFIER
@@ -64,7 +64,7 @@ D Language File
                         DLangSpecialKeywordImpl(SPECIAL_KEYWORD)
                           PsiElement(DLangTokenType.__LINE__)('__LINE__')
                 PsiElement(DLangTokenType.,)(',')
-                DLangParameterImpl(PARAMETER)
+                PARAMETER
                   DLangBasicTypeImpl(BASIC_TYPE)
                     DLangIdentifierListImpl(IDENTIFIER_LIST)
                       IDENTIFIER
@@ -80,7 +80,7 @@ D Language File
                         DLangSpecialKeywordImpl(SPECIAL_KEYWORD)
                           PsiElement(DLangTokenType.__MODULE__)('__MODULE__')
                 PsiElement(DLangTokenType.,)(',')
-                DLangParameterImpl(PARAMETER)
+                PARAMETER
                   DLangBasicTypeImpl(BASIC_TYPE)
                     DLangIdentifierListImpl(IDENTIFIER_LIST)
                       IDENTIFIER
@@ -96,7 +96,7 @@ D Language File
                         DLangSpecialKeywordImpl(SPECIAL_KEYWORD)
                           PsiElement(DLangTokenType.__FUNCTION__)('__FUNCTION__')
                 PsiElement(DLangTokenType.,)(',')
-                DLangParameterImpl(PARAMETER)
+                PARAMETER
                   DLangBasicTypeImpl(BASIC_TYPE)
                     DLangIdentifierListImpl(IDENTIFIER_LIST)
                       IDENTIFIER
@@ -181,7 +181,7 @@ D Language File
             DLangParametersImpl(PARAMETERS)
               PsiElement(DLangTokenType.()('(')
               DLangParameterListImpl(PARAMETER_LIST)
-                DLangParameterImpl(PARAMETER)
+                PARAMETER
                   DLangBasicTypeImpl(BASIC_TYPE)
                     DLangIdentifierListImpl(IDENTIFIER_LIST)
                       IDENTIFIER

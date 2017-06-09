@@ -252,7 +252,7 @@ D Language File
                         DLangParametersImpl(PARAMETERS)
                           PsiElement(DLangTokenType.()('(')
                           DLangParameterListImpl(PARAMETER_LIST)
-                            DLangParameterImpl(PARAMETER)
+                            PARAMETER
                               DLangInOutImpl(IN_OUT)
                                 DLangInOutXImpl(IN_OUT_X)
                                   DLangTypeCtorImpl(TYPE_CTOR)
@@ -270,7 +270,7 @@ D Language File
                                   DLangBasicType2XImpl(BASIC_TYPE_2_X)
                                     PsiElement(DLangTokenType.*)('*')
                             PsiElement(DLangTokenType.,)(',')
-                            DLangParameterImpl(PARAMETER)
+                            PARAMETER
                               DLangTypeImpl(TYPE)
                                 DLangBasicTypeImpl(BASIC_TYPE)
                                   DLangBasicTypeXImpl(BASIC_TYPE_X)

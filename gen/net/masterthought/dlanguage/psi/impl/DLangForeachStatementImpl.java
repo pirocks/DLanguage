@@ -70,8 +70,8 @@ public class DLangForeachStatementImpl extends ASTWrapperPsiElement implements D
     return notNullChild(findChildByType(OP_SCOLON));
   }
 
-  public void processDeclarations(PsiScopeProcessor processor, ResolveState state, PsiElement lastParent, PsiElement place) {
-    DPsiImplUtil.processDeclarations(this, processor, state, lastParent, place);
+  public boolean processDeclarations(PsiScopeProcessor processor, ResolveState state, PsiElement lastParent, PsiElement place) {
+    return DPsiImplUtil.processDeclarations(this, processor, state, lastParent, place);
   }
 
 }

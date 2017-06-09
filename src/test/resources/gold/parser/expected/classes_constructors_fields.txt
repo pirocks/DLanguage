@@ -90,7 +90,7 @@ D Language File
                     DLangParametersImpl(PARAMETERS)
                       PsiElement(DLangTokenType.()('(')
                       DLangParameterListImpl(PARAMETER_LIST)
-                        DLangParameterImpl(PARAMETER)
+                        PARAMETER
                           DLangBasicTypeImpl(BASIC_TYPE)
                             DLangBasicTypeXImpl(BASIC_TYPE_X)
                               PsiElement(DLangTokenType.int)('int')
@@ -115,7 +115,7 @@ D Language File
                         DLangParametersImpl(PARAMETERS)
                           PsiElement(DLangTokenType.()('(')
                           DLangParameterListImpl(PARAMETER_LIST)
-                            DLangParameterImpl(PARAMETER)
+                            PARAMETER
                               DLangBasicTypeImpl(BASIC_TYPE)
                                 DLangIdentifierListImpl(IDENTIFIER_LIST)
                                   IDENTIFIER
@@ -366,7 +366,7 @@ D Language File
                                   DLangForeachImpl(FOREACH)
                                     PsiElement(DLangTokenType.foreach)('foreach')
                                   PsiElement(DLangTokenType.()('(')
-                                  DLangForeachTypeImpl(FOREACH_TYPE)
+                                  FOREACH_TYPE
                                     IDENTIFIER
                                       PsiElement(DLangTokenType.ID)('i')
                                   PsiElement(DLangTokenType.;)(';')
@@ -470,27 +470,34 @@ D Language File
                                   PsiElement(DLangTokenType.if)('if')
                                   PsiElement(DLangTokenType.()('(')
                                   DLangIfConditionImpl(IF_CONDITION)
-                                    DLangCommaExpressionImpl(COMMA_EXPRESSION)
-                                      DLangAssignExpressionImpl(ASSIGN_EXPRESSION)
-                                        DLangPostfixExpressionImpl(POSTFIX_EXPRESSION)
-                                          DLangPrimaryExpressionImpl(PRIMARY_EXPRESSION)
-                                            IDENTIFIER
-                                              PsiElement(DLangTokenType.ID)('i')
-                                        PsiElement(DLangTokenType.++)('++')
-                                        DLangRelExpressionImpl(REL_EXPRESSION)
-                                          PsiElement(DLangTokenType.<)('<')
-                                          DLangPostfixExpressionImpl(POSTFIX_EXPRESSION)
-                                            DLangPrimaryExpressionImpl(PRIMARY_EXPRESSION)
-                                              PsiElement(DLangTokenType.INTEGER_LITERAL)('2')
-                                  PsiElement(DLangTokenType.))(')')
+                                    DECLARATOR_INITIALIZER
+                                      DLangVarDeclaratorImpl(VAR_DECLARATOR)
+                                        IDENTIFIER
+                                          PsiElement(DLangTokenType.ID)('i')
+                                  PsiErrorElement:DLangTokenType.(, DLangTokenType.), DLangTokenType.= or DLangTokenType.[ expected, got '++'
+                                    <empty list>
                                   DLangThenStatementImpl(THEN_STATEMENT)
                                     DLangScopeStatementImpl(SCOPE_STATEMENT)
                                       DLangNonEmptyStatementImpl(NON_EMPTY_STATEMENT)
                                         DLangNonEmptyStatementNoCaseNoDefaultImpl(NON_EMPTY_STATEMENT_NO_CASE_NO_DEFAULT)
-                                          DLangGotoStatementImpl(GOTO_STATEMENT)
-                                            PsiElement(DLangTokenType.goto)('goto')
-                                            IDENTIFIER
-                                              PsiElement(DLangTokenType.ID)('Label')
-                                            PsiElement(DLangTokenType.;)(';')
+                                          DLangExpressionStatementImpl(EXPRESSION_STATEMENT)
+                                            DLangCommaExpressionImpl(COMMA_EXPRESSION)
+                                              DLangAssignExpressionImpl(ASSIGN_EXPRESSION)
+                                                PsiElement(DLangTokenType.++)('++')
+                                                DLangRelExpressionImpl(REL_EXPRESSION)
+                                                  PsiElement(DLangTokenType.<)('<')
+                                                  DLangPostfixExpressionImpl(POSTFIX_EXPRESSION)
+                                                    DLangPrimaryExpressionImpl(PRIMARY_EXPRESSION)
+                                                      PsiElement(DLangTokenType.INTEGER_LITERAL)('2')
+                            PsiErrorElement:<add expression>, <equal expression>, <identity expression>, <in expression>, <mul expression>, <postfix expression>, <rel expression>, <shift expression>, <type ctor>, DLangTokenType.!, DLangTokenType.%=, DLangTokenType.&, DLangTokenType.&&, DLangTokenType.&=, DLangTokenType.(, DLangTokenType.*, DLangTokenType.*=, DLangTokenType.+, DLangTokenType.++, DLangTokenType.+=, DLangTokenType.,, DLangTokenType.-, DLangTokenType.--, DLangTokenType.-=, DLangTokenType./=, DLangTokenType.;, DLangTokenType.<<=, DLangTokenType.=, DLangTokenType.>>=, DLangTokenType.>>>=, DLangTokenType.?, DLangTokenType.^=, DLangTokenType.^^, DLangTokenType.^^=, DLangTokenType.cast, DLangTokenType.delete, DLangTokenType.else, DLangTokenType.|, DLangTokenType.|=, DLangTokenType.||, DLangTokenType.~ or DLangTokenType.~= expected, got ')'
+                              PsiElement(DLangTokenType.))(')')
+                          DLangStatementImpl(STATEMENT)
+                            DLangNonEmptyStatementImpl(NON_EMPTY_STATEMENT)
+                              DLangNonEmptyStatementNoCaseNoDefaultImpl(NON_EMPTY_STATEMENT_NO_CASE_NO_DEFAULT)
+                                DLangGotoStatementImpl(GOTO_STATEMENT)
+                                  PsiElement(DLangTokenType.goto)('goto')
+                                  IDENTIFIER
+                                    PsiElement(DLangTokenType.ID)('Label')
+                                  PsiElement(DLangTokenType.;)(';')
                         PsiElement(DLangTokenType.})('}')
               PsiElement(DLangTokenType.})('}')

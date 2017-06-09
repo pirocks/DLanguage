@@ -7,7 +7,7 @@ D Language File
             PsiElement(DLangTokenType.foreach_reverse)('foreach_reverse')
           PsiElement(DLangTokenType.()('(')
           DLangForeachTypeListImpl(FOREACH_TYPE_LIST)
-            DLangForeachTypeImpl(FOREACH_TYPE)
+            FOREACH_TYPE
               IDENTIFIER
                 PsiElement(DLangTokenType.ID)('e')
           PsiElement(DLangTokenType.;)(';')

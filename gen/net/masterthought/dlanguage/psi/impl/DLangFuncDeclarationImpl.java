@@ -165,8 +165,8 @@ public class DLangFuncDeclarationImpl extends DNamedStubbedPsiElementBase<DLangF
     return DPsiImplUtil.isPropertyFunction(this);
   }
 
-  public void processDeclarations(PsiScopeProcessor processor, ResolveState state, PsiElement lastParent, PsiElement place) {
-    DPsiImplUtil.processDeclarations(this, processor, state, lastParent, place);
+  public boolean processDeclarations(PsiScopeProcessor processor, ResolveState state, PsiElement lastParent, PsiElement place) {
+    return DPsiImplUtil.processDeclarations(this, processor, state, lastParent, place);
   }
 
 }

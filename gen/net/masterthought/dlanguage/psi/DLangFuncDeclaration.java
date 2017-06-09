@@ -90,6 +90,6 @@ public interface DLangFuncDeclaration extends StatementContainer, DNamedElement,
 
   boolean isPropertyFunction();
 
-  void processDeclarations(PsiScopeProcessor processor, ResolveState state, PsiElement lastParent, PsiElement place);
+  boolean processDeclarations(PsiScopeProcessor processor, ResolveState state, PsiElement lastParent, PsiElement place);
 
 }

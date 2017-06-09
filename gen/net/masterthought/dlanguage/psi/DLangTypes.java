@@ -85,7 +85,7 @@ public interface DLangTypes {
   IElementType CAST_EXPRESSION = new DLangElementType("CAST_EXPRESSION");
   IElementType CATCH = new DLangElementType("CATCH");
   IElementType CATCHES = new DLangElementType("CATCHES");
-  IElementType CATCH_PARAMETER = new DLangElementType("CATCH_PARAMETER");
+  IElementType CATCH_PARAMETER = DElementTypeFactory.factory("CATCH_PARAMETER");
   IElementType CLASS_ARGUMENTS = new DLangElementType("CLASS_ARGUMENTS");
   IElementType CLASS_DECLARATION = DElementTypeFactory.factory("CLASS_DECLARATION");
   IElementType CLASS_TEMPLATE_DECLARATION = new DLangElementType("CLASS_TEMPLATE_DECLARATION");
@@ -94,6 +94,9 @@ public interface DLangTypes {
   IElementType CONDITIONAL_DECLARATION = new DLangElementType("CONDITIONAL_DECLARATION");
   IElementType CONDITIONAL_EXPRESSION_ = new DLangElementType("CONDITIONAL_EXPRESSION_");
   IElementType CONDITIONAL_STATEMENT = new DLangElementType("CONDITIONAL_STATEMENT");
+  IElementType CONDITION_AUTO_DECLARATION = DElementTypeFactory.factory("CONDITION_AUTO_DECLARATION");
+  IElementType CONDITION_VAR_DECLARATION = DElementTypeFactory.factory("CONDITION_VAR_DECLARATION");
+  IElementType CONDITION_VAR_DECLARATOR = DElementTypeFactory.factory("CONDITION_VAR_DECLARATOR");
   IElementType CONSTRAINT = new DLangElementType("CONSTRAINT");
   IElementType CONSTRUCTOR = DElementTypeFactory.factory("CONSTRUCTOR");
   IElementType CONSTRUCTOR_TEMPLATE = new DLangElementType("CONSTRUCTOR_TEMPLATE");
@@ -699,6 +702,15 @@ public interface DLangTypes {
       }
       else if (type == CONDITIONAL_STATEMENT) {
         return new DLangConditionalStatementImpl(node);
+      }
+      else if (type == CONDITION_AUTO_DECLARATION) {
+        return new DLangConditionAutoDeclarationImpl(node);
+      }
+      else if (type == CONDITION_VAR_DECLARATION) {
+        return new DLangConditionVarDeclarationImpl(node);
+      }
+      else if (type == CONDITION_VAR_DECLARATOR) {
+        return new DLangConditionVarDeclaratorImpl(node);
       }
       else if (type == CONSTRAINT) {
         return new DLangConstraintImpl(node);

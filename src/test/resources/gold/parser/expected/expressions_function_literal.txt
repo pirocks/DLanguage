@@ -15,7 +15,7 @@ D Language File
                     DLangParametersImpl(PARAMETERS)
                       PsiElement(DLangTokenType.()('(')
                       DLangParameterListImpl(PARAMETER_LIST)
-                        DLangParameterImpl(PARAMETER)
+                        PARAMETER
                           DLangBasicTypeImpl(BASIC_TYPE)
                             DLangBasicTypeXImpl(BASIC_TYPE_X)
                               PsiElement(DLangTokenType.char)('char')
@@ -62,7 +62,7 @@ D Language File
                               DLangParametersImpl(PARAMETERS)
                                 PsiElement(DLangTokenType.()('(')
                                 DLangParameterListImpl(PARAMETER_LIST)
-                                  DLangParameterImpl(PARAMETER)
+                                  PARAMETER
                                     DLangBasicTypeImpl(BASIC_TYPE)
                                       DLangBasicTypeXImpl(BASIC_TYPE_X)
                                         PsiElement(DLangTokenType.char)('char')
@@ -124,7 +124,7 @@ D Language File
                     DLangParametersImpl(PARAMETERS)
                       PsiElement(DLangTokenType.()('(')
                       DLangParameterListImpl(PARAMETER_LIST)
-                        DLangParameterImpl(PARAMETER)
+                        PARAMETER
                           DLangBasicTypeImpl(BASIC_TYPE)
                             DLangBasicTypeXImpl(BASIC_TYPE_X)
                               PsiElement(DLangTokenType.char)('char')
@@ -179,7 +179,7 @@ D Language File
                                                 DLangParametersImpl(PARAMETERS)
                                                   PsiElement(DLangTokenType.()('(')
                                                   DLangParameterListImpl(PARAMETER_LIST)
-                                                    DLangParameterImpl(PARAMETER)
+                                                    PARAMETER
                                                       DLangBasicTypeImpl(BASIC_TYPE)
                                                         DLangBasicTypeXImpl(BASIC_TYPE_X)
                                                           PsiElement(DLangTokenType.char)('char')
@@ -218,7 +218,7 @@ D Language File
             DLangParametersImpl(PARAMETERS)
               PsiElement(DLangTokenType.()('(')
               DLangParameterListImpl(PARAMETER_LIST)
-                DLangParameterImpl(PARAMETER)
+                PARAMETER
                   DLangTypeImpl(TYPE)
                     DLangBasicTypeImpl(BASIC_TYPE)
                       DLangBasicTypeXImpl(BASIC_TYPE_X)
@@ -229,7 +229,7 @@ D Language File
                         DLangParametersImpl(PARAMETERS)
                           PsiElement(DLangTokenType.()('(')
                           DLangParameterListImpl(PARAMETER_LIST)
-                            DLangParameterImpl(PARAMETER)
+                            PARAMETER
                               DLangBasicTypeImpl(BASIC_TYPE)
                                 DLangBasicTypeXImpl(BASIC_TYPE_X)
                                   PsiElement(DLangTokenType.int)('int')
@@ -293,7 +293,7 @@ D Language File
                               DLangParametersImpl(PARAMETERS)
                                 PsiElement(DLangTokenType.()('(')
                                 DLangParameterListImpl(PARAMETER_LIST)
-                                  DLangParameterImpl(PARAMETER)
+                                  PARAMETER
                                     DLangBasicTypeImpl(BASIC_TYPE)
                                       DLangBasicTypeXImpl(BASIC_TYPE_X)
                                         PsiElement(DLangTokenType.int)('int')
@@ -359,7 +359,7 @@ D Language File
             DLangParametersImpl(PARAMETERS)
               PsiElement(DLangTokenType.()('(')
               DLangParameterListImpl(PARAMETER_LIST)
-                DLangParameterImpl(PARAMETER)
+                PARAMETER
                   DLangTypeImpl(TYPE)
                     DLangBasicTypeImpl(BASIC_TYPE)
                       DLangBasicTypeXImpl(BASIC_TYPE_X)
@@ -370,7 +370,7 @@ D Language File
                         DLangParametersImpl(PARAMETERS)
                           PsiElement(DLangTokenType.()('(')
                           DLangParameterListImpl(PARAMETER_LIST)
-                            DLangParameterImpl(PARAMETER)
+                            PARAMETER
                               DLangBasicTypeImpl(BASIC_TYPE)
                                 DLangBasicTypeXImpl(BASIC_TYPE_X)
                                   PsiElement(DLangTokenType.int)('int')
@@ -446,7 +446,7 @@ D Language File
                                             DLangParametersImpl(PARAMETERS)
                                               PsiElement(DLangTokenType.()('(')
                                               DLangParameterListImpl(PARAMETER_LIST)
-                                                DLangParameterImpl(PARAMETER)
+                                                PARAMETER
                                                   DLangBasicTypeImpl(BASIC_TYPE)
                                                     DLangBasicTypeXImpl(BASIC_TYPE_X)
                                                       PsiElement(DLangTokenType.int)('int')

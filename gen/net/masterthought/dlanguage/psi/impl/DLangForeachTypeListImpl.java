@@ -28,20 +28,8 @@ public class DLangForeachTypeListImpl extends ASTWrapperPsiElement implements DL
 
   @Override
   @NotNull
-  public DLangForeachType getForeachType() {
-    return notNullChild(PsiTreeUtil.getChildOfType(this, DLangForeachType.class));
-  }
-
-  @Override
-  @Nullable
-  public DLangForeachTypeList getForeachTypeList() {
-    return PsiTreeUtil.getChildOfType(this, DLangForeachTypeList.class);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getOpComma() {
-    return findChildByType(OP_COMMA);
+  public List<DLangForeachType> getForeachTypeList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DLangForeachType.class);
   }
 
 }

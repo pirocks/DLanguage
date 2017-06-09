@@ -33,6 +33,10 @@ public class DElementTypeFactory {
         if (name.equals("TEMPLATE_PARAMETER")) return new DLangTemplateParameterStubElementType(name);
         if (name.equals("PARAMETER")) return new DLangParameterStubElementType(name);
         if (name.equals("FOREACH_TYPE")) return new DLangForeachTypeStubElementType(name);
+        if (name.equals("CONDITION_VAR_DECLARATOR")) return new DLangConditionVarDeclaratorStubElementType(name);
+        if (name.equals("CONDITION_AUTO_DECLARATION")) return new DLangConditionAutoDeclStubElementType(name);
+        if (name.equals("CONDITION_VAR_DECLARATION")) return new DLangConditionVarDeclStubElementType(name);
+        if (name.equals("CATCH_PARAMETER")) return new DLangCatchParameterStubElementType(name);
         throw new RuntimeException("Unknown element type: " + name);
     }
 }

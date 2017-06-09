@@ -117,7 +117,7 @@ D Language File
                             DLangForeachImpl(FOREACH)
                               PsiElement(DLangTokenType.foreach)('foreach')
                             PsiElement(DLangTokenType.()('(')
-                            DLangForeachTypeImpl(FOREACH_TYPE)
+                            FOREACH_TYPE
                               IDENTIFIER
                                 PsiElement(DLangTokenType.ID)('i')
                             PsiElement(DLangTokenType.;)(';')

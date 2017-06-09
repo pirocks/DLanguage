@@ -9,7 +9,7 @@ D Language File
           DLangTemplateParametersImpl(TEMPLATE_PARAMETERS)
             PsiElement(DLangTokenType.()('(')
             DLangTemplateParameterListImpl(TEMPLATE_PARAMETER_LIST)
-              DLangTemplateParameterImpl(TEMPLATE_PARAMETER)
+              TEMPLATE_PARAMETER
                 DLangTemplateAliasParameterImpl(TEMPLATE_ALIAS_PARAMETER)
                   PsiElement(DLangTokenType.alias)('alias')
                   DLangTypeImpl(TYPE)
@@ -19,8 +19,9 @@ D Language File
                   IDENTIFIER
                     PsiElement(DLangTokenType.ID)('x')
             PsiElement(DLangTokenType.))(')')
-          PsiElement(DLangTokenType.{)('{')
-          PsiElement(DLangTokenType.})('}')
+          DLangAggregateBodyImpl(AGGREGATE_BODY)
+            PsiElement(DLangTokenType.{)('{')
+            PsiElement(DLangTokenType.})('}')
     DLangDeclDefImpl(DECL_DEF)
       DLangDeclarationImpl(DECLARATION)
         DLangVarDeclarationsImpl(VAR_DECLARATIONS)

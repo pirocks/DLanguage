@@ -1921,6 +1921,258 @@ public class DPsiImplUtil {
     // ------------ Foreach Type Declaration ----------------- //
 
 
+    // ------------ Condition Auto Declaration ----------------- //
+
+    @NotNull
+    private static DLangIdentifier getIdentifier(@NotNull DLangConditionAutoDeclaration o) {
+        return o.getIdentifier();
+    }
+
+    @NotNull
+    public static String getName(@NotNull DLangConditionAutoDeclaration o) {
+        DLangConditionAutoDeclStub stub = o.getStub();
+        if (stub != null) return StringUtil.notNullize(stub.getName());
+        return getIdentifier(o).getName();
+    }
+
+    @Nullable
+    public static PsiElement getNameIdentifier(@NotNull DLangConditionAutoDeclaration o) {
+        ASTNode keyNode = o.getNode();
+        return keyNode != null ? keyNode.getPsi() : null;
+    }
+
+    @NotNull
+    public static PsiElement setName(@NotNull DLangConditionAutoDeclaration o, @NotNull String newName) {
+        PsiElement e = DElementFactory.createDLangIdentifierFromText(o.getProject(), newName);
+        getIdentifier(o).replace(e);
+        return o;
+    }
+
+    @NotNull
+    public static PsiReference getReference(@NotNull DLangConditionAutoDeclaration o) {
+        return new DReference(o, TextRange.from(0, getName(o).length()));
+    }
+
+    @NotNull
+    public static ItemPresentation getPresentation(final DLangConditionAutoDeclaration o) {
+        return new ItemPresentation() {
+            @NotNull
+            @Override
+            public String getPresentableText() {
+                return o.getName();
+            }
+
+            /**
+             * This is needed to decipher between files when resolving multiple references.
+             */
+            @Nullable
+            @Override
+            public String getLocationString() {
+                final PsiFile psiFile = o.getContainingFile();
+                return psiFile instanceof DLangFile ? ((DLangFile) psiFile).getModuleOrFileName() : null;
+            }
+
+            @Nullable
+            @Override
+            public Icon getIcon(boolean unused) {
+                return DLangIcons.FILE;
+            }
+        };
+    }
+
+    // ------------ Condition Auto Declaration ----------------- //
+
+    // ------------ Condition Var Declaration ----------------- //
+
+    @NotNull
+    private static DLangIdentifier getIdentifier(@NotNull DLangConditionVarDeclaration o) {
+        return o.getIdentifier();
+    }
+
+    @NotNull
+    public static String getName(@NotNull DLangConditionVarDeclaration o) {
+        DLangConditionVarDeclStub stub = o.getStub();
+        if (stub != null) return StringUtil.notNullize(stub.getName());
+        return getIdentifier(o).getName();
+    }
+
+    @Nullable
+    public static PsiElement getNameIdentifier(@NotNull DLangConditionVarDeclaration o) {
+        ASTNode keyNode = o.getNode();
+        return keyNode != null ? keyNode.getPsi() : null;
+    }
+
+    @NotNull
+    public static PsiElement setName(@NotNull DLangConditionVarDeclaration o, @NotNull String newName) {
+        PsiElement e = DElementFactory.createDLangIdentifierFromText(o.getProject(), newName);
+        getIdentifier(o).replace(e);
+        return o;
+    }
+
+    @NotNull
+    public static PsiReference getReference(@NotNull DLangConditionVarDeclaration o) {
+        return new DReference(o, TextRange.from(0, getName(o).length()));
+    }
+
+    @NotNull
+    public static ItemPresentation getPresentation(final DLangConditionVarDeclaration o) {
+        return new ItemPresentation() {
+            @NotNull
+            @Override
+            public String getPresentableText() {
+                return o.getName();
+            }
+
+            /**
+             * This is needed to decipher between files when resolving multiple references.
+             */
+            @Nullable
+            @Override
+            public String getLocationString() {
+                final PsiFile psiFile = o.getContainingFile();
+                return psiFile instanceof DLangFile ? ((DLangFile) psiFile).getModuleOrFileName() : null;
+            }
+
+            @Nullable
+            @Override
+            public Icon getIcon(boolean unused) {
+                return DLangIcons.FILE;
+            }
+        };
+    }
+
+    // ------------ Condition Auto Declaration ----------------- //
+
+    // ------------ Condition Var Declarator ----------------- //
+
+    @NotNull
+    private static DLangIdentifier getIdentifier(@NotNull DLangConditionVarDeclarator o) {
+        return getIdentifier(o.getDeclarator());
+    }
+
+    @NotNull
+    private static DLangIdentifier getIdentifier(DLangDeclarator declarator) {
+        if (declarator.getVarDeclarator() != null) {
+            return declarator.getVarDeclarator().getIdentifier();
+        }
+        return getIdentifier(declarator.getAltDeclarator());
+    }
+
+    @NotNull
+    public static String getName(@NotNull DLangConditionVarDeclarator o) {
+        DLangConditionVarDeclaratorStub stub = o.getStub();
+        if (stub != null) return StringUtil.notNullize(stub.getName());
+        return getIdentifier(o).getName();
+    }
+
+    @Nullable
+    public static PsiElement getNameIdentifier(@NotNull DLangConditionVarDeclarator o) {
+        ASTNode keyNode = o.getNode();
+        return keyNode != null ? keyNode.getPsi() : null;
+    }
+
+    @NotNull
+    public static PsiElement setName(@NotNull DLangConditionVarDeclarator o, @NotNull String newName) {
+        PsiElement e = DElementFactory.createDLangIdentifierFromText(o.getProject(), newName);
+        getIdentifier(o).replace(e);
+        return o;
+    }
+
+    @NotNull
+    public static PsiReference getReference(@NotNull DLangConditionVarDeclarator o) {
+        return new DReference(o, TextRange.from(0, getName(o).length()));
+    }
+
+    @NotNull
+    public static ItemPresentation getPresentation(final DLangConditionVarDeclarator o) {
+        return new ItemPresentation() {
+            @NotNull
+            @Override
+            public String getPresentableText() {
+                return o.getName();
+            }
+
+            /**
+             * This is needed to decipher between files when resolving multiple references.
+             */
+            @Nullable
+            @Override
+            public String getLocationString() {
+                final PsiFile psiFile = o.getContainingFile();
+                return psiFile instanceof DLangFile ? ((DLangFile) psiFile).getModuleOrFileName() : null;
+            }
+
+            @Nullable
+            @Override
+            public Icon getIcon(boolean unused) {
+                return DLangIcons.FILE;
+            }
+        };
+    }
+
+    // ------------ Condition Auto Declarator ----------------- //
+
+    // ------------ Catch Parameter ----------------- //
+
+    @NotNull
+    private static DLangIdentifier getIdentifier(@NotNull DLangCatchParameter o) {
+        return o.getIdentifier();
+    }
+
+    @NotNull
+    public static String getName(@NotNull DLangCatchParameter o) {
+        DLangCatchParameterStub stub = o.getStub();
+        if (stub != null) return StringUtil.notNullize(stub.getName());
+        return getIdentifier(o).getName();
+    }
+
+    @Nullable
+    public static PsiElement getNameIdentifier(@NotNull DLangCatchParameter o) {
+        ASTNode keyNode = o.getNode();
+        return keyNode != null ? keyNode.getPsi() : null;
+    }
+
+    @NotNull
+    public static PsiElement setName(@NotNull DLangCatchParameter o, @NotNull String newName) {
+        PsiElement e = DElementFactory.createDLangIdentifierFromText(o.getProject(), newName);
+        getIdentifier(o).replace(e);
+        return o;
+    }
+
+    @NotNull
+    public static PsiReference getReference(@NotNull DLangCatchParameter o) {
+        return new DReference(o, TextRange.from(0, getName(o).length()));
+    }
+
+    @NotNull
+    public static ItemPresentation getPresentation(final DLangCatchParameter o) {
+        return new ItemPresentation() {
+            @NotNull
+            @Override
+            public String getPresentableText() {
+                return o.getName();
+            }
+
+            /**
+             * This is needed to decipher between files when resolving multiple references.
+             */
+            @Nullable
+            @Override
+            public String getLocationString() {
+                final PsiFile psiFile = o.getContainingFile();
+                return psiFile instanceof DLangFile ? ((DLangFile) psiFile).getModuleOrFileName() : null;
+            }
+
+            @Nullable
+            @Override
+            public Icon getIcon(boolean unused) {
+                return DLangIcons.FILE;
+            }
+        };
+    }
+
+    // ------------ Catch Parameter ----------------- //
+
     // -------------------- Visibility --------------------- //
 
     public static boolean isSomeVisibility(DLangAliasDeclaration o, Visibility visibility) {
@@ -2059,22 +2311,35 @@ public class DPsiImplUtil {
     // -------------------- Visibility --------------------- //
 
     // -------------------- Scope processing --------------- //
+
+    /**
+     * takes the elements declared in the given psi and passes them to the scope processor via the execute method. The scope processor will return false if it has found what it is "looking for". Note that certain declarations processors will not process child block statement/aggregate bodies since those have their own processor.
+     * Some of the process declarations methods may return early while others will search throught the entire scope
+     *
+     * @param element
+     * @param processor
+     * @param state
+     * @param lastParent todo mae use of this do determine if scope statements/decldefs contained inside a element should be processed or not.
+     * @param place
+     * @return
+     */
     public static boolean processDeclarations(DLangFuncDeclaration element, @NotNull PsiScopeProcessor processor,
                                               @NotNull ResolveState state,
                                               PsiElement lastParent,
                                               @NotNull PsiElement place) {
         //todo handle place
+        boolean shouldContinue = true;
         for (DLangParameter parameter : element.getArguments()) {
-            if (processor.execute(parameter, state)) {
-                return true;
+            if (!processor.execute(parameter, state)) {
+                shouldContinue = false;
             }
         }
         for (DLangTemplateParameter templateParameter : element.getTemplateArguments()) {
-            if (processor.execute(templateParameter, state)) {
-                return true;
+            if (!processor.execute(templateParameter, state)) {
+                shouldContinue = false;
             }
         }
-        return false;
+        return shouldContinue;
     }
 
     public static boolean processDeclarations(DLangForeachStatement element, @NotNull PsiScopeProcessor processor,
@@ -2082,115 +2347,424 @@ public class DPsiImplUtil {
                                               PsiElement lastParent,
                                               @NotNull PsiElement place) {
         //todo handle place
-        element.getForeachTypeList().getForeachType()
+        boolean shouldContinue = true;
+        for (DLangForeachType foreachType : element.getForeachTypeList().getForeachTypeList()) {
+            if (!processor.execute(foreachType, state)) {
+                shouldContinue = false;
+            }
+        }
+        return shouldContinue;
     }
 
     public static boolean processDeclarations(DLangWhileStatement element, @NotNull PsiScopeProcessor processor,
                                               @NotNull ResolveState state,
                                               PsiElement lastParent,
                                               @NotNull PsiElement place) {
-
+        //todo should handle place
+        return true;//todo check that while statement's can/can't contain truthy/falsy variable declarations or casts
     }
 
     public static boolean processDeclarations(DLangForStatement element, @NotNull PsiScopeProcessor processor,
                                               @NotNull ResolveState state,
                                               PsiElement lastParent,
                                               @NotNull PsiElement place) {
-
+        //todo handle place
+        if (element.getInitialize() == null || element.getInitialize().getStatement() == null)
+            return true;
+        return element.getInitialize().getStatement().processDeclarations(processor, state, lastParent, place);
     }
 
     public static boolean processDeclarations(DLangDoStatement element, @NotNull PsiScopeProcessor processor,
                                               @NotNull ResolveState state,
                                               PsiElement lastParent,
                                               @NotNull PsiElement place) {
-
+        return true;//todo check that while statement's can/can't contain truthy/falsy variable declarations or casts
     }
 
     public static boolean processDeclarations(DLangIfStatement element, @NotNull PsiScopeProcessor processor,
                                               @NotNull ResolveState state,
                                               PsiElement lastParent,
                                               @NotNull PsiElement place) {
-
+        boolean shouldContinue = true;
+        if (element.getIfCondition() != null) {
+            final DLangIfCondition condition = element.getIfCondition();
+            if (condition.getConditionAutoDeclaration() != null) {
+                if (!processor.execute(condition.getConditionAutoDeclaration(), state)) {
+                    shouldContinue = false;
+                }
+            } else if (condition.getConditionVarDeclaration() != null) {
+                if (!processor.execute(condition.getConditionVarDeclaration(), state)) {
+                    shouldContinue = false;
+                }
+            } else if (condition.getConditionVarDeclarator() != null) {
+                if (!processor.execute(condition.getConditionVarDeclarator(), state)) {
+                    shouldContinue = false;
+                }
+            }
+        }
+        return shouldContinue;
     }
 
     public static boolean processDeclarations(DLangBlockStatement element, @NotNull PsiScopeProcessor processor,
                                               @NotNull ResolveState state,
                                               PsiElement lastParent,
                                               @NotNull PsiElement place) {
-
+        //todo handle place
+        //todo do statements
+        if (element.getStatementList() != null) {
+            for (DLangStatement dLangStatement : element.getStatementList().getStatementList()) {
+                if (!dLangStatement.processDeclarations(processor, state, lastParent, place)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     public static boolean processDeclarations(DLangSwitchStatement element, @NotNull PsiScopeProcessor processor,
                                               @NotNull ResolveState state,
                                               PsiElement lastParent,
                                               @NotNull PsiElement place) {
-
+        //todo truthy types in switch statement???//should declarations in the switch scope statementbe processed or do they go out of scope
+        return true;
     }
 
     public static boolean processDeclarations(DLangFinalSwitchStatement element, @NotNull PsiScopeProcessor processor,
                                               @NotNull ResolveState state,
                                               PsiElement lastParent,
                                               @NotNull PsiElement place) {
-
+        return true;//see regular switch statement
     }
 
     public static boolean processDeclarations(DLangWithStatement element, @NotNull PsiScopeProcessor processor,
                                               @NotNull ResolveState state,
                                               PsiElement lastParent,
                                               @NotNull PsiElement place) {
-
+        return true;//todo I don't actually know how with statements work in D
     }
 
     public static boolean processDeclarations(DLangSynchronizedStatement element, @NotNull PsiScopeProcessor processor,
                                               @NotNull ResolveState state,
                                               PsiElement lastParent,
                                               @NotNull PsiElement place) {
-
+        return true; //how does scope work in synchronized D statements
     }
 
-    public static boolean processDeclarations(DLangTryStatement element, @NotNull PsiScopeProcessor processor,
+    public static boolean processDeclarations(DLangCatch element, @NotNull PsiScopeProcessor processor,
                                               @NotNull ResolveState state,
                                               PsiElement lastParent,
                                               @NotNull PsiElement place) {
-
+        return processor.execute(element.getCatchParameter(), state);
     }
 
     public static boolean processDeclarations(DLangForeachRangeStatement element, @NotNull PsiScopeProcessor processor,
                                               @NotNull ResolveState state,
                                               PsiElement lastParent,
                                               @NotNull PsiElement place) {
-
+        //see foreach
+        return processor.execute(element.getForeachType(), state);
     }
 
     public static boolean processDeclarations(DLangConditionalStatement element, @NotNull PsiScopeProcessor processor,
                                               @NotNull ResolveState state,
                                               PsiElement lastParent,
                                               @NotNull PsiElement place) {
-
+        //always recurse in since this is a compile time condition
+        //handle place and lastParent
+        for (DLangStatement dLangStatement : element.getStatementList()) {
+            if (!dLangStatement.processDeclarations(processor, state, lastParent, place)) {
+                return false;
+            }
+        }
+        for (DLangDeclarationBlock block : element.getDeclarationBlockList()) {
+            if (block.processDeclarations(processor, state, lastParent, place)) {
+                return false;
+            }
+        }
+        return true;
     }
 
-    public static boolean processDeclarations(DLangFunctionBody element, @NotNull PsiScopeProcessor processor,
+
+    public static boolean processDeclarations(DLangDeclarationBlock element, @NotNull PsiScopeProcessor processor,
                                               @NotNull ResolveState state,
                                               PsiElement lastParent,
                                               @NotNull PsiElement place) {
+        if (element.getDeclDef() != null) {
+            if (!element.getDeclDef().processDeclarations(processor, state, lastParent, place)) {
+                return false;
+            }
+        }
+        if (element.getDeclDefs() != null) {
+            for (DLangDeclDef def : element.getDeclDefs().getDeclDefList()) {
+                if (!def.processDeclarations(processor, state, lastParent, place)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
+    public static boolean processDeclarations(DLangDeclDef def, @NotNull PsiScopeProcessor processor,
+                                              @NotNull ResolveState state,
+                                              PsiElement lastParent,
+                                              @NotNull PsiElement place) {
+        if (def.getDeclaration() != null) {
+            if (!def.getDeclaration().processDeclarations(processor, state, lastParent, place)) {
+                return false;
+            }
+        }
+        if (def.getConstructor() != null) {
+            //todo make sure names for constructors are handled correctly
+            processor.execute(def.getConstructor(), state);
+        }
+        if (def.getAliasThis() != null) {
+            //todo handle alias this
+            //processor.execute(def.getAliasThis(), state);
+        }
+        if (def.getConditionalDeclaration() != null) {
+            processor.execute(def.getConditionalDeclaration(), state);
+        }
+        if (def.getTemplateDeclaration() != null) {
+            processor.execute(def.getTemplateDeclaration(), state);
+        }
+        if (def.getTemplateMixinDeclaration() != null) {
+            processor.execute(def.getTemplateMixinDeclaration(), state);
+        }
+        if (def.getTemplateMixin() != null) {
+            //todo handle mixins
+            //processor.execute(def.getTemplateMixin(), state);
+        }
+        if (def.getMixinDeclaration() != null) {
+            //todo handle mixins
+            //processor.execute(def.getMixinDeclaration(), state);
+        }
+        if (def.getStaticIfCondition() != null) {
+            if (def.getStaticIfCondition() != null) {
+                if (def.getStaticIfCondition().getDeclarationBlock() != null) {
+                    if (!(def.getStaticIfCondition().getDeclarationBlock().processDeclarations(processor, state, lastParent, place))) {
+                        return false;
+                    }
+                }
+            }
+        }
+        if (def.getStaticElseCondition() != null) {
+            if (def.getStaticElseCondition().getDeclarationBlock() != null) {
+                if (!(def.getStaticElseCondition().getDeclarationBlock().processDeclarations(processor, state, lastParent, place))) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+
+    public static boolean processDeclarations(DLangConditionalDeclaration element, @NotNull PsiScopeProcessor processor,
+                                              @NotNull ResolveState state,
+                                              PsiElement lastParent,
+                                              @NotNull PsiElement place) {
+        for (DLangDeclarationBlock block : element.getDeclarationBlockList()) {
+            if (!block.processDeclarations(processor, state, lastParent, place)) {
+                return false;
+            }
+        }
+        if (element.getDeclDefs() != null) {
+            for (DLangDeclDef def : element.getDeclDefs().getDeclDefList()) {
+                if (!def.processDeclarations(processor, state, lastParent, place)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     public static boolean processDeclarations(DLangClassDeclaration element, @NotNull PsiScopeProcessor processor,
                                               @NotNull ResolveState state,
                                               PsiElement lastParent,
                                               @NotNull PsiElement place) {
-
+        if (element.getClassTemplateDeclaration() != null) {
+            if (element.getClassTemplateDeclaration().getTemplateParameters().getTemplateParameterList() != null) {
+                for (DLangTemplateParameter templateParameter : element.getClassTemplateDeclaration().getTemplateParameters().getTemplateParameterList().getTemplateParameterList()) {
+                    if (!processor.execute(templateParameter, state)) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     public static boolean processDeclarations(DLangTemplateDeclaration element, @NotNull PsiScopeProcessor processor,
                                               @NotNull ResolveState state,
                                               PsiElement lastParent,
                                               @NotNull PsiElement place) {
-
+        if (element.getTemplateParameters() != null) {
+            if (element.getTemplateParameters().getTemplateParameterList() != null) {
+                for (DLangTemplateParameter templateParameter : element.getTemplateParameters().getTemplateParameterList().getTemplateParameterList()) {
+                    if (!processor.execute(templateParameter, state)) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
-    public static boolean processDeclarations(DLangStructDeclaration element, @NotNull PsiScopeProcessor processor,
+    public static boolean processDeclarations(DLangAggregateBody element, @NotNull PsiScopeProcessor processor,
+                                              @NotNull ResolveState state,
+                                              PsiElement lastParent,
+                                              @NotNull PsiElement place) {
+        if (element.getDeclDefs() != null) {
+            for (DLangDeclDef declDef : element.getDeclDefs().getDeclDefList()) {
+                if (!declDef.processDeclarations(processor, state, lastParent, place)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public static boolean processDeclarations(DLangStatement element, @NotNull PsiScopeProcessor processor,
+                                              @NotNull ResolveState state,
+                                              PsiElement lastParent,
+                                              @NotNull PsiElement place) {
+        if (element.getBlockStatement() != null) {
+
+        }
+        if (element.getNonEmptyStatement() != null) {
+            final DLangNonEmptyStatement nonEmptyStatement = element.getNonEmptyStatement();
+            if (nonEmptyStatement.getCaseRangeStatement() != null) {
+
+            }
+            if (nonEmptyStatement.getCaseStatement() != null) {
+
+            }
+            if (nonEmptyStatement.getDefaultStatement() != null) {
+
+            }
+            if (nonEmptyStatement.getNonEmptyStatementNoCaseNoDefault() != null) {
+                final DLangNonEmptyStatementNoCaseNoDefault statement = nonEmptyStatement.getNonEmptyStatementNoCaseNoDefault();
+                if (statement.getLabeledStatement() != null) {
+                    processor.execute(statement.getLabeledStatement(), state);//todo labeled statements should be DNamedElements
+                    if (statement.getLabeledStatement().getStatement() != null) {
+                        statement.getLabeledStatement().getStatement().processDeclarations(processor, state, lastParent, place);
+                    }
+                }
+                if (statement.getDeclarationStatement() != null) {
+                    statement.getDeclarationStatement().getDeclaration().processDeclarations()
+                }
+                if (statement.getBlockStatement() != null) {
+                    processor.execute(statement.getBlockStatement(), state);
+                }
+                if (statement.getIfStatement() != null) {
+                    processor.execute(statement.getIfStatement(), state);
+                }
+                if (statement.getWhileStatement() != null) {
+                    processor.execute(statement.getWhileStatement(), state);
+                }
+                if (statement.getDoStatement() != null) {
+                    processor.execute(statement.getDoStatement(), state);
+                }
+                if (statement.getForStatement() != null) {
+                    processor.execute(statement.getForStatement(), state);
+                }
+                if (statement.getForeachStatement() != null) {
+                    processor.execute(statement.getForeachStatement(), state);
+                }
+                if (statement.getSwitchStatement() != null) {
+                    processor.execute(statement.getSwitchStatement(), state);
+                }
+                if (statement.getFinalSwitchStatement() != null) {
+                    processor.execute(statement.getFinalSwitchStatement(), state);
+                }
+                if (statement.getContinueStatement() != null) {
+                    processor.execute(statement.getContinueStatement(), state);
+                }
+                if (statement.getBreakStatement() != null) {
+                    processor.execute(statement.getBreakStatement(), state);
+                }
+                if (statement.getReturnStatement() != null) {
+                    processor.execute(statement.getReturnStatement(), state);
+                }
+                if (statement.getGotoStatement() != null) {
+                    processor.execute(statement.getGotoStatement(), state);
+                }
+                if (statement.getWithStatement() != null) {
+                    processor.execute(statement.getWithStatement(), state);
+                }
+                if (statement.getSynchronizedStatement() != null) {
+                    processor.execute(statement.getSynchronizedStatement(), state);
+                }
+                if (statement.getTryStatement() != null) {
+                    processor.execute(statement.getTryStatement(), state);
+                }
+                if (statement.getScopeGuardStatement() != null) {
+                    processor.execute(statement.getScopeGuardStatement(), state);
+                }
+                if (statement.getThrowStatement() != null) {
+                    processor.execute(statement.getThrowStatement(), state);
+                }
+                if (statement.getAsmStatement() != null) {
+                    processor.execute(statement.getAsmStatement(), state);
+                }
+                if (statement.getPragmaStatement() != null) {
+                    processor.execute(statement.getPragmaStatement(), state);
+                }
+                if (statement.getMixinStatement() != null) {
+                    processor.execute(statement.getMixinStatement(), state);
+                }
+                if (statement.getForeachRangeStatement() != null) {
+                    processor.execute(statement.getForeachRangeStatement(), state);
+                }
+                if (statement.getConditionalStatement() != null) {
+                    processor.execute(statement.getConditionalStatement(), state);
+                }
+                if (statement.getExpressionStatement() != null) {
+                    processor.execute(statement.getExpressionStatement(), state);
+                }
+
+            }
+        }
+    }
+
+    public static boolean processDeclarations(DLangDeclaration element, @NotNull PsiScopeProcessor processor,
+                                              @NotNull ResolveState state,
+                                              PsiElement lastParent,
+                                              @NotNull PsiElement place) {
+        if (element.getEnumDeclaration() != null) {
+            //todo members
+            if (!processor.execute(element.getEnumDeclaration(), state)) {
+                return false;
+            }
+        }
+        if (element.getFuncDeclaration() != null) {
+            if (!processor.execute(element.getFuncDeclaration(), state)) {
+                return false;
+            }
+        }
+        if (element.getVarDeclarations() != null) {
+            if (!processor.execute(element.getVarDeclarations(), state)) {
+                return false;
+            }
+        }
+        if (element.getAliasDeclaration() != null) {
+            if (!processor.execute(element.getAliasDeclaration(), state)) {
+                return false;
+            }
+        }
+        if (element.getAggregateDeclaration() != null) {
+            //todo
+        }
+        if (element.getImportDeclaration() != null) {
+            if (!processor.execute(element.getImportDeclaration(), state)) {
+                return false;
+            }
+        }
+        if (element.getTemplateDeclaration() != null) {
+            //todo
+        }
+    }
+
+    /*public static boolean processDeclarations(DLangStructDeclaration element, @NotNull PsiScopeProcessor processor,
                                               @NotNull ResolveState state,
                                               PsiElement lastParent,
                                               @NotNull PsiElement place) {
@@ -2202,7 +2776,7 @@ public class DPsiImplUtil {
                                               PsiElement lastParent,
                                               @NotNull PsiElement place) {
 
-    }
+    }*/
     // -------------------- Scope processing --------------- //
 
 

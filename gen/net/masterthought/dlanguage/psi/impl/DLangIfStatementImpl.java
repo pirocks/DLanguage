@@ -70,8 +70,8 @@ public class DLangIfStatementImpl extends ASTWrapperPsiElement implements DLangI
     return findChildByType(OP_PAR_RIGHT);
   }
 
-  public void processDeclarations(PsiScopeProcessor processor, ResolveState state, PsiElement lastParent, PsiElement place) {
-    DPsiImplUtil.processDeclarations(this, processor, state, lastParent, place);
+  public boolean processDeclarations(PsiScopeProcessor processor, ResolveState state, PsiElement lastParent, PsiElement place) {
+    return DPsiImplUtil.processDeclarations(this, processor, state, lastParent, place);
   }
 
 }

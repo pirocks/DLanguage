@@ -10,6 +10,12 @@ public interface DLangStaticIfCondition extends PsiElement {
   @Nullable
   DLangAssignExpression getAssignExpression();
 
+  @Nullable
+  DLangDeclarationBlock getDeclarationBlock();
+
+  @Nullable
+  DLangStaticElseCondition getStaticElseCondition();
+
   @NotNull
   PsiElement getKwIf();
 

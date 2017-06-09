@@ -68,7 +68,7 @@ D Language File
           DLangTemplateParametersImpl(TEMPLATE_PARAMETERS)
             PsiElement(DLangTokenType.()('(')
             DLangTemplateParameterListImpl(TEMPLATE_PARAMETER_LIST)
-              DLangTemplateParameterImpl(TEMPLATE_PARAMETER)
+              TEMPLATE_PARAMETER
                 DLangTemplateTypeParameterImpl(TEMPLATE_TYPE_PARAMETER)
                   DLangTypeImpl(TYPE)
                     DLangBasicTypeImpl(BASIC_TYPE)
@@ -77,22 +77,23 @@ D Language File
                           PsiElement(DLangTokenType.ID)('T')
                   PsiElement(DLangTokenType....)('...')
             PsiElement(DLangTokenType.))(')')
-          PsiElement(DLangTokenType.{)('{')
-          DLangDeclDefsImpl(DECL_DEFS)
-            DLangDeclDefImpl(DECL_DEF)
-              DLangDeclarationImpl(DECLARATION)
-                ALIAS_DECLARATION
-                  PsiElement(DLangTokenType.alias)('alias')
-                  IDENTIFIER
-                    PsiElement(DLangTokenType.ID)('Tuple')
-                  PsiElement(DLangTokenType.=)('=')
-                  DLangTypeImpl(TYPE)
-                    DLangBasicTypeImpl(BASIC_TYPE)
-                      DLangIdentifierListImpl(IDENTIFIER_LIST)
-                        IDENTIFIER
-                          PsiElement(DLangTokenType.ID)('T')
-                  PsiElement(DLangTokenType.;)(';')
-          PsiElement(DLangTokenType.})('}')
+          DLangAggregateBodyImpl(AGGREGATE_BODY)
+            PsiElement(DLangTokenType.{)('{')
+            DLangDeclDefsImpl(DECL_DEFS)
+              DLangDeclDefImpl(DECL_DEF)
+                DLangDeclarationImpl(DECLARATION)
+                  ALIAS_DECLARATION
+                    PsiElement(DLangTokenType.alias)('alias')
+                    IDENTIFIER
+                      PsiElement(DLangTokenType.ID)('Tuple')
+                    PsiElement(DLangTokenType.=)('=')
+                    DLangTypeImpl(TYPE)
+                      DLangBasicTypeImpl(BASIC_TYPE)
+                        DLangIdentifierListImpl(IDENTIFIER_LIST)
+                          IDENTIFIER
+                            PsiElement(DLangTokenType.ID)('T')
+                    PsiElement(DLangTokenType.;)(';')
+            PsiElement(DLangTokenType.})('}')
     DLangDeclDefImpl(DECL_DEF)
       DLangDeclarationImpl(DECLARATION)
         ENUM_DECLARATION

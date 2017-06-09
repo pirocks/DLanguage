@@ -42,7 +42,7 @@ D Language File
                         DLangTemplateParametersImpl(TEMPLATE_PARAMETERS)
                           PsiElement(DLangTokenType.()('(')
                           DLangTemplateParameterListImpl(TEMPLATE_PARAMETER_LIST)
-                            DLangTemplateParameterImpl(TEMPLATE_PARAMETER)
+                            TEMPLATE_PARAMETER
                               DLangTemplateTypeParameterImpl(TEMPLATE_TYPE_PARAMETER)
                                 DLangTypeImpl(TYPE)
                                   DLangBasicTypeImpl(BASIC_TYPE)
@@ -53,7 +53,7 @@ D Language File
                         DLangParametersImpl(PARAMETERS)
                           PsiElement(DLangTokenType.()('(')
                           DLangParameterListImpl(PARAMETER_LIST)
-                            DLangParameterImpl(PARAMETER)
+                            PARAMETER
                               DLangInOutImpl(IN_OUT)
                                 DLangInOutXImpl(IN_OUT_X)
                                   PsiElement(DLangTokenType.scope)('scope')
@@ -121,7 +121,7 @@ D Language File
                         DLangTemplateParametersImpl(TEMPLATE_PARAMETERS)
                           PsiElement(DLangTokenType.()('(')
                           DLangTemplateParameterListImpl(TEMPLATE_PARAMETER_LIST)
-                            DLangTemplateParameterImpl(TEMPLATE_PARAMETER)
+                            TEMPLATE_PARAMETER
                               DLangTemplateTypeParameterImpl(TEMPLATE_TYPE_PARAMETER)
                                 DLangTypeImpl(TYPE)
                                   DLangBasicTypeImpl(BASIC_TYPE)
@@ -132,7 +132,7 @@ D Language File
                         DLangParametersImpl(PARAMETERS)
                           PsiElement(DLangTokenType.()('(')
                           DLangParameterListImpl(PARAMETER_LIST)
-                            DLangParameterImpl(PARAMETER)
+                            PARAMETER
                               DLangInOutImpl(IN_OUT)
                                 DLangInOutXImpl(IN_OUT_X)
                                   PsiElement(DLangTokenType.scope)('scope')
@@ -213,7 +213,7 @@ D Language File
                           PsiElement(DLangTokenType.foreach)('foreach')
                         PsiElement(DLangTokenType.()('(')
                         DLangForeachTypeListImpl(FOREACH_TYPE_LIST)
-                          DLangForeachTypeImpl(FOREACH_TYPE)
+                          FOREACH_TYPE
                             DLangTypeImpl(TYPE)
                               DLangBasicTypeImpl(BASIC_TYPE)
                                 DLangBasicTypeXImpl(BASIC_TYPE_X)
@@ -221,14 +221,13 @@ D Language File
                             IDENTIFIER
                               PsiElement(DLangTokenType.ID)('a')
                           PsiElement(DLangTokenType.,)(',')
-                          DLangForeachTypeListImpl(FOREACH_TYPE_LIST)
-                            DLangForeachTypeImpl(FOREACH_TYPE)
-                              DLangTypeImpl(TYPE)
-                                DLangBasicTypeImpl(BASIC_TYPE)
-                                  DLangBasicTypeXImpl(BASIC_TYPE_X)
-                                    PsiElement(DLangTokenType.int)('int')
-                              IDENTIFIER
-                                PsiElement(DLangTokenType.ID)('b')
+                          FOREACH_TYPE
+                            DLangTypeImpl(TYPE)
+                              DLangBasicTypeImpl(BASIC_TYPE)
+                                DLangBasicTypeXImpl(BASIC_TYPE_X)
+                                  PsiElement(DLangTokenType.int)('int')
+                            IDENTIFIER
+                              PsiElement(DLangTokenType.ID)('b')
                         PsiElement(DLangTokenType.;)(';')
                         DLangForeachAggregateImpl(FOREACH_AGGREGATE)
                           DLangCommaExpressionImpl(COMMA_EXPRESSION)
@@ -260,7 +259,7 @@ D Language File
                           PsiElement(DLangTokenType.foreach)('foreach')
                         PsiElement(DLangTokenType.()('(')
                         DLangForeachTypeListImpl(FOREACH_TYPE_LIST)
-                          DLangForeachTypeImpl(FOREACH_TYPE)
+                          FOREACH_TYPE
                             DLangTypeImpl(TYPE)
                               DLangBasicTypeImpl(BASIC_TYPE)
                                 DLangBasicTypeXImpl(BASIC_TYPE_X)
@@ -268,23 +267,21 @@ D Language File
                             IDENTIFIER
                               PsiElement(DLangTokenType.ID)('a')
                           PsiElement(DLangTokenType.,)(',')
-                          DLangForeachTypeListImpl(FOREACH_TYPE_LIST)
-                            DLangForeachTypeImpl(FOREACH_TYPE)
-                              DLangTypeImpl(TYPE)
-                                DLangBasicTypeImpl(BASIC_TYPE)
-                                  DLangBasicTypeXImpl(BASIC_TYPE_X)
-                                    PsiElement(DLangTokenType.int)('int')
-                              IDENTIFIER
-                                PsiElement(DLangTokenType.ID)('b')
-                            PsiElement(DLangTokenType.,)(',')
-                            DLangForeachTypeListImpl(FOREACH_TYPE_LIST)
-                              DLangForeachTypeImpl(FOREACH_TYPE)
-                                DLangTypeImpl(TYPE)
-                                  DLangBasicTypeImpl(BASIC_TYPE)
-                                    DLangBasicTypeXImpl(BASIC_TYPE_X)
-                                      PsiElement(DLangTokenType.float)('float')
-                                IDENTIFIER
-                                  PsiElement(DLangTokenType.ID)('c')
+                          FOREACH_TYPE
+                            DLangTypeImpl(TYPE)
+                              DLangBasicTypeImpl(BASIC_TYPE)
+                                DLangBasicTypeXImpl(BASIC_TYPE_X)
+                                  PsiElement(DLangTokenType.int)('int')
+                            IDENTIFIER
+                              PsiElement(DLangTokenType.ID)('b')
+                          PsiElement(DLangTokenType.,)(',')
+                          FOREACH_TYPE
+                            DLangTypeImpl(TYPE)
+                              DLangBasicTypeImpl(BASIC_TYPE)
+                                DLangBasicTypeXImpl(BASIC_TYPE_X)
+                                  PsiElement(DLangTokenType.float)('float')
+                            IDENTIFIER
+                              PsiElement(DLangTokenType.ID)('c')
                         PsiElement(DLangTokenType.;)(';')
                         DLangForeachAggregateImpl(FOREACH_AGGREGATE)
                           DLangCommaExpressionImpl(COMMA_EXPRESSION)

@@ -33,6 +33,18 @@ public class DLangStaticIfConditionImpl extends ASTWrapperPsiElement implements 
   }
 
   @Override
+  @Nullable
+  public DLangDeclarationBlock getDeclarationBlock() {
+    return PsiTreeUtil.getChildOfType(this, DLangDeclarationBlock.class);
+  }
+
+  @Override
+  @Nullable
+  public DLangStaticElseCondition getStaticElseCondition() {
+    return PsiTreeUtil.getChildOfType(this, DLangStaticElseCondition.class);
+  }
+
+  @Override
   @NotNull
   public PsiElement getKwIf() {
     return notNullChild(findChildByType(KW_IF));

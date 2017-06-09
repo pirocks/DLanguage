@@ -30,6 +30,6 @@ public interface DLangDoStatement extends PsiElement {
   @Nullable
   PsiElement getOpScolon();
 
-  void processDeclarations(PsiScopeProcessor processor, ResolveState state, PsiElement lastParent, PsiElement place);
+  boolean processDeclarations(PsiScopeProcessor processor, ResolveState state, PsiElement lastParent, PsiElement place);
 
 }

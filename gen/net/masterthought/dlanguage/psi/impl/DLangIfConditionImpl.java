@@ -28,44 +28,26 @@ public class DLangIfConditionImpl extends ASTWrapperPsiElement implements DLangI
 
   @Override
   @Nullable
-  public DLangBasicType getBasicType() {
-    return PsiTreeUtil.getChildOfType(this, DLangBasicType.class);
-  }
-
-  @Override
-  @NotNull
   public DLangCommaExpression getCommaExpression() {
-    return notNullChild(PsiTreeUtil.getChildOfType(this, DLangCommaExpression.class));
+    return PsiTreeUtil.getChildOfType(this, DLangCommaExpression.class);
   }
 
   @Override
   @Nullable
-  public DLangDeclarator getDeclarator() {
-    return PsiTreeUtil.getChildOfType(this, DLangDeclarator.class);
+  public DLangConditionAutoDeclaration getConditionAutoDeclaration() {
+    return PsiTreeUtil.getChildOfType(this, DLangConditionAutoDeclaration.class);
   }
 
   @Override
   @Nullable
-  public DLangIdentifier getIdentifier() {
-    return PsiTreeUtil.getChildOfType(this, DLangIdentifier.class);
+  public DLangConditionVarDeclaration getConditionVarDeclaration() {
+    return PsiTreeUtil.getChildOfType(this, DLangConditionVarDeclaration.class);
   }
 
   @Override
   @Nullable
-  public DLangTypeCtors getTypeCtors() {
-    return PsiTreeUtil.getChildOfType(this, DLangTypeCtors.class);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getKwAuto() {
-    return findChildByType(KW_AUTO);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getOpEq() {
-    return findChildByType(OP_EQ);
+  public DLangConditionVarDeclarator getConditionVarDeclarator() {
+    return PsiTreeUtil.getChildOfType(this, DLangConditionVarDeclarator.class);
   }
 
 }

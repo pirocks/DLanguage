@@ -9,7 +9,7 @@ D Language File
           DLangTemplateParametersImpl(TEMPLATE_PARAMETERS)
             PsiElement(DLangTokenType.()('(')
             DLangTemplateParameterListImpl(TEMPLATE_PARAMETER_LIST)
-              DLangTemplateParameterImpl(TEMPLATE_PARAMETER)
+              TEMPLATE_PARAMETER
                 DLangTemplateTypeParameterImpl(TEMPLATE_TYPE_PARAMETER)
                   DLangTypeImpl(TYPE)
                     DLangBasicTypeImpl(BASIC_TYPE)
@@ -17,7 +17,7 @@ D Language File
                         IDENTIFIER
                           PsiElement(DLangTokenType.ID)('T')
               PsiElement(DLangTokenType.,)(',')
-              DLangTemplateParameterImpl(TEMPLATE_PARAMETER)
+              TEMPLATE_PARAMETER
                 DLangTemplateTypeParameterImpl(TEMPLATE_TYPE_PARAMETER)
                   DLangTypeImpl(TYPE)
                     DLangBasicTypeImpl(BASIC_TYPE)
@@ -30,8 +30,9 @@ D Language File
                       DLangBasicTypeXImpl(BASIC_TYPE_X)
                         PsiElement(DLangTokenType.int)('int')
             PsiElement(DLangTokenType.))(')')
-          PsiElement(DLangTokenType.{)('{')
-          PsiElement(DLangTokenType.})('}')
+          DLangAggregateBodyImpl(AGGREGATE_BODY)
+            PsiElement(DLangTokenType.{)('{')
+            PsiElement(DLangTokenType.})('}')
   DLangStatementImpl(STATEMENT)
     DLangNonEmptyStatementImpl(NON_EMPTY_STATEMENT)
       DLangNonEmptyStatementNoCaseNoDefaultImpl(NON_EMPTY_STATEMENT_NO_CASE_NO_DEFAULT)
@@ -104,7 +105,7 @@ D Language File
           DLangTemplateParametersImpl(TEMPLATE_PARAMETERS)
             PsiElement(DLangTokenType.()('(')
             DLangTemplateParameterListImpl(TEMPLATE_PARAMETER_LIST)
-              DLangTemplateParameterImpl(TEMPLATE_PARAMETER)
+              TEMPLATE_PARAMETER
                 DLangTemplateTypeParameterImpl(TEMPLATE_TYPE_PARAMETER)
                   DLangTypeImpl(TYPE)
                     DLangBasicTypeImpl(BASIC_TYPE)
@@ -112,7 +113,7 @@ D Language File
                         IDENTIFIER
                           PsiElement(DLangTokenType.ID)('T')
               PsiElement(DLangTokenType.,)(',')
-              DLangTemplateParameterImpl(TEMPLATE_PARAMETER)
+              TEMPLATE_PARAMETER
                 DLangTemplateTypeParameterImpl(TEMPLATE_TYPE_PARAMETER)
                   DLangTypeImpl(TYPE)
                     DLangBasicTypeImpl(BASIC_TYPE)
@@ -129,8 +130,9 @@ D Language File
                       DLangBasicType2XImpl(BASIC_TYPE_2_X)
                         PsiElement(DLangTokenType.*)('*')
             PsiElement(DLangTokenType.))(')')
-          PsiElement(DLangTokenType.{)('{')
-          PsiElement(DLangTokenType.})('}')
+          DLangAggregateBodyImpl(AGGREGATE_BODY)
+            PsiElement(DLangTokenType.{)('{')
+            PsiElement(DLangTokenType.})('}')
   DLangStatementImpl(STATEMENT)
     DLangNonEmptyStatementImpl(NON_EMPTY_STATEMENT)
       DLangNonEmptyStatementNoCaseNoDefaultImpl(NON_EMPTY_STATEMENT_NO_CASE_NO_DEFAULT)
@@ -167,7 +169,7 @@ D Language File
           DLangTemplateParametersImpl(TEMPLATE_PARAMETERS)
             PsiElement(DLangTokenType.()('(')
             DLangTemplateParameterListImpl(TEMPLATE_PARAMETER_LIST)
-              DLangTemplateParameterImpl(TEMPLATE_PARAMETER)
+              TEMPLATE_PARAMETER
                 DLangTemplateTypeParameterImpl(TEMPLATE_TYPE_PARAMETER)
                   DLangTypeImpl(TYPE)
                     DLangBasicTypeImpl(BASIC_TYPE)
@@ -175,23 +177,24 @@ D Language File
                         IDENTIFIER
                           PsiElement(DLangTokenType.ID)('T')
             PsiElement(DLangTokenType.))(')')
-          PsiElement(DLangTokenType.{)('{')
-          DLangDeclDefsImpl(DECL_DEFS)
-            DLangDeclDefImpl(DECL_DEF)
-              DLangDeclarationImpl(DECLARATION)
-                DLangVarDeclarationsImpl(VAR_DECLARATIONS)
-                  DLangBasicTypeImpl(BASIC_TYPE)
-                    DLangIdentifierListImpl(IDENTIFIER_LIST)
-                      IDENTIFIER
-                        PsiElement(DLangTokenType.ID)('T')
-                  DLangDeclaratorsImpl(DECLARATORS)
-                    DECLARATOR_INITIALIZER
-                      DLangVarDeclaratorImpl(VAR_DECLARATOR)
+          DLangAggregateBodyImpl(AGGREGATE_BODY)
+            PsiElement(DLangTokenType.{)('{')
+            DLangDeclDefsImpl(DECL_DEFS)
+              DLangDeclDefImpl(DECL_DEF)
+                DLangDeclarationImpl(DECLARATION)
+                  DLangVarDeclarationsImpl(VAR_DECLARATIONS)
+                    DLangBasicTypeImpl(BASIC_TYPE)
+                      DLangIdentifierListImpl(IDENTIFIER_LIST)
                         IDENTIFIER
-                          PsiElement(DLangTokenType.ID)('Foo')
-                  PsiElement(DLangTokenType.;)(';')
-          PsiComment(DLangTokenType.LINE_COMMENT)('// declare variable Foo of type T')
-          PsiElement(DLangTokenType.})('}')
+                          PsiElement(DLangTokenType.ID)('T')
+                    DLangDeclaratorsImpl(DECLARATORS)
+                      DECLARATOR_INITIALIZER
+                        DLangVarDeclaratorImpl(VAR_DECLARATOR)
+                          IDENTIFIER
+                            PsiElement(DLangTokenType.ID)('Foo')
+                    PsiElement(DLangTokenType.;)(';')
+            PsiComment(DLangTokenType.LINE_COMMENT)('// declare variable Foo of type T')
+            PsiElement(DLangTokenType.})('}')
     DLangDeclDefImpl(DECL_DEF)
       DLangDeclarationImpl(DECLARATION)
         FUNC_DECLARATION
@@ -249,7 +252,7 @@ D Language File
           DLangTemplateParametersImpl(TEMPLATE_PARAMETERS)
             PsiElement(DLangTokenType.()('(')
             DLangTemplateParameterListImpl(TEMPLATE_PARAMETER_LIST)
-              DLangTemplateParameterImpl(TEMPLATE_PARAMETER)
+              TEMPLATE_PARAMETER
                 DLangTemplateTypeParameterImpl(TEMPLATE_TYPE_PARAMETER)
                   DLangTypeImpl(TYPE)
                     DLangBasicTypeImpl(BASIC_TYPE)
@@ -257,33 +260,34 @@ D Language File
                         IDENTIFIER
                           PsiElement(DLangTokenType.ID)('T')
             PsiElement(DLangTokenType.))(')')
-          PsiElement(DLangTokenType.{)('{')
-          DLangDeclDefsImpl(DECL_DEFS)
-            DLangDeclDefImpl(DECL_DEF)
-              DLangDeclarationImpl(DECLARATION)
-                DLangAggregateDeclarationImpl(AGGREGATE_DECLARATION)
-                  CLASS_DECLARATION
-                    PsiElement(DLangTokenType.class)('class')
-                    IDENTIFIER
-                      PsiElement(DLangTokenType.ID)('Bar')
-                    DLangAggregateBodyImpl(AGGREGATE_BODY)
-                      PsiElement(DLangTokenType.{)('{')
-                      DLangDeclDefsImpl(DECL_DEFS)
-                        DLangDeclDefImpl(DECL_DEF)
-                          DLangDeclarationImpl(DECLARATION)
-                            DLangVarDeclarationsImpl(VAR_DECLARATIONS)
-                              DLangBasicTypeImpl(BASIC_TYPE)
-                                DLangIdentifierListImpl(IDENTIFIER_LIST)
-                                  IDENTIFIER
-                                    PsiElement(DLangTokenType.ID)('T')
-                              DLangDeclaratorsImpl(DECLARATORS)
-                                DECLARATOR_INITIALIZER
-                                  DLangVarDeclaratorImpl(VAR_DECLARATOR)
+          DLangAggregateBodyImpl(AGGREGATE_BODY)
+            PsiElement(DLangTokenType.{)('{')
+            DLangDeclDefsImpl(DECL_DEFS)
+              DLangDeclDefImpl(DECL_DEF)
+                DLangDeclarationImpl(DECLARATION)
+                  DLangAggregateDeclarationImpl(AGGREGATE_DECLARATION)
+                    CLASS_DECLARATION
+                      PsiElement(DLangTokenType.class)('class')
+                      IDENTIFIER
+                        PsiElement(DLangTokenType.ID)('Bar')
+                      DLangAggregateBodyImpl(AGGREGATE_BODY)
+                        PsiElement(DLangTokenType.{)('{')
+                        DLangDeclDefsImpl(DECL_DEFS)
+                          DLangDeclDefImpl(DECL_DEF)
+                            DLangDeclarationImpl(DECLARATION)
+                              DLangVarDeclarationsImpl(VAR_DECLARATIONS)
+                                DLangBasicTypeImpl(BASIC_TYPE)
+                                  DLangIdentifierListImpl(IDENTIFIER_LIST)
                                     IDENTIFIER
-                                      PsiElement(DLangTokenType.ID)('member')
-                              PsiElement(DLangTokenType.;)(';')
-                      PsiElement(DLangTokenType.})('}')
-          PsiElement(DLangTokenType.})('}')
+                                      PsiElement(DLangTokenType.ID)('T')
+                                DLangDeclaratorsImpl(DECLARATORS)
+                                  DECLARATOR_INITIALIZER
+                                    DLangVarDeclaratorImpl(VAR_DECLARATOR)
+                                      IDENTIFIER
+                                        PsiElement(DLangTokenType.ID)('member')
+                                PsiElement(DLangTokenType.;)(';')
+                        PsiElement(DLangTokenType.})('}')
+            PsiElement(DLangTokenType.})('}')
     DLangDeclDefImpl(DECL_DEF)
       DLangDeclarationImpl(DECLARATION)
         DLangAggregateDeclarationImpl(AGGREGATE_DECLARATION)
@@ -295,7 +299,7 @@ D Language File
               DLangTemplateParametersImpl(TEMPLATE_PARAMETERS)
                 PsiElement(DLangTokenType.()('(')
                 DLangTemplateParameterListImpl(TEMPLATE_PARAMETER_LIST)
-                  DLangTemplateParameterImpl(TEMPLATE_PARAMETER)
+                  TEMPLATE_PARAMETER
                     DLangTemplateTypeParameterImpl(TEMPLATE_TYPE_PARAMETER)
                       DLangTypeImpl(TYPE)
                         DLangBasicTypeImpl(BASIC_TYPE)

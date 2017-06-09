@@ -80,7 +80,7 @@ D Language File
                   DLangParametersImpl(PARAMETERS)
                     PsiElement(DLangTokenType.()('(')
                     DLangParameterListImpl(PARAMETER_LIST)
-                      DLangParameterImpl(PARAMETER)
+                      PARAMETER
                         DLangBasicTypeImpl(BASIC_TYPE)
                           DLangBasicTypeXImpl(BASIC_TYPE_X)
                             PsiElement(DLangTokenType.int)('int')
@@ -89,7 +89,7 @@ D Language File
                             IDENTIFIER
                               PsiElement(DLangTokenType.ID)('i')
                       PsiElement(DLangTokenType.,)(',')
-                      DLangParameterImpl(PARAMETER)
+                      PARAMETER
                         DLangBasicTypeImpl(BASIC_TYPE)
                           DLangBasicTypeXImpl(BASIC_TYPE_X)
                             PsiElement(DLangTokenType.char)('char')
@@ -101,7 +101,7 @@ D Language File
                             IDENTIFIER
                               PsiElement(DLangTokenType.ID)('p')
                       PsiElement(DLangTokenType.,)(',')
-                      DLangParameterImpl(PARAMETER)
+                      PARAMETER
                         DLangInOutImpl(IN_OUT)
                           DLangInOutXImpl(IN_OUT_X)
                             DLangTypeCtorImpl(TYPE_CTOR)
@@ -117,7 +117,7 @@ D Language File
                             IDENTIFIER
                               PsiElement(DLangTokenType.ID)('q')
                       PsiElement(DLangTokenType.,)(',')
-                      DLangParameterImpl(PARAMETER)
+                      PARAMETER
                         DLangInOutImpl(IN_OUT)
                           DLangInOutXImpl(IN_OUT_X)
                             DLangTypeCtorImpl(TYPE_CTOR)

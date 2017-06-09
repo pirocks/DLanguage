@@ -72,7 +72,7 @@ D Language File
                         DLangParametersImpl(PARAMETERS)
                           PsiElement(DLangTokenType.()('(')
                           DLangParameterListImpl(PARAMETER_LIST)
-                            DLangParameterImpl(PARAMETER)
+                            PARAMETER
                               DLangTypeImpl(TYPE)
                                 DLangBasicTypeImpl(BASIC_TYPE)
                                   DLangBasicTypeXImpl(BASIC_TYPE_X)
@@ -150,7 +150,7 @@ D Language File
                           PsiElement(DLangTokenType.foreach)('foreach')
                         PsiElement(DLangTokenType.()('(')
                         DLangForeachTypeListImpl(FOREACH_TYPE_LIST)
-                          DLangForeachTypeImpl(FOREACH_TYPE)
+                          FOREACH_TYPE
                             IDENTIFIER
                               PsiElement(DLangTokenType.ID)('t')
                         PsiElement(DLangTokenType.;)(';')
@@ -270,7 +270,7 @@ D Language File
                           PsiElement(DLangTokenType.foreach)('foreach')
                         PsiElement(DLangTokenType.()('(')
                         DLangForeachTypeListImpl(FOREACH_TYPE_LIST)
-                          DLangForeachTypeImpl(FOREACH_TYPE)
+                          FOREACH_TYPE
                             IDENTIFIER
                               PsiElement(DLangTokenType.ID)('t')
                         PsiElement(DLangTokenType.;)(';')

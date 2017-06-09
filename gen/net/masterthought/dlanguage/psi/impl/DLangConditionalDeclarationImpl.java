@@ -10,6 +10,8 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static net.masterthought.dlanguage.psi.DLangTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import net.masterthought.dlanguage.psi.*;
+import com.intellij.psi.ResolveState;
+import com.intellij.psi.scope.PsiScopeProcessor;
 
 public class DLangConditionalDeclarationImpl extends ASTWrapperPsiElement implements DLangConditionalDeclaration {
 
@@ -54,6 +56,10 @@ public class DLangConditionalDeclarationImpl extends ASTWrapperPsiElement implem
   @Nullable
   public PsiElement getOpColon() {
     return findChildByType(OP_COLON);
+  }
+
+  public boolean processDeclarations(PsiScopeProcessor processor, ResolveState state, PsiElement lastParent, PsiElement place) {
+    return DPsiImplUtil.processDeclarations(this, processor, state, lastParent, place);
   }
 
 }

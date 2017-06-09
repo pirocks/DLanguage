@@ -4,7 +4,7 @@ package net.masterthought.dlanguage.psi;
 import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
-import net.masterthought.dlanguage.psi.interfaces.DNamedElement;
+import net.masterthought.dlanguage/.psi.interfaces.DNamedElement;
 import net.masterthought.dlanguage.psi.interfaces.containers.StatementContainer;
 import net.masterthought.dlanguage.psi.interfaces.containers.MixinContainer;
 import net.masterthought.dlanguage.psi.interfaces.containers.GlobalDeclarationContainer;
@@ -16,8 +16,6 @@ import com.intellij.psi.StubBasedPsiElement;
 import net.masterthought.dlanguage.stubs.DLangTemplateDeclStub;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.PsiReference;
-import com.intellij.psi.ResolveState;
-import com.intellij.psi.scope.PsiScopeProcessor;
 import net.masterthought.dlanguage.psi.interfaces.containers.Container;
 import net.masterthought.dlanguage.psi.interfaces.HasVisibility.Visibility;
 
@@ -63,6 +61,8 @@ public interface DLangTemplateDeclaration extends DNamedElement, StatementContai
 
   boolean isSomeVisibility(Visibility visibility);
 
-  void processDeclarations(PsiScopeProcessor processor, ResolveState state, PsiElement lastParent, PsiElement place);
+  //WARNING: processDeclarations(...) is skipped
+  //matching processDeclarations(DLangTemplateDeclaration, ...)
+  //methods are not found in DPsiImplUtil
 
 }

@@ -21,7 +21,7 @@ D Language File
                   DLangParametersImpl(PARAMETERS)
                     PsiElement(DLangTokenType.()('(')
                     DLangParameterListImpl(PARAMETER_LIST)
-                      DLangParameterImpl(PARAMETER)
+                      PARAMETER
                         DLangTypeImpl(TYPE)
                           DLangBasicTypeImpl(BASIC_TYPE)
                             DLangBasicTypeXImpl(BASIC_TYPE_X)

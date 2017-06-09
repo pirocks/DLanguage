@@ -42,7 +42,7 @@ D Language File
                         DLangParametersImpl(PARAMETERS)
                           PsiElement(DLangTokenType.()('(')
                           DLangParameterListImpl(PARAMETER_LIST)
-                            DLangParameterImpl(PARAMETER)
+                            PARAMETER
                               DLangBasicTypeImpl(BASIC_TYPE)
                                 DLangBasicTypeXImpl(BASIC_TYPE_X)
                                   PsiElement(DLangTokenType.int)('int')
@@ -54,7 +54,7 @@ D Language File
                                       DLangParametersImpl(PARAMETERS)
                                         PsiElement(DLangTokenType.()('(')
                                         DLangParameterListImpl(PARAMETER_LIST)
-                                          DLangParameterImpl(PARAMETER)
+                                          PARAMETER
                                             DLangInOutImpl(IN_OUT)
                                               DLangInOutXImpl(IN_OUT_X)
                                                 PsiElement(DLangTokenType.ref)('ref')
@@ -202,12 +202,10 @@ D Language File
                                                       PsiElement(DLangTokenType.if)('if')
                                                       PsiElement(DLangTokenType.()('(')
                                                       DLangIfConditionImpl(IF_CONDITION)
-                                                        DLangCommaExpressionImpl(COMMA_EXPRESSION)
-                                                          DLangAssignExpressionImpl(ASSIGN_EXPRESSION)
-                                                            DLangPostfixExpressionImpl(POSTFIX_EXPRESSION)
-                                                              DLangPrimaryExpressionImpl(PRIMARY_EXPRESSION)
-                                                                IDENTIFIER
-                                                                  PsiElement(DLangTokenType.ID)('result')
+                                                        DECLARATOR_INITIALIZER
+                                                          DLangVarDeclaratorImpl(VAR_DECLARATOR)
+                                                            IDENTIFIER
+                                                              PsiElement(DLangTokenType.ID)('result')
                                                       PsiElement(DLangTokenType.))(')')
                                                       DLangThenStatementImpl(THEN_STATEMENT)
                                                         DLangScopeStatementImpl(SCOPE_STATEMENT)
@@ -348,7 +346,7 @@ D Language File
                           PsiElement(DLangTokenType.foreach)('foreach')
                         PsiElement(DLangTokenType.()('(')
                         DLangForeachTypeListImpl(FOREACH_TYPE_LIST)
-                          DLangForeachTypeImpl(FOREACH_TYPE)
+                          FOREACH_TYPE
                             DLangTypeImpl(TYPE)
                               DLangBasicTypeImpl(BASIC_TYPE)
                                 DLangBasicTypeXImpl(BASIC_TYPE_X)

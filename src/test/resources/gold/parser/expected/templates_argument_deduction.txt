@@ -9,7 +9,7 @@ D Language File
           DLangTemplateParametersImpl(TEMPLATE_PARAMETERS)
             PsiElement(DLangTokenType.()('(')
             DLangTemplateParameterListImpl(TEMPLATE_PARAMETER_LIST)
-              DLangTemplateParameterImpl(TEMPLATE_PARAMETER)
+              TEMPLATE_PARAMETER
                 DLangTemplateTypeParameterImpl(TEMPLATE_TYPE_PARAMETER)
                   DLangTypeImpl(TYPE)
                     DLangBasicTypeImpl(BASIC_TYPE)
@@ -17,8 +17,9 @@ D Language File
                         IDENTIFIER
                           PsiElement(DLangTokenType.ID)('T')
             PsiElement(DLangTokenType.))(')')
-          PsiElement(DLangTokenType.{)('{')
-          PsiElement(DLangTokenType.})('}')
+          DLangAggregateBodyImpl(AGGREGATE_BODY)
+            PsiElement(DLangTokenType.{)('{')
+            PsiElement(DLangTokenType.})('}')
     DLangDeclDefImpl(DECL_DEF)
       DLangDeclarationImpl(DECLARATION)
         ALIAS_DECLARATION
@@ -87,7 +88,7 @@ D Language File
           DLangTemplateParametersImpl(TEMPLATE_PARAMETERS)
             PsiElement(DLangTokenType.()('(')
             DLangTemplateParameterListImpl(TEMPLATE_PARAMETER_LIST)
-              DLangTemplateParameterImpl(TEMPLATE_PARAMETER)
+              TEMPLATE_PARAMETER
                 DLangTemplateTypeParameterImpl(TEMPLATE_TYPE_PARAMETER)
                   DLangTypeImpl(TYPE)
                     DLangBasicTypeImpl(BASIC_TYPE)
@@ -104,8 +105,9 @@ D Language File
                       DLangBasicType2XImpl(BASIC_TYPE_2_X)
                         PsiElement(DLangTokenType.*)('*')
             PsiElement(DLangTokenType.))(')')
-          PsiElement(DLangTokenType.{)('{')
-          PsiElement(DLangTokenType.})('}')
+          DLangAggregateBodyImpl(AGGREGATE_BODY)
+            PsiElement(DLangTokenType.{)('{')
+            PsiElement(DLangTokenType.})('}')
     DLangDeclDefImpl(DECL_DEF)
       DLangDeclarationImpl(DECLARATION)
         ALIAS_DECLARATION
@@ -146,7 +148,7 @@ D Language File
           DLangTemplateParametersImpl(TEMPLATE_PARAMETERS)
             PsiElement(DLangTokenType.()('(')
             DLangTemplateParameterListImpl(TEMPLATE_PARAMETER_LIST)
-              DLangTemplateParameterImpl(TEMPLATE_PARAMETER)
+              TEMPLATE_PARAMETER
                 DLangTemplateTypeParameterImpl(TEMPLATE_TYPE_PARAMETER)
                   DLangTypeImpl(TYPE)
                     DLangBasicTypeImpl(BASIC_TYPE)
@@ -154,7 +156,7 @@ D Language File
                         IDENTIFIER
                           PsiElement(DLangTokenType.ID)('D')
               PsiElement(DLangTokenType.,)(',')
-              DLangTemplateParameterImpl(TEMPLATE_PARAMETER)
+              TEMPLATE_PARAMETER
                 DLangTemplateTypeParameterImpl(TEMPLATE_TYPE_PARAMETER)
                   DLangTypeImpl(TYPE)
                     DLangBasicTypeImpl(BASIC_TYPE)
@@ -172,8 +174,9 @@ D Language File
                         PsiElement(DLangTokenType.[)('[')
                         PsiElement(DLangTokenType.])(']')
             PsiElement(DLangTokenType.))(')')
-          PsiElement(DLangTokenType.{)('{')
-          PsiElement(DLangTokenType.})('}')
+          DLangAggregateBodyImpl(AGGREGATE_BODY)
+            PsiElement(DLangTokenType.{)('{')
+            PsiElement(DLangTokenType.})('}')
     DLangDeclDefImpl(DECL_DEF)
       DLangDeclarationImpl(DECLARATION)
         ALIAS_DECLARATION
@@ -267,7 +270,7 @@ D Language File
           DLangTemplateParametersImpl(TEMPLATE_PARAMETERS)
             PsiElement(DLangTokenType.()('(')
             DLangTemplateParameterListImpl(TEMPLATE_PARAMETER_LIST)
-              DLangTemplateParameterImpl(TEMPLATE_PARAMETER)
+              TEMPLATE_PARAMETER
                 DLangTemplateTypeParameterImpl(TEMPLATE_TYPE_PARAMETER)
                   DLangTypeImpl(TYPE)
                     DLangBasicTypeImpl(BASIC_TYPE)
@@ -284,7 +287,7 @@ D Language File
                       DLangBasicType2XImpl(BASIC_TYPE_2_X)
                         PsiElement(DLangTokenType.*)('*')
               PsiElement(DLangTokenType.,)(',')
-              DLangTemplateParameterImpl(TEMPLATE_PARAMETER)
+              TEMPLATE_PARAMETER
                 DLangTemplateTypeParameterImpl(TEMPLATE_TYPE_PARAMETER)
                   DLangTypeImpl(TYPE)
                     DLangBasicTypeImpl(BASIC_TYPE)
@@ -292,8 +295,9 @@ D Language File
                         IDENTIFIER
                           PsiElement(DLangTokenType.ID)('E')
             PsiElement(DLangTokenType.))(')')
-          PsiElement(DLangTokenType.{)('{')
-          PsiElement(DLangTokenType.})('}')
+          DLangAggregateBodyImpl(AGGREGATE_BODY)
+            PsiElement(DLangTokenType.{)('{')
+            PsiElement(DLangTokenType.})('}')
     DLangDeclDefImpl(DECL_DEF)
       DLangDeclarationImpl(DECLARATION)
         ALIAS_DECLARATION
@@ -372,7 +376,7 @@ D Language File
           DLangTemplateParametersImpl(TEMPLATE_PARAMETERS)
             PsiElement(DLangTokenType.()('(')
             DLangTemplateParameterListImpl(TEMPLATE_PARAMETER_LIST)
-              DLangTemplateParameterImpl(TEMPLATE_PARAMETER)
+              TEMPLATE_PARAMETER
                 DLangTemplateTypeParameterImpl(TEMPLATE_TYPE_PARAMETER)
                   DLangTypeImpl(TYPE)
                     DLangBasicTypeImpl(BASIC_TYPE)
@@ -386,8 +390,9 @@ D Language File
                         IDENTIFIER
                           PsiElement(DLangTokenType.ID)('A')
             PsiElement(DLangTokenType.))(')')
-          PsiElement(DLangTokenType.{)('{')
-          PsiElement(DLangTokenType.})('}')
+          DLangAggregateBodyImpl(AGGREGATE_BODY)
+            PsiElement(DLangTokenType.{)('{')
+            PsiElement(DLangTokenType.})('}')
     DLangDeclDefImpl(DECL_DEF)
       DLangDeclarationImpl(DECLARATION)
         ALIAS_DECLARATION
@@ -423,7 +428,7 @@ D Language File
           DLangTemplateParametersImpl(TEMPLATE_PARAMETERS)
             PsiElement(DLangTokenType.()('(')
             DLangTemplateParameterListImpl(TEMPLATE_PARAMETER_LIST)
-              DLangTemplateParameterImpl(TEMPLATE_PARAMETER)
+              TEMPLATE_PARAMETER
                 DLangTemplateTypeParameterImpl(TEMPLATE_TYPE_PARAMETER)
                   DLangTypeImpl(TYPE)
                     DLangBasicTypeImpl(BASIC_TYPE)
@@ -440,7 +445,7 @@ D Language File
                       DLangBasicType2XImpl(BASIC_TYPE_2_X)
                         PsiElement(DLangTokenType.*)('*')
               PsiElement(DLangTokenType.,)(',')
-              DLangTemplateParameterImpl(TEMPLATE_PARAMETER)
+              TEMPLATE_PARAMETER
                 DLangTemplateTypeParameterImpl(TEMPLATE_TYPE_PARAMETER)
                   DLangTypeImpl(TYPE)
                     DLangBasicTypeImpl(BASIC_TYPE)
@@ -454,8 +459,9 @@ D Language File
                         IDENTIFIER
                           PsiElement(DLangTokenType.ID)('A')
             PsiElement(DLangTokenType.))(')')
-          PsiElement(DLangTokenType.{)('{')
-          PsiElement(DLangTokenType.})('}')
+          DLangAggregateBodyImpl(AGGREGATE_BODY)
+            PsiElement(DLangTokenType.{)('{')
+            PsiElement(DLangTokenType.})('}')
     DLangDeclDefImpl(DECL_DEF)
       DLangDeclarationImpl(DECLARATION)
         ALIAS_DECLARATION

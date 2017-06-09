@@ -5,19 +5,20 @@ import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiElement;
 import net.masterthought.dlanguage.psi.interfaces.DNamedElement;
+import net.masterthought.dlanguage.psi.interfaces.Declaration;
+import net.masterthought.dlanguage.psi.interfaces.VariableDeclaration;
 import net.masterthought.dlanguage.psi.interfaces.containers.StatementContainer;
 import net.masterthought.dlanguage.psi.interfaces.containers.GlobalDeclarationContainer;
 import net.masterthought.dlanguage.psi.interfaces.HasVisibility;
-import net.masterthought.dlanguage.psi.interfaces.Declaration;
 import net.masterthought.dlanguage.psi.interfaces.Mixin;
 import net.masterthought.dlanguage.psi.interfaces.HasTemplateArguments;
 import net.masterthought.dlanguage.psi.interfaces.HasArguments;
 import net.masterthought.dlanguage.psi.interfaces.containers.MixinContainer;
-import net.masterthought.dlanguage.psi.interfaces.DCompositeElement;
-import net.masterthought.dlanguage.psi.interfaces.VariableDeclaration;
 import net.masterthought.dlanguage.psi.interfaces.HasProperty;
+import net.masterthought.dlanguage/.psi.interfaces.DNamedElement;
 import net.masterthought.dlanguage.psi.interfaces.Mixinable;
 import net.masterthought.dlanguage.psi.interfaces.CanInherit;
+import net.masterthought.dlanguage.psi.interfaces.DCompositeElement;
 
 public class DLangVisitor extends PsiElementVisitor {
 
@@ -278,7 +279,9 @@ public class DLangVisitor extends PsiElementVisitor {
   }
 
   public void visitCatchParameter(@NotNull DLangCatchParameter o) {
-    visitPsiElement(o);
+    visitDNamedElement(o);
+    // visitDeclaration(o);
+    // visitVariableDeclaration(o);
   }
 
   public void visitCatches(@NotNull DLangCatches o) {
@@ -309,6 +312,24 @@ public class DLangVisitor extends PsiElementVisitor {
 
   public void visitCondition(@NotNull DLangCondition o) {
     visitPsiElement(o);
+  }
+
+  public void visitConditionAutoDeclaration(@NotNull DLangConditionAutoDeclaration o) {
+    visitDNamedElement(o);
+    // visitDeclaration(o);
+    // visitVariableDeclaration(o);
+  }
+
+  public void visitConditionVarDeclaration(@NotNull DLangConditionVarDeclaration o) {
+    visitDNamedElement(o);
+    // visitDeclaration(o);
+    // visitVariableDeclaration(o);
+  }
+
+  public void visitConditionVarDeclarator(@NotNull DLangConditionVarDeclarator o) {
+    visitDNamedElement(o);
+    // visitDeclaration(o);
+    // visitVariableDeclaration(o);
   }
 
   public void visitConditionalDeclaration(@NotNull DLangConditionalDeclaration o) {
@@ -494,6 +515,7 @@ public class DLangVisitor extends PsiElementVisitor {
   public void visitForeachType(@NotNull DLangForeachType o) {
     visitDNamedElement(o);
     // visitDeclaration(o);
+    // visitVariableDeclaration(o);
   }
 
   public void visitForeachTypeAttribute(@NotNull DLangForeachTypeAttribute o) {

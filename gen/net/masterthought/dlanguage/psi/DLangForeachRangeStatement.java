@@ -36,6 +36,6 @@ public interface DLangForeachRangeStatement extends PsiElement {
   @NotNull
   PsiElement getOpScolon();
 
-  void processDeclarations(PsiScopeProcessor processor, ResolveState state, PsiElement lastParent, PsiElement place);
+  boolean processDeclarations(PsiScopeProcessor processor, ResolveState state, PsiElement lastParent, PsiElement place);
 
 }

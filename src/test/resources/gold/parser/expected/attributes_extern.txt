@@ -59,7 +59,7 @@ D Language File
             DLangParametersImpl(PARAMETERS)
               PsiElement(DLangTokenType.()('(')
               DLangParameterListImpl(PARAMETER_LIST)
-                DLangParameterImpl(PARAMETER)
+                PARAMETER
                   DLangBasicTypeImpl(BASIC_TYPE)
                     DLangBasicTypeXImpl(BASIC_TYPE_X)
                       PsiElement(DLangTokenType.void)('void')
@@ -71,7 +71,7 @@ D Language File
                       IDENTIFIER
                         PsiElement(DLangTokenType.ID)('lpAddress')
                 PsiElement(DLangTokenType.,)(',')
-                DLangParameterImpl(PARAMETER)
+                PARAMETER
                   DLangBasicTypeImpl(BASIC_TYPE)
                     DLangBasicTypeXImpl(BASIC_TYPE_X)
                       PsiElement(DLangTokenType.uint)('uint')
@@ -80,7 +80,7 @@ D Language File
                       IDENTIFIER
                         PsiElement(DLangTokenType.ID)('dwSize')
                 PsiElement(DLangTokenType.,)(',')
-                DLangParameterImpl(PARAMETER)
+                PARAMETER
                   DLangBasicTypeImpl(BASIC_TYPE)
                     DLangBasicTypeXImpl(BASIC_TYPE_X)
                       PsiElement(DLangTokenType.uint)('uint')
@@ -89,7 +89,7 @@ D Language File
                       IDENTIFIER
                         PsiElement(DLangTokenType.ID)('flAllocationType')
                 PsiElement(DLangTokenType.,)(',')
-                DLangParameterImpl(PARAMETER)
+                PARAMETER
                   DLangBasicTypeImpl(BASIC_TYPE)
                     DLangBasicTypeXImpl(BASIC_TYPE_X)
                       PsiElement(DLangTokenType.uint)('uint')

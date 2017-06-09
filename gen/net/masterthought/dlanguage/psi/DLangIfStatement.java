@@ -30,6 +30,6 @@ public interface DLangIfStatement extends PsiElement {
   @Nullable
   PsiElement getOpParRight();
 
-  void processDeclarations(PsiScopeProcessor processor, ResolveState state, PsiElement lastParent, PsiElement place);
+  boolean processDeclarations(PsiScopeProcessor processor, ResolveState state, PsiElement lastParent, PsiElement place);
 
 }

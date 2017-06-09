@@ -8,24 +8,15 @@ import com.intellij.psi.PsiElement;
 public interface DLangIfCondition extends PsiElement {
 
   @Nullable
-  DLangBasicType getBasicType();
-
-  @NotNull
   DLangCommaExpression getCommaExpression();
 
   @Nullable
-  DLangDeclarator getDeclarator();
+  DLangConditionAutoDeclaration getConditionAutoDeclaration();
 
   @Nullable
-  DLangIdentifier getIdentifier();
+  DLangConditionVarDeclaration getConditionVarDeclaration();
 
   @Nullable
-  DLangTypeCtors getTypeCtors();
-
-  @Nullable
-  PsiElement getKwAuto();
-
-  @Nullable
-  PsiElement getOpEq();
+  DLangConditionVarDeclarator getConditionVarDeclarator();
 
 }

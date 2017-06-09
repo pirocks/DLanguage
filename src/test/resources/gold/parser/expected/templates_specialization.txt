@@ -9,7 +9,7 @@ D Language File
           DLangTemplateParametersImpl(TEMPLATE_PARAMETERS)
             PsiElement(DLangTokenType.()('(')
             DLangTemplateParameterListImpl(TEMPLATE_PARAMETER_LIST)
-              DLangTemplateParameterImpl(TEMPLATE_PARAMETER)
+              TEMPLATE_PARAMETER
                 DLangTemplateTypeParameterImpl(TEMPLATE_TYPE_PARAMETER)
                   DLangTypeImpl(TYPE)
                     DLangBasicTypeImpl(BASIC_TYPE)
@@ -17,8 +17,9 @@ D Language File
                         IDENTIFIER
                           PsiElement(DLangTokenType.ID)('T')
             PsiElement(DLangTokenType.))(')')
-          PsiElement(DLangTokenType.{)('{')
-          PsiElement(DLangTokenType.})('}')
+          DLangAggregateBodyImpl(AGGREGATE_BODY)
+            PsiElement(DLangTokenType.{)('{')
+            PsiElement(DLangTokenType.})('}')
     PsiComment(DLangTokenType.LINE_COMMENT)('// #1')
     DLangDeclDefImpl(DECL_DEF)
       DLangDeclarationImpl(DECLARATION)
@@ -29,7 +30,7 @@ D Language File
           DLangTemplateParametersImpl(TEMPLATE_PARAMETERS)
             PsiElement(DLangTokenType.()('(')
             DLangTemplateParameterListImpl(TEMPLATE_PARAMETER_LIST)
-              DLangTemplateParameterImpl(TEMPLATE_PARAMETER)
+              TEMPLATE_PARAMETER
                 DLangTemplateTypeParameterImpl(TEMPLATE_TYPE_PARAMETER)
                   DLangTypeImpl(TYPE)
                     DLangBasicTypeImpl(BASIC_TYPE)
@@ -47,8 +48,9 @@ D Language File
                         PsiElement(DLangTokenType.[)('[')
                         PsiElement(DLangTokenType.])(']')
             PsiElement(DLangTokenType.))(')')
-          PsiElement(DLangTokenType.{)('{')
-          PsiElement(DLangTokenType.})('}')
+          DLangAggregateBodyImpl(AGGREGATE_BODY)
+            PsiElement(DLangTokenType.{)('{')
+            PsiElement(DLangTokenType.})('}')
     PsiComment(DLangTokenType.LINE_COMMENT)('// #2')
     DLangDeclDefImpl(DECL_DEF)
       DLangDeclarationImpl(DECLARATION)
@@ -59,7 +61,7 @@ D Language File
           DLangTemplateParametersImpl(TEMPLATE_PARAMETERS)
             PsiElement(DLangTokenType.()('(')
             DLangTemplateParameterListImpl(TEMPLATE_PARAMETER_LIST)
-              DLangTemplateParameterImpl(TEMPLATE_PARAMETER)
+              TEMPLATE_PARAMETER
                 DLangTemplateTypeParameterImpl(TEMPLATE_TYPE_PARAMETER)
                   DLangTypeImpl(TYPE)
                     DLangBasicTypeImpl(BASIC_TYPE)
@@ -72,8 +74,9 @@ D Language File
                       DLangBasicTypeXImpl(BASIC_TYPE_X)
                         PsiElement(DLangTokenType.char)('char')
             PsiElement(DLangTokenType.))(')')
-          PsiElement(DLangTokenType.{)('{')
-          PsiElement(DLangTokenType.})('}')
+          DLangAggregateBodyImpl(AGGREGATE_BODY)
+            PsiElement(DLangTokenType.{)('{')
+            PsiElement(DLangTokenType.})('}')
     PsiComment(DLangTokenType.LINE_COMMENT)('// #3')
     DLangDeclDefImpl(DECL_DEF)
       DLangDeclarationImpl(DECLARATION)
@@ -84,7 +87,7 @@ D Language File
           DLangTemplateParametersImpl(TEMPLATE_PARAMETERS)
             PsiElement(DLangTokenType.()('(')
             DLangTemplateParameterListImpl(TEMPLATE_PARAMETER_LIST)
-              DLangTemplateParameterImpl(TEMPLATE_PARAMETER)
+              TEMPLATE_PARAMETER
                 DLangTemplateTypeParameterImpl(TEMPLATE_TYPE_PARAMETER)
                   DLangTypeImpl(TYPE)
                     DLangBasicTypeImpl(BASIC_TYPE)
@@ -92,7 +95,7 @@ D Language File
                         IDENTIFIER
                           PsiElement(DLangTokenType.ID)('T')
               PsiElement(DLangTokenType.,)(',')
-              DLangTemplateParameterImpl(TEMPLATE_PARAMETER)
+              TEMPLATE_PARAMETER
                 DLangTemplateTypeParameterImpl(TEMPLATE_TYPE_PARAMETER)
                   DLangTypeImpl(TYPE)
                     DLangBasicTypeImpl(BASIC_TYPE)
@@ -100,7 +103,7 @@ D Language File
                         IDENTIFIER
                           PsiElement(DLangTokenType.ID)('U')
               PsiElement(DLangTokenType.,)(',')
-              DLangTemplateParameterImpl(TEMPLATE_PARAMETER)
+              TEMPLATE_PARAMETER
                 DLangTemplateTypeParameterImpl(TEMPLATE_TYPE_PARAMETER)
                   DLangTypeImpl(TYPE)
                     DLangBasicTypeImpl(BASIC_TYPE)
@@ -108,8 +111,9 @@ D Language File
                         IDENTIFIER
                           PsiElement(DLangTokenType.ID)('V')
             PsiElement(DLangTokenType.))(')')
-          PsiElement(DLangTokenType.{)('{')
-          PsiElement(DLangTokenType.})('}')
+          DLangAggregateBodyImpl(AGGREGATE_BODY)
+            PsiElement(DLangTokenType.{)('{')
+            PsiElement(DLangTokenType.})('}')
     PsiComment(DLangTokenType.LINE_COMMENT)('// #4')
     DLangDeclDefImpl(DECL_DEF)
       DLangDeclarationImpl(DECLARATION)

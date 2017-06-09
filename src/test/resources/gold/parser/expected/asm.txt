@@ -522,7 +522,7 @@ D Language File
             DLangParametersImpl(PARAMETERS)
               PsiElement(DLangTokenType.()('(')
               DLangParameterListImpl(PARAMETER_LIST)
-                DLangParameterImpl(PARAMETER)
+                PARAMETER
                   DLangBasicTypeImpl(BASIC_TYPE)
                     DLangIdentifierListImpl(IDENTIFIER_LIST)
                       IDENTIFIER
@@ -1022,7 +1022,7 @@ D Language File
             DLangParametersImpl(PARAMETERS)
               PsiElement(DLangTokenType.()('(')
               DLangParameterListImpl(PARAMETER_LIST)
-                DLangParameterImpl(PARAMETER)
+                PARAMETER
                   DLangBasicTypeImpl(BASIC_TYPE)
                     DLangBasicTypeXImpl(BASIC_TYPE_X)
                       PsiElement(DLangTokenType.int)('int')

@@ -138,7 +138,7 @@ D Language File
             DLangParametersImpl(PARAMETERS)
               PsiElement(DLangTokenType.()('(')
               DLangParameterListImpl(PARAMETER_LIST)
-                DLangParameterImpl(PARAMETER)
+                PARAMETER
                   DLangInOutImpl(IN_OUT)
                     DLangInOutXImpl(IN_OUT_X)
                       PsiElement(DLangTokenType.lazy)('lazy')

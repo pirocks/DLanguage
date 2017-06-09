@@ -29,12 +29,6 @@ public class DLangConditionalStatementImpl extends ASTWrapperPsiElement implemen
   }
 
   @Override
-  @Nullable
-  public DLangBlockStatement getBlockStatement() {
-    return PsiTreeUtil.getChildOfType(this, DLangBlockStatement.class);
-  }
-
-  @Override
   @NotNull
   public DLangCondition getCondition() {
     return notNullChild(PsiTreeUtil.getChildOfType(this, DLangCondition.class));
@@ -58,8 +52,8 @@ public class DLangConditionalStatementImpl extends ASTWrapperPsiElement implemen
     return findChildByType(KW_ELSE);
   }
 
-  public void processDeclarations(PsiScopeProcessor processor, ResolveState state, PsiElement lastParent, PsiElement place) {
-    DPsiImplUtil.processDeclarations(this, processor, state, lastParent, place);
+  public boolean processDeclarations(PsiScopeProcessor processor, ResolveState state, PsiElement lastParent, PsiElement place) {
+    return DPsiImplUtil.processDeclarations(this, processor, state, lastParent, place);
   }
 
 }
