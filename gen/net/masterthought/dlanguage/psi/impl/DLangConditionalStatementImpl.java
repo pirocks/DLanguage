@@ -29,6 +29,12 @@ public class DLangConditionalStatementImpl extends ASTWrapperPsiElement implemen
   }
 
   @Override
+  @Nullable
+  public DLangBlockStatement getBlockStatement() {
+    return PsiTreeUtil.getChildOfType(this, DLangBlockStatement.class);
+  }
+
+  @Override
   @NotNull
   public DLangCondition getCondition() {
     return notNullChild(PsiTreeUtil.getChildOfType(this, DLangCondition.class));

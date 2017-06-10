@@ -381,7 +381,7 @@ struct File
 /**
 Constructor taking the name of the file to open and the open mode.
 
-Copying one $(D File) object to another results in the two $(D File)
+Copying one $(D File) object to another result in the two $(D File)
 objects referring to the same underlying file.
 
 The destructor automatically closes the file as soon as no $(D File)

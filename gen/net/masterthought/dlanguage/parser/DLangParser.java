@@ -3861,14 +3861,15 @@ public class DLangParser implements PsiParser, LightPsiParser {
   public static boolean ConditionAutoDeclaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "ConditionAutoDeclaration")) return false;
     if (!nextTokenIs(b, KW_AUTO)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, CONDITION_AUTO_DECLARATION, null);
     r = consumeToken(b, KW_AUTO);
-    r = r && Identifier(b, l + 1);
-    r = r && consumeToken(b, OP_EQ);
-    r = r && Expression(b, l + 1);
-    exit_section_(b, m, CONDITION_AUTO_DECLARATION, r);
-    return r;
+    p = r; // pin = 1
+    r = r && report_error_(b, Identifier(b, l + 1));
+    r = p && report_error_(b, consumeToken(b, OP_EQ)) && r;
+    r = p && Expression(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -4026,7 +4027,7 @@ public class DLangParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // Condition (Statement | DeclarationBlock) ('else' (Statement | DeclarationBlock))?
+  // Condition (Statement | BlockStatement | DeclarationBlock) ('else' (Statement | DeclarationBlock))?
   public static boolean ConditionalStatement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "ConditionalStatement")) return false;
     boolean r;
@@ -4038,12 +4039,13 @@ public class DLangParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // Statement | DeclarationBlock
+  // Statement | BlockStatement | DeclarationBlock
   private static boolean ConditionalStatement_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "ConditionalStatement_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = Statement(b, l + 1);
+    if (!r) r = BlockStatement(b, l + 1);
     if (!r) r = DeclarationBlock(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
@@ -5956,18 +5958,18 @@ public class DLangParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // Expression
-  //     | ConditionAutoDeclaration
+  // ConditionAutoDeclaration
   //     | ConditionVarDeclaration
   //     | ConditionVarDeclarator
+  //     | Expression
   public static boolean IfCondition(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "IfCondition")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, IF_CONDITION, "<if condition>");
-    r = Expression(b, l + 1);
-    if (!r) r = ConditionAutoDeclaration(b, l + 1);
+    r = ConditionAutoDeclaration(b, l + 1);
     if (!r) r = ConditionVarDeclaration(b, l + 1);
     if (!r) r = ConditionVarDeclarator(b, l + 1);
+    if (!r) r = Expression(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -10911,7 +10913,7 @@ public class DLangParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'static' 'if' '(' AssignExpression ')' (DeclarationBlock)? StaticElseCondition?
+  // 'static' 'if' '(' AssignExpression ')'
   public static boolean StaticIfCondition(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "StaticIfCondition")) return false;
     if (!nextTokenIs(b, KW_STATIC)) return false;
@@ -10920,35 +10922,9 @@ public class DLangParser implements PsiParser, LightPsiParser {
     r = consumeTokens(b, 3, KW_STATIC, KW_IF, OP_PAR_LEFT);
     p = r; // pin = 3
     r = r && report_error_(b, AssignExpression(b, l + 1));
-    r = p && report_error_(b, consumeToken(b, OP_PAR_RIGHT)) && r;
-    r = p && report_error_(b, StaticIfCondition_5(b, l + 1)) && r;
-    r = p && StaticIfCondition_6(b, l + 1) && r;
+    r = p && consumeToken(b, OP_PAR_RIGHT) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
-  }
-
-  // (DeclarationBlock)?
-  private static boolean StaticIfCondition_5(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "StaticIfCondition_5")) return false;
-    StaticIfCondition_5_0(b, l + 1);
-    return true;
-  }
-
-  // (DeclarationBlock)
-  private static boolean StaticIfCondition_5_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "StaticIfCondition_5_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = DeclarationBlock(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // StaticElseCondition?
-  private static boolean StaticIfCondition_6(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "StaticIfCondition_6")) return false;
-    StaticElseCondition(b, l + 1);
-    return true;
   }
 
   /* ********************************************************** */

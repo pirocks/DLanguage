@@ -202,7 +202,7 @@ public class DUtil {
     }
 
     @NotNull
-    public static DLangIdentifier getEndOfIdentifierList(DLangModuleFullyQualifiedName list) {
+    public static DLangIdentifier getEndOfIdentifierList(@NotNull DLangModuleFullyQualifiedName list) {
         if (list.getModuleFullyQualifiedName() == null) {
             return list.getIdentifier();
         }
@@ -210,7 +210,7 @@ public class DUtil {
     }
 
     @NotNull
-    public static DLangIdentifier getEndOfIdentifierList(DLangIdentifierList list) {
+    public static DLangIdentifier getEndOfIdentifierList(@NotNull DLangIdentifierList list) {
         if (list.getIdentifierList() == null) {
             return list.getIdentifier();
         }

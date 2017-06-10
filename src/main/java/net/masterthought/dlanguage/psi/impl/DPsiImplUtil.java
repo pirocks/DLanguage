@@ -308,6 +308,9 @@ public class DPsiImplUtil {
             assert (basicType.getTypeVector() == null);
             assert (basicType.getTypeof() == null);
             final DLangIdentifierList identifierList = basicType.getIdentifierList();
+            if (identifierList == null) {
+                return Collections.emptyList();
+            }
             final ResolveResult[] definitionNodesSimple = ((DReference) getEndOfIdentifierList(identifierList).getReference()).multiResolve(false);
             Set<CanInherit> definitionNodes = new HashSet<>();
             for (ResolveResult node : definitionNodesSimple) {
@@ -340,6 +343,9 @@ public class DPsiImplUtil {
             assert (basicType.getTypeVector() == null);
             assert (basicType.getTypeof() == null);
             final DLangIdentifierList identifierList = basicType.getIdentifierList();
+            if (identifierList == null) {
+                return res;
+            }
             res.put(getEndOfIdentifierList(identifierList).getName(), getEndOfIdentifierList(identifierList));
         }
 
@@ -437,7 +443,7 @@ public class DPsiImplUtil {
         if (o.getIdentifier() != null) {
             o.getIdentifier().setName(newName);
         } else if (o.getAnonymousEnumDeclaration() != null) {
-            throw new IllegalStateException("somehow smeon tried to rename anonymous enum");
+            throw new IllegalStateException("somehow someone tried to rename anonymous enum");
         }
         return o;
     }
@@ -609,7 +615,8 @@ public class DPsiImplUtil {
     @NotNull
     public static String getName(@NotNull DLangConstructor o) {
         if (DUtil.getParentClassOrStruct(o) == null) {
-            throw new IllegalStateException("somehow this constructor is not in a class/struct");
+            return "this";//todo ensure that static constructors are parsed
+//            throw new IllegalStateException("somehow this constructor is not in a class/struct");
         }
         return DUtil.getParentClassOrStruct(o).getName();
     }
@@ -1788,7 +1795,10 @@ public class DPsiImplUtil {
             if (o.getIdentifier() != null) {
                 return o.getIdentifier();
             }
-            return DUtil.getEndOfIdentifierList(o.getType().getBasicType().getIdentifierList());
+            if (o.getType().getBasicType().getIdentifierList() != null) {
+                return DUtil.getEndOfIdentifierList(o.getType().getBasicType().getIdentifierList());
+            }
+            return null;
 
         }
         if (o.getDeclarator().getAltDeclarator() != null) {
@@ -1804,7 +1814,11 @@ public class DPsiImplUtil {
     public static String getName(@NotNull DLangParameter o) {
         DLangParameterStub stub = o.getStub();
         if (stub != null) return StringUtil.notNullize(stub.getName());
-        return getIdentifier(o).getName();
+        final DLangIdentifier identifier = getIdentifier(o);
+        if (identifier == null) {
+            return "";
+        }
+        return identifier.getName();
     }
 
     @Nullable
@@ -2539,13 +2553,14 @@ public class DPsiImplUtil {
             //processor.execute(def.getMixinDeclaration(), state);
         }
         if (def.getStaticIfCondition() != null) {
-            if (def.getStaticIfCondition() != null) {
-                if (def.getStaticIfCondition().getDeclarationBlock() != null) {
-                    if (!(def.getStaticIfCondition().getDeclarationBlock().processDeclarations(processor, state, lastParent, place))) {
-                        return false;
-                    }
-                }
-            }
+            //todo
+//            if (def.getStaticIfCondition() != null) {
+//                if (def.getStaticIfCondition().getDeclarationBlock() != null) {
+//                    if (!(def.getStaticIfCondition().getDeclarationBlock().processDeclarations(processor, state, lastParent, place))) {
+//                        return false;
+//                    }
+//                }
+//            }
         }
         if (def.getStaticElseCondition() != null) {
             if (def.getStaticElseCondition().getDeclarationBlock() != null) {
@@ -2681,7 +2696,7 @@ public class DPsiImplUtil {
                     statement.getForStatement().processDeclarations(processor, state, lastParent, place);
                 }
                 if (statement.getForeachStatement() != null) {
-                    statement.getForStatement().processDeclarations(processor, state, lastParent, place);
+                    statement.getForeachStatement().processDeclarations(processor, state, lastParent, place);
                 }
                 if (statement.getSwitchStatement() != null) {
                     statement.getSwitchStatement().processDeclarations(processor, state, lastParent, place);
@@ -2738,7 +2753,13 @@ public class DPsiImplUtil {
             }
         }
         if (element.getVarDeclarations() != null) {
-            if (!processor.execute(element.getVarDeclarations(), state)) {
+            VariableDeclaration var;
+            if (element.getVarDeclarations().getAutoDeclaration() != null) {
+                var = element.getVarDeclarations().getAutoDeclaration().getAutoDeclarationX().getAutoDeclarationY();
+            } else {
+                var = element.getVarDeclarations().getDeclarators().getDeclaratorInitializer();
+            }
+            if (!processor.execute(var, state)) {
                 return false;
             }
         }
@@ -2758,7 +2779,9 @@ public class DPsiImplUtil {
             }
         }
         if (element.getTemplateDeclaration() != null) {
-            //todo
+            if (!(element.getTemplateDeclaration().processDeclarations(processor, state, lastParent, place))) {
+                return false;//todo template parameters are leaking through
+            }
         }
         return true;
     }

@@ -872,15 +872,16 @@ IfStatement ::=
     }
 
 IfCondition ::=
-    Expression
-    | ConditionAutoDeclaration
+    ConditionAutoDeclaration
     | ConditionVarDeclaration
     | ConditionVarDeclarator
+    | Expression
 
 
 //todo convert to exsisting rules for declarations
 ConditionAutoDeclaration ::=
     'auto' Identifier '=' Expression{
+        pin = 1
         methods =[getName getFullName getNameIdentifier getReference setName getPresentation processDeclarations actuallyIsDeclaration]
         implements = ["net.masterthought.dlanguage.psi.interfaces.DNamedElement" "net.masterthought.dlanguage.psi.interfaces.Declaration" "net.masterthought.dlanguage.psi.interfaces.VariableDeclaration"]
         stubClass="net.masterthought.dlanguage.stubs.DLangConditionAutoDeclStub"
@@ -888,6 +889,7 @@ ConditionAutoDeclaration ::=
 
 ConditionVarDeclaration ::=
     TypeCtors Identifier '=' Expression{
+    pin = 4
         methods =[getName getFullName getNameIdentifier getReference setName getPresentation processDeclarations actuallyIsDeclaration]
                 implements = ["net.masterthought.dlanguage.psi.interfaces.DNamedElement" "net.masterthought.dlanguage.psi.interfaces.Declaration" "net.masterthought.dlanguage.psi.interfaces.VariableDeclaration"]
                 stubClass="net.masterthought.dlanguage.stubs.DLangConditionVarDeclStub"
@@ -895,6 +897,7 @@ ConditionVarDeclaration ::=
 
 ConditionVarDeclarator ::=
     TypeCtors? BasicType Declarator '=' Expression{
+    pin = 5
         methods =[getName getFullName getNameIdentifier getReference setName getPresentation processDeclarations actuallyIsDeclaration]
                 implements = ["net.masterthought.dlanguage.psi.interfaces.DNamedElement" "net.masterthought.dlanguage.psi.interfaces.Declaration" "net.masterthought.dlanguage.psi.interfaces.VariableDeclaration"]
                 stubClass="net.masterthought.dlanguage.stubs.DLangConditionVarDeclaratorStub"
@@ -2366,7 +2369,7 @@ TemplateDeclaration ::=
     'template' Identifier TemplateParameters Constraint? AggregateBody {
     pin= 2
       methods=[getName getFullName getNameIdentifier getReference setName getPresentation getTemplateArguments isSomeVisibility processDeclarations ]
-    implements = ["net.masterthought.dlanguage/.psi.interfaces.DNamedElement" "net.masterthought.dlanguage.psi.interfaces.containers.StatementContainer" "net.masterthought.dlanguage.psi.interfaces.containers.MixinContainer" "net.masterthought.dlanguage.psi.interfaces.containers.GlobalDeclarationContainer" "net.masterthought.dlanguage.psi.interfaces.HasVisibility" "net.masterthought.dlanguage.psi.interfaces.HasTemplateArguments" "net.masterthought.dlanguage.psi.interfaces.Mixinable" "net.masterthought.dlanguage.psi.interfaces.Declaration"]
+    implements = ["net.masterthought.dlanguage.psi.interfaces.DNamedElement" "net.masterthought.dlanguage.psi.interfaces.containers.StatementContainer" "net.masterthought.dlanguage.psi.interfaces.containers.MixinContainer" "net.masterthought.dlanguage.psi.interfaces.containers.GlobalDeclarationContainer" "net.masterthought.dlanguage.psi.interfaces.HasVisibility" "net.masterthought.dlanguage.psi.interfaces.HasTemplateArguments" "net.masterthought.dlanguage.psi.interfaces.Mixinable" "net.masterthought.dlanguage.psi.interfaces.Declaration"]
       stubClass="net.masterthought.dlanguage.stubs.DLangTemplateDeclStub"
     }
 
@@ -2582,7 +2585,7 @@ ConditionalDeclaration ::=
     }
 
 ConditionalStatement ::=
-    Condition (Statement | DeclarationBlock) ('else' (Statement | DeclarationBlock))?{
+    Condition (Statement | BlockStatement | DeclarationBlock) ('else' (Statement | DeclarationBlock))?{
     methods = [processDeclarations]
     }
 
@@ -2602,8 +2605,7 @@ DebugCondition ::=
     }
 
 StaticIfCondition ::=
-    'static' 'if' '(' AssignExpression ')' (DeclarationBlock)? StaticElseCondition? //declaration block should not have a ? after it todo
-    {
+    'static' 'if' '(' AssignExpression ')' /*(DeclDef | AggregateBody)? StaticElseCondition?*/ {
     pin = 3
     }
 

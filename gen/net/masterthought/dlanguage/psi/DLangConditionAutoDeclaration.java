@@ -14,16 +14,16 @@ import com.intellij.psi.PsiReference;
 
 public interface DLangConditionAutoDeclaration extends DNamedElement, Declaration, VariableDeclaration, StubBasedPsiElement<DLangConditionAutoDeclStub> {
 
-  @NotNull
+  @Nullable
   DLangCommaExpression getCommaExpression();
 
-  @NotNull
+  @Nullable
   DLangIdentifier getIdentifier();
 
   @NotNull
   PsiElement getKwAuto();
 
-  @NotNull
+  @Nullable
   PsiElement getOpEq();
 
   @NotNull

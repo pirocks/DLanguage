@@ -1,12 +1,13 @@
 package net.masterthought.dlanguage.utils
 
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiDirectory
+import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
+import com.intellij.psi.ResolveState
 import com.intellij.psi.impl.source.PsiFileImpl
+import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.stubs.Stub
 import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.PsiTreeUtil.findChildrenOfType
@@ -15,8 +16,8 @@ import net.masterthought.dlanguage.psi.*
 import net.masterthought.dlanguage.psi.impl.DLangIdentifierImpl
 import net.masterthought.dlanguage.psi.interfaces.DNamedElement
 import net.masterthought.dlanguage.psi.interfaces.Declaration
+import net.masterthought.dlanguage.psi.interfaces.VariableDeclaration
 import net.masterthought.dlanguage.psi.references.DReference
-import net.masterthought.dlanguage.stubs.DLangImportDeclStub
 import net.masterthought.dlanguage.stubs.index.DTopLevelDeclarationIndex
 
 /**
@@ -56,20 +57,33 @@ object DResolveUtil {
     }
 
     fun getImportedFromLocation(location: DLangIdentifier): MutableSet<Import> {
-        stubTreeCheck(location)
-        var stub: Stub = (location as DLangIdentifierImpl).greenStub!!
-        val imports: MutableSet<Import> = mutableSetOf()
-        while (true) {
-            for (child in stub.childrenStubs) {
-                if (child is DLangImportDeclStub) {
-                    imports.add(Import(child.psi))
+        class ImportScopeProcessor(val start: DLangIdentifier) : PsiScopeProcessor {
+            val result: MutableSet<Import> = mutableSetOf()
+
+            override fun handleEvent(event: PsiScopeProcessor.Event, associated: Any?) {
+                return
+            }
+
+            override fun <T : Any?> getHint(hintKey: Key<T>): T? {
+                return null
+            }
+
+            override fun execute(element: PsiElement, state: ResolveState): Boolean {
+                if (element is DLangImport) {
+                    result.add(Import(element))
                 }
+                if (element is DLangImportDeclaration) {
+                    for (dLangImport in findChildrenOfType(element, DLangImport::class.java)) {
+                        result.add(Import(dLangImport))
+                    }
+                }
+                return true
             }
-            if (stub.parentStub == null) {
-                return imports
-            }
-            stub = stub.parentStub
         }
+
+        val importScopeProcessor = ImportScopeProcessor(location)
+        PsiTreeUtil.treeWalkUp(importScopeProcessor, location, location.containingFile.containingDirectory, ResolveState.initial())
+        return importScopeProcessor.result
     }
 
     private fun stubTreeCheck(location: DLangIdentifier) {
@@ -80,62 +94,36 @@ object DResolveUtil {
     }
 
     fun resolveThroughLocalScope(identifier: DLangIdentifier): DNamedElement? {
-        val scopeDelimiter = listOf(DLangFuncDeclaration::class.java, DLangForeachStatement::class.java, DLangWhileStatement::class.java, DLangForStatement::class.java, DLangDoStatement::class.java, DLangIfStatement::class.java, DLangBlockStatement::class.java, DLangSwitchStatement::class.java, DLangFinalSwitchStatement::class.java, DLangWithStatement::class.java, DLangSynchronizedStatement::class.java, DLangTryStatement::class.java, DLangForeachRangeStatement::class.java, DLangConditionalStatement::class.java, DLangFunctionBody::class.java, DLangClassDeclaration::class.java, DLangTemplateDeclaration::class.java, DLangStructDeclaration::class.java, DLangTemplateMixinDeclaration::class.java)
+        class LocalScopeResolveProcessor(val start: DLangIdentifier) : PsiScopeProcessor {
+            var result: DNamedElement? = null
 
+            override fun handleEvent(event: PsiScopeProcessor.Event, associated: Any?) {
+                return
+            }
 
-        val orderMatters = listOf(DLangFuncDeclaration::class.java, DLangUnitTesting::class.java, DLangForeachStatement::class.java, DLangWhileStatement::class.java, DLangForStatement::class.java, DLangDoStatement::class.java, DLangIfStatement::class.java, DLangBlockStatement::class.java, DLangSwitchStatement::class.java, DLangFinalSwitchStatement::class.java, DLangWithStatement::class.java, DLangSynchronizedStatement::class.java, DLangTryStatement::class.java, DLangForeachRangeStatement::class.java, DLangConditionalStatement::class.java, DLangFunctionBody::class.java)
-        val orderDoesNotMatter = listOf(DLangClassDeclaration::class.java, DLangTemplateDeclaration::class.java, DLangStructDeclaration::class.java, DLangTemplateMixinDeclaration::class.java)
-        fun declarationOrderMatters(element: PsiElement): Boolean {
-            for (clazz in orderMatters) {
-                if (clazz.isInstance(element)) {
-                    return true
-                }
-            }
-            return false
-        }
-        fun scopeElement(element: PsiElement): Boolean {
-            for (clazz in orderMatters) {
-                if (clazz.isInstance(element)) {
-                    return true
-                }
-            }
-            for (clazz in orderDoesNotMatter) {
-                if (clazz.isInstance(element)) {
-                    return true
-                }
-            }
-            return false
-        }
-        fun getParents(element: PsiElement): List<PsiElement> {
-            val parents = mutableListOf<PsiElement>()
-            var currentElement = element
-            while (true) {
-                if (currentElement.parent == null || currentElement is PsiDirectory) {
-                    break
-                }
-                currentElement = currentElement.parent
-                parents.add(currentElement)
-            }
-            return parents
-
-        }
-        stubTreeCheck(identifier)
-        var current: PsiElement = identifier
-        val parents = getParents(current)
-        while (true) {
-            if (scopeElement(current)) {
-                fun getChildrenDeclarations(element: PsiElement) {
-                    val declarations: MutableList<Declaration> = mutableListOf()
-                    for (declaration in findChildrenOfType(element, Declaration::class.java)) {
-                        declarations.add(declaration)
-                    }
-                }
-            }
-            if (current is DLangFile || current.parent == null) {//todo simplify
+            override fun <T : Any?> getHint(hintKey: Key<T>): T? {
                 return null
             }
-            current = current.parent
+
+            override fun execute(element: PsiElement, state: ResolveState): Boolean {
+                if (element is DNamedElement) {
+                    if (element is VariableDeclaration) {
+                        if (!element.actuallyIsDeclaration()) {
+                            return true
+                        }
+                    }
+                    if (element.name.equals(start.name)) {
+                        result = element
+                        return false
+                    }
+                }
+                return true
+            }
         }
+
+        val resolveProcessor = LocalScopeResolveProcessor(identifier)
+        PsiTreeUtil.treeWalkUp(resolveProcessor, identifier, identifier.containingFile.containingDirectory, ResolveState.initial())
+        return resolveProcessor.result
     }
 
 
@@ -168,6 +156,8 @@ object DResolveUtil {
         return result
 
 
+    }
+
 //        // Guess where the name could be defined by lookup up potential modules.
 //        val potentialModules = if (e == null)
 //            Collections.emptySet<String>();
@@ -193,20 +183,20 @@ object DResolveUtil {
 //            }
 //        }
 //        return result
-    }
+}
 
 
-    /**
-     * finds definition(s) of functions/class/template
-     * @param file the file to search for definitions in
-     * *
-     * @param name the name of the function/class/template to resolve
-     * *
-     * @param e the usage of the defined function/class/template etc.
-     * *
-     * @param result the results are added to the is arraylist
-     */
-    //    fun findDefinitionNode(file: DLangFile?, name: String?, e: PsiNamedElement?, result: MutableList<PsiNamedElement>) {
+/**
+ * finds definition(s) of functions/class/template
+ * @param file the file to search for definitions in
+ * *
+ * @param name the name of the function/class/template to resolve
+ * *
+ * @param e the usage of the defined function/class/template etc.
+ * *
+ * @param result the results are added to the is arraylist
+ */
+//    fun findDefinitionNode(file: DLangFile?, name: String?, e: PsiNamedElement?, result: MutableList<PsiNamedElement>) {
 //        if (file == null) return
 //        // start with empty list of potential named elements
 //        val declarationElements = ArrayList<DNamedElement>()
@@ -257,30 +247,30 @@ object DResolveUtil {
 //        }
 //    }
 
-    /**
-     * Finds a name definition inside a D file. All definitions are found when name
-     * is null.
-     */
-    //    fun findDefinitionNodes(dLangFile: DLangFile?, name: String?): MutableList<PsiNamedElement> {
+/**
+ * Finds a name definition inside a D file. All definitions are found when name
+ * is null.
+ */
+//    fun findDefinitionNodes(dLangFile: DLangFile?, name: String?): MutableList<PsiNamedElement> {
 //        val ret = ContainerUtil.newArrayList<PsiNamedElement>()
 //        findDefinitionNode(dLangFile, name, null, ret)
 //        return ret
 //    }
 
-    /**
-     * Finds name definition across all D files in the project. All
-     * definitions are found when name is null.
-     */
-    //    fun findDefinitionNodes(project: Project): List<PsiNamedElement> {
+/**
+ * Finds name definition across all D files in the project. All
+ * definitions are found when name is null.
+ */
+//    fun findDefinitionNodes(project: Project): List<PsiNamedElement> {
 //        return findDefinitionNode(project, null)
 //    }
 
-    /**
-     * Finds name definitions that are within the scope of a file, including imports (to some degree).
-     */
-    //    fun findDefinitionNodes(psiFile: DLangFile): List<PsiNamedElement> {
+/**
+ * Finds name definitions that are within the scope of a file, including imports (to some degree).
+ */
+//    fun findDefinitionNodes(psiFile: DLangFile): List<PsiNamedElement> {
 //        val result = findDefinitionNodes(psiFile, null)
 //        result.addAll(findDefinitionNode(psiFile.project, null))
 //        return result
 //    }
-}
+

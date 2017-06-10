@@ -15,7 +15,6 @@ import net.masterthought.dlanguage.psi.interfaces.HasTemplateArguments;
 import net.masterthought.dlanguage.psi.interfaces.HasArguments;
 import net.masterthought.dlanguage.psi.interfaces.containers.MixinContainer;
 import net.masterthought.dlanguage.psi.interfaces.HasProperty;
-import net.masterthought.dlanguage/.psi.interfaces.DNamedElement;
 import net.masterthought.dlanguage.psi.interfaces.Mixinable;
 import net.masterthought.dlanguage.psi.interfaces.CanInherit;
 import net.masterthought.dlanguage.psi.interfaces.DCompositeElement;

@@ -2380,7 +2380,7 @@ auto capitalize(S)(auto ref S s)
   Params:
     s = a string of $(D chars), $(D wchars), or $(D dchars), or any custom
         type that casts to a $(D string) type
-    keepTerm = whether delimiter is included or not in the results
+    keepTerm = whether delimiter is included or not in the result
   Returns:
     array of strings, each element is a line that is a slice of $(D s)
   See_Also:
@@ -2712,7 +2712,7 @@ public:
 
   Params:
     r = array of $(D chars), $(D wchars), or $(D dchars) or a slicable range
-    keepTerm = whether delimiter is included or not in the results
+    keepTerm = whether delimiter is included or not in the result
   Returns:
     range of slices of the input range $(D r)
 

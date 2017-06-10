@@ -9,6 +9,9 @@ import com.intellij.psi.scope.PsiScopeProcessor;
 
 public interface DLangConditionalStatement extends PsiElement {
 
+  @Nullable
+  DLangBlockStatement getBlockStatement();
+
   @NotNull
   DLangCondition getCondition();
 

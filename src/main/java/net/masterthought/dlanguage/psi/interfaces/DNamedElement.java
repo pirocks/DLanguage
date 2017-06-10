@@ -5,6 +5,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import net.masterthought.dlanguage.psi.impl.DPsiImplUtil;
 import net.masterthought.dlanguage.psi.interfaces.containers.Container;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Interface that combines everything we need for convenient navigation.
@@ -26,4 +27,8 @@ public interface DNamedElement extends DCompositeElement, PsiNameIdentifierOwner
     default String getFullName() {
         return DPsiImplUtil.getFullName(this);
     }
+
+    @Override
+    @NotNull
+    String getName();
 }

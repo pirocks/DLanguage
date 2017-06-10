@@ -34,15 +34,15 @@ public class DLangConditionAutoDeclarationImpl extends DNamedStubbedPsiElementBa
   }
 
   @Override
-  @NotNull
+  @Nullable
   public DLangCommaExpression getCommaExpression() {
-    return notNullChild(PsiTreeUtil.getChildOfType(this, DLangCommaExpression.class));
+    return PsiTreeUtil.getChildOfType(this, DLangCommaExpression.class);
   }
 
   @Override
-  @NotNull
+  @Nullable
   public DLangIdentifier getIdentifier() {
-    return notNullChild(PsiTreeUtil.getStubChildOfType(this, DLangIdentifier.class));
+    return PsiTreeUtil.getStubChildOfType(this, DLangIdentifier.class);
   }
 
   @Override
@@ -52,9 +52,9 @@ public class DLangConditionAutoDeclarationImpl extends DNamedStubbedPsiElementBa
   }
 
   @Override
-  @NotNull
+  @Nullable
   public PsiElement getOpEq() {
-    return notNullChild(findChildByType(OP_EQ));
+    return findChildByType(OP_EQ);
   }
 
   @NotNull
