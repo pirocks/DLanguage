@@ -8,7 +8,16 @@ import com.intellij.psi.PsiElement;
 public interface DLangStaticIfCondition extends PsiElement {
 
   @Nullable
+  DLangAggregateBody getAggregateBody();
+
+  @Nullable
   DLangAssignExpression getAssignExpression();
+
+  @Nullable
+  DLangDeclDef getDeclDef();
+
+  @Nullable
+  DLangStaticElseCondition getStaticElseCondition();
 
   @NotNull
   PsiElement getKwIf();

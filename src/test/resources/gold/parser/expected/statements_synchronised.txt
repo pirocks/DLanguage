@@ -1,9 +1,0 @@
-D Language File
-  DLangDeclDefsImpl(DECL_DEFS)
-    DLangDeclDefImpl(DECL_DEF)
-      DLangAttributeSpecifierImpl(ATTRIBUTE_SPECIFIER)
-        DLangAttributeImpl(ATTRIBUTE)
-          PsiElement(DLangTokenType.synchronized)('synchronized')
-        DLangDeclarationBlockImpl(DECLARATION_BLOCK)
-          PsiElement(DLangTokenType.{)('{')
-          PsiElement(DLangTokenType.})('}')

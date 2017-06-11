@@ -300,7 +300,7 @@ public interface DLangTypes {
   IElementType XOR_EXPRESSION_ = new DLangElementType("XOR_EXPRESSION_");
 
   IElementType ALTERNATE_WYSIWYG_STRING = new DLangTokenType("ALTERNATE_WYSIWYG_STRING");
-  IElementType BLOCK_COMMENT = new DLangTokenType("BLOCK_COMMENT");
+  IElementType BLOCK_COMMENT = new DLangTokenType("block_comment");
   IElementType CHARACTER_LITERAL = new DLangTokenType("CHARACTER_LITERAL");
   IElementType DELIMITED_STRING = new DLangTokenType("DELIMITED_STRING");
   IElementType DOUBLE_QUOTED_STRING = new DLangTokenType("DOUBLE_QUOTED_STRING");
@@ -414,7 +414,7 @@ public interface DLangTypes {
   IElementType KW___PARAMETERS = new DLangTokenType("__parameters");
   IElementType KW___PRETTY_FUNCTION__ = new DLangTokenType("__PRETTY_FUNCTION__");
   IElementType KW___TRAITS = new DLangTokenType("__traits");
-  IElementType LINE_COMMENT = new DLangTokenType("LINE_COMMENT");
+  IElementType LINE_COMMENT = new DLangTokenType("line_comment");
   IElementType NESTING_BLOCK_COMMENT = new DLangTokenType("NESTING_BLOCK_COMMENT");
   IElementType OP_AND = new DLangTokenType("&");
   IElementType OP_AND_EQ = new DLangTokenType("&=");

@@ -2333,7 +2333,7 @@ public class DPsiImplUtil {
      * @param element
      * @param processor
      * @param state
-     * @param lastParent todo mae use of this do determine if scope statements/decldefs contained inside a element should be processed or not.
+     * @param lastParent todo make use of this do determine if scope statements/decldefs contained inside a element should be processed or not.
      * @param place
      * @return
      */

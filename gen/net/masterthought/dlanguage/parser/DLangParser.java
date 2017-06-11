@@ -5239,8 +5239,8 @@ public class DLangParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ForeachTypeAttribute Identifier
-  //    | ForeachTypeAttributes? Type? Identifier // this needs to be above for ForeachTypeAttributes? Type? Identifier
+  // ForeachTypeAttributes? Type? Identifier 
+  //    | ForeachTypeAttribute Identifier
   //    | Type? ForeachTypeAttributes? Identifier
   //    | Identifier
   public static boolean ForeachType(PsiBuilder b, int l) {
@@ -5255,41 +5255,41 @@ public class DLangParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // ForeachTypeAttribute Identifier
+  // ForeachTypeAttributes? Type? Identifier
   private static boolean ForeachType_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "ForeachType_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = ForeachTypeAttribute(b, l + 1);
-    r = r && Identifier(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // ForeachTypeAttributes? Type? Identifier
-  private static boolean ForeachType_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "ForeachType_1")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = ForeachType_1_0(b, l + 1);
-    r = r && ForeachType_1_1(b, l + 1);
+    r = ForeachType_0_0(b, l + 1);
+    r = r && ForeachType_0_1(b, l + 1);
     r = r && Identifier(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // ForeachTypeAttributes?
-  private static boolean ForeachType_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "ForeachType_1_0")) return false;
+  private static boolean ForeachType_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "ForeachType_0_0")) return false;
     ForeachTypeAttributes(b, l + 1);
     return true;
   }
 
   // Type?
-  private static boolean ForeachType_1_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "ForeachType_1_1")) return false;
+  private static boolean ForeachType_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "ForeachType_0_1")) return false;
     Type(b, l + 1);
     return true;
+  }
+
+  // ForeachTypeAttribute Identifier
+  private static boolean ForeachType_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "ForeachType_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = ForeachTypeAttribute(b, l + 1);
+    r = r && Identifier(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
   }
 
   // Type? ForeachTypeAttributes? Identifier
@@ -5958,17 +5958,17 @@ public class DLangParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ConditionAutoDeclaration
-  //     | ConditionVarDeclaration
+  // ConditionVarDeclaration
   //     | ConditionVarDeclarator
+  //     | ConditionAutoDeclaration
   //     | Expression
   public static boolean IfCondition(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "IfCondition")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, IF_CONDITION, "<if condition>");
-    r = ConditionAutoDeclaration(b, l + 1);
-    if (!r) r = ConditionVarDeclaration(b, l + 1);
+    r = ConditionVarDeclaration(b, l + 1);
     if (!r) r = ConditionVarDeclarator(b, l + 1);
+    if (!r) r = ConditionAutoDeclaration(b, l + 1);
     if (!r) r = Expression(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
@@ -10785,7 +10785,7 @@ public class DLangParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'static' 'assert' '(' AssignExpression (',' AssignExpression)? ')' ';'
+  // 'static' 'assert' '(' (AssignExpression (',' AssignExpression ','?)?) ')' ';'
   public static boolean StaticAssert(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "StaticAssert")) return false;
     if (!nextTokenIs(b, KW_STATIC)) return false;
@@ -10793,29 +10793,47 @@ public class DLangParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_, STATIC_ASSERT, null);
     r = consumeTokens(b, 3, KW_STATIC, KW_ASSERT, OP_PAR_LEFT);
     p = r; // pin = 3
-    r = r && report_error_(b, AssignExpression(b, l + 1));
-    r = p && report_error_(b, StaticAssert_4(b, l + 1)) && r;
+    r = r && report_error_(b, StaticAssert_3(b, l + 1));
     r = p && report_error_(b, consumeTokens(b, -1, OP_PAR_RIGHT, OP_SCOLON)) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
 
-  // (',' AssignExpression)?
-  private static boolean StaticAssert_4(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "StaticAssert_4")) return false;
-    StaticAssert_4_0(b, l + 1);
+  // AssignExpression (',' AssignExpression ','?)?
+  private static boolean StaticAssert_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "StaticAssert_3")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = AssignExpression(b, l + 1);
+    r = r && StaticAssert_3_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // (',' AssignExpression ','?)?
+  private static boolean StaticAssert_3_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "StaticAssert_3_1")) return false;
+    StaticAssert_3_1_0(b, l + 1);
     return true;
   }
 
-  // ',' AssignExpression
-  private static boolean StaticAssert_4_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "StaticAssert_4_0")) return false;
+  // ',' AssignExpression ','?
+  private static boolean StaticAssert_3_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "StaticAssert_3_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, OP_COMMA);
     r = r && AssignExpression(b, l + 1);
+    r = r && StaticAssert_3_1_0_2(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
+  }
+
+  // ','?
+  private static boolean StaticAssert_3_1_0_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "StaticAssert_3_1_0_2")) return false;
+    consumeToken(b, OP_COMMA);
+    return true;
   }
 
   /* ********************************************************** */
@@ -10913,7 +10931,7 @@ public class DLangParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'static' 'if' '(' AssignExpression ')'
+  // 'static' 'if' '(' AssignExpression ')' (DeclDef | AggregateBody)? StaticElseCondition?
   public static boolean StaticIfCondition(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "StaticIfCondition")) return false;
     if (!nextTokenIs(b, KW_STATIC)) return false;
@@ -10922,9 +10940,36 @@ public class DLangParser implements PsiParser, LightPsiParser {
     r = consumeTokens(b, 3, KW_STATIC, KW_IF, OP_PAR_LEFT);
     p = r; // pin = 3
     r = r && report_error_(b, AssignExpression(b, l + 1));
-    r = p && consumeToken(b, OP_PAR_RIGHT) && r;
+    r = p && report_error_(b, consumeToken(b, OP_PAR_RIGHT)) && r;
+    r = p && report_error_(b, StaticIfCondition_5(b, l + 1)) && r;
+    r = p && StaticIfCondition_6(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
+  }
+
+  // (DeclDef | AggregateBody)?
+  private static boolean StaticIfCondition_5(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "StaticIfCondition_5")) return false;
+    StaticIfCondition_5_0(b, l + 1);
+    return true;
+  }
+
+  // DeclDef | AggregateBody
+  private static boolean StaticIfCondition_5_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "StaticIfCondition_5_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = DeclDef(b, l + 1);
+    if (!r) r = AggregateBody(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // StaticElseCondition?
+  private static boolean StaticIfCondition_6(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "StaticIfCondition_6")) return false;
+    StaticElseCondition(b, l + 1);
+    return true;
   }
 
   /* ********************************************************** */

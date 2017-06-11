@@ -190,4 +190,7 @@ class DLanguageLexerTest : DLanguageLexerTestBase("lexer") {
 
     //chars
     fun testchar() = doTest()
+
+    //traits
+    fun testtraits() = doTest()
 }

@@ -16,9 +16,6 @@ public interface DLangStaticAssert extends PsiElement {
   @NotNull
   PsiElement getKwStatic();
 
-  @Nullable
-  PsiElement getOpComma();
-
   @NotNull
   PsiElement getOpParLeft();
 

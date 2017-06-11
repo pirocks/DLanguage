@@ -28,8 +28,26 @@ public class DLangStaticIfConditionImpl extends ASTWrapperPsiElement implements 
 
   @Override
   @Nullable
+  public DLangAggregateBody getAggregateBody() {
+    return PsiTreeUtil.getChildOfType(this, DLangAggregateBody.class);
+  }
+
+  @Override
+  @Nullable
   public DLangAssignExpression getAssignExpression() {
     return PsiTreeUtil.getChildOfType(this, DLangAssignExpression.class);
+  }
+
+  @Override
+  @Nullable
+  public DLangDeclDef getDeclDef() {
+    return PsiTreeUtil.getChildOfType(this, DLangDeclDef.class);
+  }
+
+  @Override
+  @Nullable
+  public DLangStaticElseCondition getStaticElseCondition() {
+    return PsiTreeUtil.getChildOfType(this, DLangStaticElseCondition.class);
   }
 
   @Override

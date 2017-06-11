@@ -1,1 +1,1 @@
-DLangTokenType.LINE_COMMENT ('// a comment line')
+DLangTokenType.line_comment ('// a comment line')

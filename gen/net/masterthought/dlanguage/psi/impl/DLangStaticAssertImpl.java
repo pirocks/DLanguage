@@ -45,12 +45,6 @@ public class DLangStaticAssertImpl extends ASTWrapperPsiElement implements DLang
   }
 
   @Override
-  @Nullable
-  public PsiElement getOpComma() {
-    return findChildByType(OP_COMMA);
-  }
-
-  @Override
   @NotNull
   public PsiElement getOpParLeft() {
     return notNullChild(findChildByType(OP_PAR_LEFT));
