@@ -120,7 +120,8 @@
         <lang.foldingBuilder language="D" implementationClass="net.masterthought.dlanguage.features.DFoldingBuilder"/>
         <completion.contributor language="D"
                                 implementationClass="net.masterthought.dlanguage.codeinsight.DCompletionContributor"/>
-
+        <lang.smartEnterProcessor language="D"
+                                  implementationClass="net.masterthought.dlanguage.features.DSmartEnterProcessor"/>
 
         <!-- dunit support -->
         <configurationType implementation="net.masterthought.dlanguage.unittest.DUnitTestRunConfigurationType"/>
