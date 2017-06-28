@@ -5,31 +5,997 @@ import com.intellij.lang.LightPsiParser;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiParser;
 import com.intellij.psi.tree.IElementType;
+import net.masterthought.dlanguage.psi.DLanguageTypes;
 import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.lang.parser.GeneratedParserUtilBase.*;
 import static net.masterthought.dlanguage.parser.DLanguageParser.item_recover_parser_;
+import static net.masterthought.dlanguage.parser.SkipUtil.skipAttributes;
+import static net.masterthought.dlanguage.parser.TokenConstants.TOKmodule;
 import static net.masterthought.dlanguage.psi.DLanguageTypes.*;
 
 /**
  * Created by francis on 6/24/2017.
  */
 public class DLangParser implements PsiParser, LightPsiParser {
-    /* ********************************************************** */
-    // item_*
-    static boolean dFile(PsiBuilder b, int l) {
-        if (!recursion_guard_(b, l, "dFile")) return false;
-        int c = current_position_(b);
-        while (true) {
-            if (!item_(b, l + 1)) break;
-            if (!empty_element_parsed_guard_(b, "dFile", c)) break;
-            c = current_position_(b);
+
+    /**
+     * if (udas)
+     * {
+     * auto a = new Dsymbols();
+     * auto udad = new UserAttributeDeclaration(udas, a);
+     * mod.userAttribDecl = udad;
+     * }
+     * <p>
+     * // ModuleDeclation leads off
+     * if (token.value == TOKmodule)
+     * {
+     * const loc = token.loc;
+     * <p>
+     * nextToken();
+     * if (token.value != TOKidentifier)
+     * {
+     * error("identifier expected following module");
+     * goto Lerr;
+     * }
+     * else
+     * {
+     * Identifiers* a = null;
+     * Identifier id = token.ident;
+     * <p>
+     * while (nextToken() == TOKdot)
+     * {
+     * if (!a)
+     * a = new Identifiers();
+     * a.push(id);
+     * nextToken();
+     * if (token.value != TOKidentifier)
+     * {
+     * error("identifier expected following package");
+     * goto Lerr;
+     * }
+     * id = token.ident;
+     * }
+     * <p>
+     * md = new ModuleDeclaration(loc, a, id, msg, isdeprecated);
+     * <p>
+     * if (token.value != TOKsemicolon)
+     * error("';' expected following module declaration instead of %s", token.toChars());
+     * nextToken();
+     * addComment(mod, comment);
+     * }
+     * }
+     * <p>
+     * decldefs = parseDeclDefs(0, &lastDecl);
+     * if (token.value != TOKeof)
+     * {
+     * error(token.loc, "unrecognized declaration");
+     * goto Lerr;
+     * }
+     * return decldefs;
+     * <p>
+     * Lerr:
+     * while (token.value != TOKsemicolon && token.value != TOKeof)
+     * nextToken();
+     * nextToken();
+     * return new Dsymbols();
+     * }
+     * <p>
+     * Dsymbols* parseDeclDefs(int once, Dsymbol* pLastDecl = null, PrefixAttributes* pAttrs = null)
+     * {
+     * Dsymbol lastDecl = null; // used to link unittest to its previous declaration
+     * if (!pLastDecl)
+     * pLastDecl = &lastDecl;
+     * <p>
+     * const linksave = linkage; // save global state
+     * <p>
+     * //printf("Parser::parseDeclDefs()\n");
+     * auto decldefs = new Dsymbols();
+     * do
+     * {
+     * // parse result
+     * Dsymbol s = null;
+     * Dsymbols* a = null;
+     * <p>
+     * PrefixAttributes attrs;
+     * if (!once || !pAttrs)
+     * {
+     * pAttrs = &attrs;
+     * pAttrs.comment = token.blockComment;
+     * }
+     * PROTKIND prot;
+     * StorageClass stc;
+     * Condition condition;
+     * <p>
+     * linkage = linksave;
+     * <p>
+     * switch (token.value)
+     * {
+     * case TOKenum:
+     * {
+     * /* Determine if this is a manifest constant declaration,
+     * or a conventional enum.
+     * +/
+     * Token* t = peek(&token);
+     * if (t.value == TOKlcurly || t.value == TOKcolon)
+     * s = parseEnum();
+     * else if (t.value != TOKidentifier)
+     * goto Ldeclaration;
+     * else
+     * {
+     * t = peek(t);
+     * if (t.value == TOKlcurly || t.value == TOKcolon || t.value == TOKsemicolon)
+     * s = parseEnum();
+     * else
+     * goto Ldeclaration;
+     * }
+     * break;
+     * }
+     * case TOKimport:
+     * a = parseImport();
+     * // keep pLastDecl
+     * break;
+     * <p>
+     * case TOKtemplate:
+     * s = cast(Dsymbol)parseTemplateDeclaration();
+     * break;
+     * <p>
+     * case TOKmixin:
+     * {
+     * const loc = token.loc;
+     * switch (peekNext())
+     * {
+     * case TOKlparen:
+     * {
+     * // mixin(string)
+     * nextToken();
+     * check(TOKlparen, "mixin");
+     * Expression e = parseAssignExp();
+     * check(TOKrparen);
+     * check(TOKsemicolon);
+     * s = new CompileDeclaration(loc, e);
+     * break;
+     * }
+     * case TOKtemplate:
+     * // mixin template
+     * nextToken();
+     * s = cast(Dsymbol)parseTemplateDeclaration(true);
+     * break;
+     * <p>
+     * default:
+     * s = parseMixin();
+     * break;
+     * }
+     * break;
+     * }
+     * case TOKwchar:
+     * case TOKdchar:
+     * case TOKbool:
+     * case TOKchar:
+     * case TOKint8:
+     * case TOKuns8:
+     * case TOKint16:
+     * case TOKuns16:
+     * case TOKint32:
+     * case TOKuns32:
+     * case TOKint64:
+     * case TOKuns64:
+     * case TOKint128:
+     * case TOKuns128:
+     * case TOKfloat32:
+     * case TOKfloat64:
+     * case TOKfloat80:
+     * case TOKimaginary32:
+     * case TOKimaginary64:
+     * case TOKimaginary80:
+     * case TOKcomplex32:
+     * case TOKcomplex64:
+     * case TOKcomplex80:
+     * case TOKvoid:
+     * case TOKalias:
+     * case TOKidentifier:
+     * case TOKsuper:
+     * case TOKtypeof:
+     * case TOKdot:
+     * case TOKvector:
+     * case TOKstruct:
+     * case TOKunion:
+     * case TOKclass:
+     * case TOKinterface:
+     * Ldeclaration:
+     * a = parseDeclarations(false, pAttrs, pAttrs.comment);
+     * if (a && a.dim)
+     * pLastDecl = (*a)[a.dim - 1];
+     * break;
+     * <p>
+     * case TOKthis:
+     * if (peekNext() == TOKdot)
+     * goto Ldeclaration;
+     * else
+     * s = parseCtor(pAttrs);
+     * break;
+     * <p>
+     * case TOKtilde:
+     * s = parseDtor(pAttrs);
+     * break;
+     * <p>
+     * case TOKinvariant:
+     * {
+     * Token* t = peek(&token);
+     * if (t.value == TOKlparen && peek(t).value == TOKrparen || t.value == TOKlcurly)
+     * {
+     * // invariant {}
+     * // invariant() {}
+     * s = parseInvariant(pAttrs);
+     * }
+     * else
+     * {
+     * error("invariant body expected, not '%s'", token.toChars());
+     * goto Lerror;
+     * }
+     * break;
+     * }
+     * case TOKunittest:
+     * if (global.params.useUnitTests || global.params.doDocComments || global.params.doHdrGeneration)
+     * {
+     * s = parseUnitTest(pAttrs);
+     * if (*pLastDecl)
+     * (*pLastDecl).ddocUnittest = cast(UnitTestDeclaration)s;
+     * }
+     * else
+     * {
+     * // Skip over unittest block by counting { }
+     * Loc loc = token.loc;
+     * int braces = 0;
+     * while (1)
+     * {
+     * nextToken();
+     * switch (token.value)
+     * {
+     * case TOKlcurly:
+     * ++braces;
+     * continue;
+     * <p>
+     * case TOKrcurly:
+     * if (--braces)
+     * continue;
+     * nextToken();
+     * break;
+     * <p>
+     * case TOKeof:
+     * /* { +/
+     * error(loc, "closing } of unittest not found before end of file");
+     * goto Lerror;
+     * <p>
+     * default:
+     * continue;
+     * }
+     * break;
+     * }
+     * // Workaround 14894. Add an empty unittest declaration to keep
+     * // the number of symbols in this scope independent of -unittest.
+     * s = new UnitTestDeclaration(loc, token.loc, STCundefined, null);
+     * }
+     * break;
+     * <p>
+     * case TOKnew:
+     * s = parseNew(pAttrs);
+     * break;
+     * <p>
+     * case TOKdelete:
+     * s = parseDelete(pAttrs);
+     * break;
+     * <p>
+     * case TOKcolon:
+     * case TOKlcurly:
+     * error("declaration expected, not '%s'", token.toChars());
+     * goto Lerror;
+     * <p>
+     * case TOKrcurly:
+     * case TOKeof:
+     * if (once)
+     * error("declaration expected, not '%s'", token.toChars());
+     * return decldefs;
+     * <p>
+     * case TOKstatic:
+     * {
+     * const next = peekNext();
+     * if (next == TOKthis)
+     * s = parseStaticCtor(pAttrs);
+     * else if (next == TOKtilde)
+     * s = parseStaticDtor(pAttrs);
+     * else if (next == TOKassert)
+     * s = parseStaticAssert();
+     * else if (next == TOKif)
+     * {
+     * condition = parseStaticIfCondition();
+     * Dsymbols* athen;
+     * if (token.value == TOKcolon)
+     * athen = parseBlock(pLastDecl);
+     * else
+     * {
+     * const lookingForElseSave = lookingForElse;
+     * lookingForElse = token.loc;
+     * athen = parseBlock(pLastDecl);
+     * lookingForElse = lookingForElseSave;
+     * }
+     * Dsymbols* aelse = null;
+     * if (token.value == TOKelse)
+     * {
+     * const elseloc = token.loc;
+     * nextToken();
+     * aelse = parseBlock(pLastDecl);
+     * checkDanglingElse(elseloc);
+     * }
+     * s = new StaticIfDeclaration(condition, athen, aelse);
+     * }
+     * else if (next == TOKimport)
+     * {
+     * a = parseImport();
+     * // keep pLastDecl
+     * }
+     * else
+     * {
+     * stc = STCstatic;
+     * goto Lstc;
+     * }
+     * break;
+     * }
+     * case TOKconst:
+     * if (peekNext() == TOKlparen)
+     * goto Ldeclaration;
+     * stc = STCconst;
+     * goto Lstc;
+     * <p>
+     * case TOKimmutable:
+     * if (peekNext() == TOKlparen)
+     * goto Ldeclaration;
+     * stc = STCimmutable;
+     * goto Lstc;
+     * <p>
+     * case TOKshared:
+     * {
+     * const next = peekNext();
+     * if (next == TOKlparen)
+     * goto Ldeclaration;
+     * if (next == TOKstatic)
+     * {
+     * TOK next2 = peekNext2();
+     * if (next2 == TOKthis)
+     * {
+     * s = parseSharedStaticCtor(pAttrs);
+     * break;
+     * }
+     * if (next2 == TOKtilde)
+     * {
+     * s = parseSharedStaticDtor(pAttrs);
+     * break;
+     * }
+     * }
+     * stc = STCshared;
+     * goto Lstc;
+     * }
+     * case TOKwild:
+     * if (peekNext() == TOKlparen)
+     * goto Ldeclaration;
+     * stc = STCwild;
+     * goto Lstc;
+     * <p>
+     * case TOKfinal:
+     * stc = STCfinal;
+     * goto Lstc;
+     * <p>
+     * case TOKauto:
+     * stc = STCauto;
+     * goto Lstc;
+     * <p>
+     * case TOKscope:
+     * stc = STCscope;
+     * goto Lstc;
+     * <p>
+     * case TOKoverride:
+     * stc = STCoverride;
+     * goto Lstc;
+     * <p>
+     * case TOKabstract:
+     * stc = STCabstract;
+     * goto Lstc;
+     * <p>
+     * case TOKsynchronized:
+     * stc = STCsynchronized;
+     * goto Lstc;
+     * <p>
+     * case TOKnothrow:
+     * stc = STCnothrow;
+     * goto Lstc;
+     * <p>
+     * case TOKpure:
+     * stc = STCpure;
+     * goto Lstc;
+     * <p>
+     * case TOKref:
+     * stc = STCref;
+     * goto Lstc;
+     * <p>
+     * case TOKgshared:
+     * stc = STCgshared;
+     * goto Lstc;
+     * <p>
+     * //case TOKmanifest:   stc = STCmanifest;     goto Lstc;
+     * <p>
+     * case TOKat:
+     * {
+     * Expressions* exps = null;
+     * stc = parseAttribute(&exps);
+     * if (stc)
+     * goto Lstc; // it's a predefined attribute
+     * // no redundant/conflicting check for UDAs
+     * pAttrs.udas = UserAttributeDeclaration.concat(pAttrs.udas, exps);
+     * goto Lautodecl;
+     * }
+     * Lstc:
+     * pAttrs.storageClass = appendStorageClass(pAttrs.storageClass, stc);
+     * nextToken();
+     * <p>
+     * Lautodecl:
+     * Token* tk;
+     * <p>
+     * /* Look for auto initializers:
+     * storage_class identifier = initializer;
+     * storage_class identifier(...) = initializer;
+     * +/
+     * if (token.value == TOKidentifier && skipParensIf(peek(&token), &tk) && tk.value == TOKassign)
+     * {
+     * a = parseAutoDeclarations(getStorageClass(pAttrs), pAttrs.comment);
+     * if (a && a.dim)
+     * pLastDecl = (*a)[a.dim - 1];
+     * if (pAttrs.udas)
+     * {
+     * s = new UserAttributeDeclaration(pAttrs.udas, a);
+     * pAttrs.udas = null;
+     * }
+     * break;
+     * }
+     * <p>
+     * /* Look for return type inference for template functions.
+     * +/
+     * if (token.value == TOKidentifier && skipParens(peek(&token), &tk) && skipAttributes(tk, &tk) && (tk.value == TOKlparen || tk.value == TOKlcurly || tk.value == TOKin || tk.value == TOKout || tk.value == TOKbody))
+     * {
+     * a = parseDeclarations(true, pAttrs, pAttrs.comment);
+     * if (a && a.dim)
+     * pLastDecl = (*a)[a.dim - 1];
+     * if (pAttrs.udas)
+     * {
+     * s = new UserAttributeDeclaration(pAttrs.udas, a);
+     * pAttrs.udas = null;
+     * }
+     * break;
+     * }
+     * <p>
+     * a = parseBlock(pLastDecl, pAttrs);
+     * auto stc2 = getStorageClass(pAttrs);
+     * if (stc2 != STCundefined)
+     * {
+     * s = new StorageClassDeclaration(stc2, a);
+     * }
+     * if (pAttrs.udas)
+     * {
+     * if (s)
+     * {
+     * a = new Dsymbols();
+     * a.push(s);
+     * }
+     * s = new UserAttributeDeclaration(pAttrs.udas, a);
+     * pAttrs.udas = null;
+     * }
+     * break;
+     * <p>
+     * case TOKdeprecated:
+     * {
+     * if (peek(&token).value != TOKlparen)
+     * {
+     * stc = STCdeprecated;
+     * goto Lstc;
+     * }
+     * nextToken();
+     * check(TOKlparen);
+     * Expression e = parseAssignExp();
+     * check(TOKrparen);
+     * if (pAttrs.depmsg)
+     * {
+     * error("conflicting storage class 'deprecated(%s)' and 'deprecated(%s)'", pAttrs.depmsg.toChars(), e.toChars());
+     * }
+     * pAttrs.depmsg = e;
+     * a = parseBlock(pLastDecl, pAttrs);
+     * if (pAttrs.depmsg)
+     * {
+     * s = new DeprecatedDeclaration(pAttrs.depmsg, a);
+     * pAttrs.depmsg = null;
+     * }
+     * break;
+     * }
+     * case TOKlbracket:
+     * {
+     * if (peekNext() == TOKrbracket)
+     * error("empty attribute list is not allowed");
+     * error("use @(attributes) instead of [attributes]");
+     * Expressions* exps = parseArguments();
+     * // no redundant/conflicting check for UDAs
+     * <p>
+     * pAttrs.udas = UserAttributeDeclaration.concat(pAttrs.udas, exps);
+     * a = parseBlock(pLastDecl, pAttrs);
+     * if (pAttrs.udas)
+     * {
+     * s = new UserAttributeDeclaration(pAttrs.udas, a);
+     * pAttrs.udas = null;
+     * }
+     * break;
+     * }
+     * case TOKextern:
+     * {
+     * if (peek(&token).value != TOKlparen)
+     * {
+     * stc = STCextern;
+     * goto Lstc;
+     * }
+     * <p>
+     * const linkLoc = token.loc;
+     * Identifiers* idents = null;
+     * CPPMANGLE cppmangle;
+     * const link = parseLinkage(&idents, cppmangle);
+     * if (pAttrs.link != LINKdefault)
+     * {
+     * if (pAttrs.link != link)
+     * {
+     * error("conflicting linkage extern (%s) and extern (%s)", linkageToChars(pAttrs.link), linkageToChars(link));
+     * }
+     * else if (idents)
+     * {
+     * // Allow:
+     * //      extern(C++, foo) extern(C++, bar) void foo();
+     * // to be equivalent with:
+     * //      extern(C++, foo.bar) void foo();
+     * }
+     * else
+     * error("redundant linkage extern (%s)", linkageToChars(pAttrs.link));
+     * }
+     * pAttrs.link = link;
+     * this.linkage = link;
+     * a = parseBlock(pLastDecl, pAttrs);
+     * if (idents)
+     * {
+     * assert(link == LINKcpp);
+     * assert(idents.dim);
+     * for (size_t i = idents.dim; i;)
+     * {
+     * Identifier id = (*idents)[--i];
+     * if (s)
+     * {
+     * a = new Dsymbols();
+     * a.push(s);
+     * }
+     * s = new Nspace(linkLoc, id, a);
+     * }
+     * pAttrs.link = LINKdefault;
+     * }
+     * else if (cppmangle != CPPMANGLE.def)
+     * {
+     * assert(link == LINKcpp);
+     * s = new CPPMangleDeclaration(cppmangle, a);
+     * }
+     * else if (pAttrs.link != LINKdefault)
+     * {
+     * s = new LinkDeclaration(pAttrs.link, a);
+     * pAttrs.link = LINKdefault;
+     * }
+     * break;
+     * }
+     * <p>
+     * case TOKprivate:
+     * prot = PROTprivate;
+     * goto Lprot;
+     * <p>
+     * case TOKpackage:
+     * prot = PROTpackage;
+     * goto Lprot;
+     * <p>
+     * case TOKprotected:
+     * prot = PROTprotected;
+     * goto Lprot;
+     * <p>
+     * case TOKpublic:
+     * prot = PROTpublic;
+     * goto Lprot;
+     * <p>
+     * case TOKexport:
+     * prot = PROTexport;
+     * goto Lprot;
+     * Lprot:
+     * {
+     * if (pAttrs.protection.kind != PROTundefined)
+     * {
+     * if (pAttrs.protection.kind != prot)
+     * error("conflicting protection attribute '%s' and '%s'", protectionToChars(pAttrs.protection.kind), protectionToChars(prot));
+     * else
+     * error("redundant protection attribute '%s'", protectionToChars(prot));
+     * }
+     * pAttrs.protection.kind = prot;
+     * <p>
+     * nextToken();
+     * <p>
+     * // optional qualified package identifier to bind
+     * // protection to
+     * Identifiers* pkg_prot_idents = null;
+     * if (pAttrs.protection.kind == PROTpackage && token.value == TOKlparen)
+     * {
+     * pkg_prot_idents = parseQualifiedIdentifier("protection package");
+     * if (pkg_prot_idents)
+     * check(TOKrparen);
+     * else
+     * {
+     * while (token.value != TOKsemicolon && token.value != TOKeof)
+     * nextToken();
+     * nextToken();
+     * break;
+     * }
+     * }
+     * <p>
+     * const attrloc = token.loc;
+     * a = parseBlock(pLastDecl, pAttrs);
+     * if (pAttrs.protection.kind != PROTundefined)
+     * {
+     * if (pAttrs.protection.kind == PROTpackage && pkg_prot_idents)
+     * s = new ProtDeclaration(attrloc, pkg_prot_idents, a);
+     * else
+     * s = new ProtDeclaration(attrloc, pAttrs.protection, a);
+     * <p>
+     * pAttrs.protection = Prot(PROTundefined);
+     * }
+     * break;
+     * }
+     * case TOKalign:
+     * {
+     * const attrLoc = token.loc;
+     * <p>
+     * nextToken();
+     * <p>
+     * Expression e = null; // default
+     * if (token.value == TOKlparen)
+     * {
+     * nextToken();
+     * e = parseAssignExp();
+     * check(TOKrparen);
+     * }
+     * <p>
+     * if (pAttrs.setAlignment)
+     * {
+     * if (e)
+     * error("redundant alignment attribute align(%s)", e.toChars());
+     * else
+     * error("redundant alignment attribute align");
+     * }
+     * <p>
+     * pAttrs.setAlignment = true;
+     * pAttrs.ealign = e;
+     * a = parseBlock(pLastDecl, pAttrs);
+     * if (pAttrs.setAlignment)
+     * {
+     * s = new AlignDeclaration(attrLoc, pAttrs.ealign, a);
+     * pAttrs.setAlignment = false;
+     * pAttrs.ealign = null;
+     * }
+     * break;
+     * }
+     * case TOKpragma:
+     * {
+     * Expressions* args = null;
+     * const loc = token.loc;
+     * <p>
+     * nextToken();
+     * check(TOKlparen);
+     * if (token.value != TOKidentifier)
+     * {
+     * error("pragma(identifier) expected");
+     * goto Lerror;
+     * }
+     * Identifier ident = token.ident;
+     * nextToken();
+     * if (token.value == TOKcomma && peekNext() != TOKrparen)
+     * args = parseArguments(); // pragma(identifier, args...)
+     * else
+     * check(TOKrparen); // pragma(identifier)
+     * <p>
+     * Dsymbols* a2 = null;
+     * if (token.value == TOKsemicolon)
+     * {
+     * /* Bugzilla 2354: Accept single semicolon as an empty
+     * DeclarationBlock following attribute.
+     * <p>
+     * Attribute DeclarationBlock
+     * Pragma    DeclDef
+     * ;
+     * +/
+     * nextToken();
+     * }
+     * else
+     * a2 = parseBlock(pLastDecl);
+     * s = new PragmaDeclaration(loc, ident, args, a2);
+     * break;
+     * }
+     * case TOKdebug:
+     * nextToken();
+     * if (token.value == TOKassign)
+     * {
+     * nextToken();
+     * if (token.value == TOKidentifier)
+     * s = new DebugSymbol(token.loc, token.ident);
+     * else if (token.value == TOKint32v || token.value == TOKint64v)
+     * s = new DebugSymbol(token.loc, cast(uint)token.uns64value);
+     * else
+     * {
+     * error("identifier or integer expected, not %s", token.toChars());
+     * s = null;
+     * }
+     * nextToken();
+     * if (token.value != TOKsemicolon)
+     * error("semicolon expected");
+     * nextToken();
+     * break;
+     * }
+     * <p>
+     * condition = parseDebugCondition();
+     * goto Lcondition;
+     * <p>
+     * case TOKversion:
+     * nextToken();
+     * if (token.value == TOKassign)
+     * {
+     * nextToken();
+     * if (token.value == TOKidentifier)
+     * s = new VersionSymbol(token.loc, token.ident);
+     * else if (token.value == TOKint32v || token.value == TOKint64v)
+     * s = new VersionSymbol(token.loc, cast(uint)token.uns64value);
+     * else
+     * {
+     * error("identifier or integer expected, not %s", token.toChars());
+     * s = null;
+     * }
+     * nextToken();
+     * if (token.value != TOKsemicolon)
+     * error("semicolon expected");
+     * nextToken();
+     * break;
+     * }
+     * condition = parseVersionCondition();
+     * goto Lcondition;
+     * <p>
+     * Lcondition:
+     * {
+     * Dsymbols* athen;
+     * if (token.value == TOKcolon)
+     * athen = parseBlock(pLastDecl);
+     * else
+     * {
+     * const lookingForElseSave = lookingForElse;
+     * lookingForElse = token.loc;
+     * athen = parseBlock(pLastDecl);
+     * lookingForElse = lookingForElseSave;
+     * }
+     * Dsymbols* aelse = null;
+     * if (token.value == TOKelse)
+     * {
+     * const elseloc = token.loc;
+     * nextToken();
+     * aelse = parseBlock(pLastDecl);
+     * checkDanglingElse(elseloc);
+     * }
+     * s = new ConditionalDeclaration(condition, athen, aelse);
+     * break;
+     * }
+     * case TOKsemicolon:
+     * // empty declaration
+     * //error("empty declaration");
+     * nextToken();
+     * continue;
+     * <p>
+     * default:
+     * error("declaration expected, not '%s'", token.toChars());
+     * Lerror:
+     * while (token.value != TOKsemicolon && token.value != TOKeof)
+     * nextToken();
+     * nextToken();
+     * s = null;
+     * continue;
+     * }
+     * <p>
+     * if (s)
+     * {
+     * if (!s.isAttribDeclaration())
+     * pLastDecl = s;
+     * decldefs.push(s);
+     * addComment(s, pAttrs.comment);
+     * }
+     * else if (a && a.dim)
+     * {
+     * decldefs.append(a);
+     * }
+     * }
+     * while (!once);
+     * <p>
+     * linkage = linksave;
+     * <p>
+     * return decldefs;
+     * }
+     */
+    static boolean dFile(PsiBuilder builder, int l) {
+        builder.setDebugMode(true);
+        //if (!recursion_guard_(builder, l, "dFile")) return false;//I don't think a recursion guard for a file is necessary
+        boolean isdeprecated = false;
+        boolean udas = false;
+        //Expression msg = null;
+        //Expressions* udas = null;
+        //List<> decldefs;
+//        Dsymbol lastDecl = mod;
+
+        if (skipAttributes(new Token(builder)) != null) {
+            final Token token = skipAttributes(new Token(builder));
+            if (token.value() == TOKmodule) {
+                final PsiBuilder.Marker modulePrefix = enter_section_(builder);
+                while (true) {
+                    if (nextTokenIs(builder, KW_DEPRECATED)) {
+                        final PsiBuilder.Marker deprecatedMarker = enter_section_(builder);
+                        // deprecated (...) module ...
+                        if (isdeprecated) {
+                            error("there is only one deprecation attribute allowed for module declaration", builder);
+                        } else {
+                            isdeprecated = true;
+                        }
+                        consumeToken(builder, KW_DEPRECATED);
+                        if (nextTokenIs(builder, OP_PAR_LEFT)) {
+                            if (!consumeToken(builder, OP_PAR_LEFT)) {
+                                error("you should never see this", builder);
+                            }
+                            if (!ExpressionParser.AssignExpression(builder, l)) {
+                                error("expression expected", builder);
+                            }
+                            if (!consumeToken(builder, OP_PAR_RIGHT)) {
+                                error("unclosed deprecated statement", builder);
+                            }
+                        }
+                        exit_section_(builder, deprecatedMarker, DLanguageTypes.DEPRECATED_ATTRIBUTE, true);
+                    } else if (nextTokenIs(builder, OP_AT)) {
+                        if (!AttributesParser.Attribute(builder, l + 1)) {
+                            error("attribute for module declaration is not supported", builder);//todo this message could be better
+                        }
+                        //                final PsiBuilder.Marker userAttribute = enter_section_(builder);
+                        //                consumeToken(builder, OP_AT);
+                        //                //todo parse attribute instead of @
+                        //                //todo add missing tokens
+                        //                if (nextTokenIs(builder, "property") || nextTokenIs(builder, "nogc") || nextTokenIs(builder, "disable") || nextTokenIs(builder, "safe") || nextTokenIs(builder, "trusted") || nextTokenIs(builder, "system")) {
+                        //                    error("attribute for module declaration is not supported", builder);
+                        //                }
+                        //                exit_section_(builder, userAttribute, DLanguageTypes.ATTRIBUTE, true);
+                    } else if (nextTokenIs(builder, KW_MODULE)) {
+                        exit_section_(builder, modulePrefix, DECL_DEF, true);
+                        break;
+                    } else {
+                        error("'module' expected", builder);
+                        exit_section_(builder, modulePrefix, DECL_DEF, true);
+                        break;
+                    }
+                }
+            }
         }
-        return true;
+
+//        assert (nextTokenIs(builder, KW_MODULE));
+        if (nextTokenIs(builder, KW_MODULE)) {
+            final PsiBuilder.Marker moduleDeclaration = enter_section_(builder);
+            consumeToken(builder, KW_MODULE);
+            final PsiBuilder.Marker moduleName = enter_section_(builder);
+            if (!nextTokenIs(builder, ID)) {
+                error("identifier expected following module", builder);
+                //goto error
+            } else {
+                BaseRulesParser.Identifier(builder, l + 3);
+
+                while (nextTokenIs(builder, OP_DOT)) {
+                    consumeToken(builder, OP_DOT);
+                    if (!BaseRulesParser.Identifier(builder, l + 3)) {
+                        error("identifier expected following package", builder);
+//                        goto Lerr;
+                    }
+                }
+
+                exit_section_(builder, moduleName, MODULE_FULLY_QUALIFIED_NAME, true);
+
+                if (!nextTokenIs(builder, OP_SCOLON))
+                    error("';' expected following module declaration instead of %s", builder);
+                consumeToken(builder, OP_SCOLON);
+                exit_section_(builder, moduleDeclaration, MODULE_DECLARATION, true);
+            }
+        }
+        return DeclDefParser.DeclDefs(builder, l + 1);
     }
 
     /* ********************************************************** */
-    // ModuleDeclaration | DeclDefs | Statement | SHEBANG
+
+    private static void error(String s, PsiBuilder builder) {
+//        report_error_(builder,false);
+        builder.error(s);
+    }
+
+
+    /**
+     * @param b the psibuilder in question
+     * @param l current recursion depth
+     * @return bool if match
+     * Monster sized dmd code for this:
+     */
+
+    /*
+Dsymbols* parseModule()
+    {
+        const comment = token.blockComment;
+        bool isdeprecated = false;
+        Expression msg = null;
+        Expressions* udas = null;
+        Dsymbols* decldefs;
+        Dsymbol lastDecl = mod; // for attaching ddoc unittests to module decl
+
+        Token* tk;
+        if (skipAttributes(&token, &tk) && tk.value == TOKmodule)
+        {
+            while (token.value != TOKmodule)
+            {
+                switch (token.value)
+                {
+                case TOKdeprecated:
+                    {
+                        // deprecated (...) module ...
+                        if (isdeprecated)
+                        {
+                            error("there is only one deprecation attribute allowed for module declaration");
+                        }
+                        else
+                        {
+                            isdeprecated = true;
+                        }
+                        nextToken();
+                        if (token.value == TOKlparen)
+                        {
+                            check(TOKlparen);
+                            msg = parseAssignExp();
+                            check(TOKrparen);
+                        }
+                        break;
+                    }
+                case TOKat:
+                    {
+                        Expressions* exps = null;
+                        const stc = parseAttribute(&exps);
+                        if (stc == STCproperty || stc == STCnogc || stc == STCdisable || stc == STCsafe || stc == STCtrusted || stc == STCsystem)
+                        {
+                            error("@%s attribute for module declaration is not supported", token.toChars());
+                        }
+                        else
+                        {
+                            udas = UserAttributeDeclaration.concat(udas, exps);
+                        }
+                        if (stc)
+                            nextToken();
+                        break;
+                    }
+                default:
+                    {
+                        error("'module' expected instead of %s", token.toChars());
+                        nextToken();
+                        break;
+                    }
+                }
+            }
+        }
+
+    */
     static boolean item_(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "item_")) return false;
         boolean r;
@@ -43,33 +1009,14 @@ public class DLangParser implements PsiParser, LightPsiParser {
     }
 
     /* ********************************************************** */
-    // !( ModuleDeclaration | DeclDefs | Statement | SHEBANG )
-    static boolean item_recover(PsiBuilder b, int l) {
-        if (!recursion_guard_(b, l, "item_recover")) return false;
-        boolean r;
-        PsiBuilder.Marker m = enter_section_(b, l, _NOT_);
-        r = !item_recover_0(b, l + 1);
-        exit_section_(b, l, m, r, false, null);
-        return r;
-    }
-
     // ModuleDeclaration | DeclDefs | Statement | SHEBANG
-    private static boolean item_recover_0(PsiBuilder b, int l) {
-        if (!recursion_guard_(b, l, "item_recover_0")) return false;
-        boolean r;
-        PsiBuilder.Marker m = enter_section_(b);
-        r = DeclDefParser.ModuleDeclaration(b, l + 1);
-        if (!r) r = DeclDefParser.DeclDefs(b, l + 1);
-        if (!r) r = StatementParser.Statement(b, l + 1);
-        if (!r) r = consumeToken(b, SHEBANG);
-        exit_section_(b, m, null, r);
-        return r;
-    }
+
 
     @Override
     public void parseLight(IElementType root, PsiBuilder builder) {
         boolean r;
         PsiBuilder b = adapt_builder_(root, builder, this, null);
+        b.setDebugMode(true);
         PsiBuilder.Marker m = enter_section_(b, 0, _COLLAPSE_, null);
         if (root == ADD_EXPRESSION_) {
             r = ExpressionParser.AddExpression_(b, 0);
@@ -631,4 +1578,5 @@ public class DLangParser implements PsiParser, LightPsiParser {
     protected boolean parse_root_(IElementType t, PsiBuilder b, int l) {
         return dFile(b, l + 1);
     }
+
 }
