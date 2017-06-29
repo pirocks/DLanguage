@@ -129,4 +129,12 @@ public class SkipUtil {
         }
 
     }
+
+    static Token skipParensIf(Token t) {
+        if (t.value() != TOKlparen)
+        {
+            return t;
+        }
+        return skipParens(t);
+    }
 }

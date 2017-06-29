@@ -26,7 +26,7 @@ public class DeclarationParser {
     // DeclDefs?
     private static boolean AggregateBody_1(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "AggregateBody_1")) return false;
-        DeclDefParser.DeclDefs(b, l + 1);
+        DeclDefParser.parseDeclDefs(b, l + 1);
         return true;
     }
 
@@ -394,7 +394,7 @@ public class DeclarationParser {
     // DeclDefs?
     private static boolean DeclarationBlock_1_1(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "DeclarationBlock_1_1")) return false;
-        DeclDefParser.DeclDefs(b, l + 1);
+        DeclDefParser.parseDeclDefs(b, l + 1);
         return true;
     }
 
@@ -1089,7 +1089,7 @@ public class DeclarationParser {
     // DeclDefs?
     private static boolean TemplateDeclaration_5(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "TemplateDeclaration_5")) return false;
-        DeclDefParser.DeclDefs(b, l + 1);
+        DeclDefParser.parseDeclDefs(b, l + 1);
         return true;
     }
 
@@ -1122,7 +1122,7 @@ public class DeclarationParser {
     // DeclDefs?
     private static boolean TemplateMixinDeclaration_6(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "TemplateMixinDeclaration_6")) return false;
-        DeclDefParser.DeclDefs(b, l + 1);
+        DeclDefParser.parseDeclDefs(b, l + 1);
         return true;
     }
 

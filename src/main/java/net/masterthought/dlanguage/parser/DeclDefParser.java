@@ -192,7 +192,7 @@ public class DeclDefParser {
     // DeclDefs?
     private static boolean ConditionalDeclaration_0_4(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "ConditionalDeclaration_0_4")) return false;
-        DeclDefs(b, l + 1);
+        parseDeclDefs(b, l + 1);
         return true;
     }
 
@@ -241,7 +241,7 @@ public class DeclDefParser {
     // DeclDefs?
     private static boolean ConditionalDeclaration_2_2(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "ConditionalDeclaration_2_2")) return false;
-        DeclDefs(b, l + 1);
+        parseDeclDefs(b, l + 1);
         return true;
     }
 
@@ -555,9 +555,13 @@ public class DeclDefParser {
         return r;
     }
 
+
+
+
+
     /* ********************************************************** */
     // DeclDef DeclDef*
-    public static boolean DeclDefs(PsiBuilder b, int l) {
+    public static boolean parseDeclDefs(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "DeclDefs")) return false;
         boolean r, p;
         PsiBuilder.Marker m = enter_section_(b, l, _NONE_, DECL_DEFS, "<decl defs>");

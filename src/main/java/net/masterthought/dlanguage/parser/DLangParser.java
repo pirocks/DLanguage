@@ -846,26 +846,26 @@ public class DLangParser implements PsiParser, LightPsiParser {
                         final PsiBuilder.Marker deprecatedMarker = enter_section_(builder);
                         // deprecated (...) module ...
                         if (isdeprecated) {
-                            error("there is only one deprecation attribute allowed for module declaration", builder);
+                            MiscParser.error("there is only one deprecation attribute allowed for module declaration", builder);
                         } else {
                             isdeprecated = true;
                         }
                         consumeToken(builder, KW_DEPRECATED);
                         if (nextTokenIs(builder, OP_PAR_LEFT)) {
                             if (!consumeToken(builder, OP_PAR_LEFT)) {
-                                error("you should never see this", builder);
+                                MiscParser.error("you should never see this", builder);
                             }
                             if (!ExpressionParser.AssignExpression(builder, l)) {
-                                error("expression expected", builder);
+                                MiscParser.error("expression expected", builder);
                             }
                             if (!consumeToken(builder, OP_PAR_RIGHT)) {
-                                error("unclosed deprecated statement", builder);
+                                MiscParser.error("unclosed deprecated statement", builder);
                             }
                         }
                         exit_section_(builder, deprecatedMarker, DLanguageTypes.DEPRECATED_ATTRIBUTE, true);
                     } else if (nextTokenIs(builder, OP_AT)) {
                         if (!AttributesParser.Attribute(builder, l + 1)) {
-                            error("attribute for module declaration is not supported", builder);//todo this message could be better
+                            MiscParser.error("attribute for module declaration is not supported", builder);//todo this message could be better
                         }
                         //                final PsiBuilder.Marker userAttribute = enter_section_(builder);
                         //                consumeToken(builder, OP_AT);
@@ -879,7 +879,7 @@ public class DLangParser implements PsiParser, LightPsiParser {
                         exit_section_(builder, modulePrefix, DECL_DEF, true);
                         break;
                     } else {
-                        error("'module' expected", builder);
+                        MiscParser.error("'module' expected", builder);
                         exit_section_(builder, modulePrefix, DECL_DEF, true);
                         break;
                     }
@@ -893,7 +893,7 @@ public class DLangParser implements PsiParser, LightPsiParser {
             consumeToken(builder, KW_MODULE);
             final PsiBuilder.Marker moduleName = enter_section_(builder);
             if (!nextTokenIs(builder, ID)) {
-                error("identifier expected following module", builder);
+                MiscParser.error("identifier expected following module", builder);
                 //goto error
             } else {
                 BaseRulesParser.Identifier(builder, l + 3);
@@ -901,7 +901,7 @@ public class DLangParser implements PsiParser, LightPsiParser {
                 while (nextTokenIs(builder, OP_DOT)) {
                     consumeToken(builder, OP_DOT);
                     if (!BaseRulesParser.Identifier(builder, l + 3)) {
-                        error("identifier expected following package", builder);
+                        MiscParser.error("identifier expected following package", builder);
 //                        goto Lerr;
                     }
                 }
@@ -909,20 +909,23 @@ public class DLangParser implements PsiParser, LightPsiParser {
                 exit_section_(builder, moduleName, MODULE_FULLY_QUALIFIED_NAME, true);
 
                 if (!nextTokenIs(builder, OP_SCOLON))
-                    error("';' expected following module declaration instead of %s", builder);
+                    MiscParser.error("';' expected following module declaration instead of %s", builder);
                 consumeToken(builder, OP_SCOLON);
                 exit_section_(builder, moduleDeclaration, MODULE_DECLARATION, true);
             }
         }
-        return DeclDefParser.DeclDefs(builder, l + 1);
+        return DeclDefParser.parseDeclDefs(builder, l + 1);
+        //todo do this with better error handling:
+//        if (token.value != TOKeof)
+//        {
+//            error(token.loc, "unrecognized declaration");
+//            goto Lerr;
+//        }
+//        return decldefs;
+
     }
 
     /* ********************************************************** */
-
-    private static void error(String s, PsiBuilder builder) {
-//        report_error_(builder,false);
-        builder.error(s);
-    }
 
 
     /**
@@ -1001,7 +1004,7 @@ Dsymbols* parseModule()
         boolean r;
         PsiBuilder.Marker m = enter_section_(b, l, _NONE_);
         r = DeclDefParser.ModuleDeclaration(b, l + 1);
-        if (!r) r = DeclDefParser.DeclDefs(b, l + 1);
+        if (!r) r = DeclDefParser.parseDeclDefs(b, l + 1);
         if (!r) r = StatementParser.Statement(b, l + 1);
         if (!r) r = consumeToken(b, SHEBANG);
         exit_section_(b, l, m, r, false, item_recover_parser_);
@@ -1179,7 +1182,7 @@ Dsymbols* parseModule()
         } else if (root == DECL_DEF) {
             r = DeclDefParser.DeclDef(b, 0);
         } else if (root == DECL_DEFS) {
-            r = DeclDefParser.DeclDefs(b, 0);
+            r = DeclDefParser.parseDeclDefs(b, 0);
         } else if (root == DECLARATION) {
             r = DeclarationParser.Declaration(b, 0);
         } else if (root == DECLARATION_BLOCK) {

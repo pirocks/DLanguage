@@ -366,4 +366,9 @@ public class MiscParser {
         exit_section_(b, m, VOID_INITIALIZER, r);
         return r;
     }
+
+    static void error(String s, PsiBuilder builder) {
+//        report_error_(builder,false);
+        builder.error(s);
+    }
 }

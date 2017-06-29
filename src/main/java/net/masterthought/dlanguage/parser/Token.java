@@ -9,9 +9,9 @@ import net.masterthought.dlanguage.psi.DLanguageTypes;
  */
 public class Token {
     PsiBuilder builder;
-    int i;
+    private int i;
 
-    private Token(PsiBuilder builder, int i) {
+    protected Token(PsiBuilder builder, int i) {
         this.builder = builder;
         this.i = i;
     }
@@ -31,6 +31,21 @@ public class Token {
 
     public boolean ident() {
         return builder.lookAhead(i).getIndex() == DLanguageTypes.ID.getIndex();
+    }
+
+    static class CurrentToken extends Token{
+
+        public CurrentToken(PsiBuilder builder) {
+            super(builder);
+        }
+
+        static Token peekNext(PsiBuilder builder){
+            return new Token(builder, 1);
+        }
+
+        static Token peekNext2(PsiBuilder builder){
+            return new Token(builder, 2);
+        }
     }
 
 }
