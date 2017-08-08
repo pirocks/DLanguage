@@ -3,7 +3,9 @@
     <id>net.masterthought.dlanguage</id>
     <name>D Language</name>
     <version>@version@</version>
-    <vendor email="kingsley.hendrickse@gmail.com" url="http://www.masterthought.net">MasterThought</vendor>
+    <vendor email="kingsley.hendrickse@gmail.com" url="https://github.com/intellij-dlanguage/intellij-dlanguage">
+        MasterThought
+    </vendor>
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
