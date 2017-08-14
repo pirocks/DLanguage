@@ -2,7 +2,6 @@ package net.masterthought.dlanguage.stubs.types
 
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
-import com.intellij.psi.stubs.StubOutputStream
 import net.masterthought.dlanguage.psi.DLanguageForeachType
 import net.masterthought.dlanguage.psi.impl.named.DLanguageForeachTypeImpl
 import net.masterthought.dlanguage.stubs.DLanguageForeachTypeStub
@@ -18,16 +17,12 @@ class DLanguageForeachTypeStubElementType(debugName: String) : DNamedStubElement
     }
 
     override fun createStub(psi: DLanguageForeachType, parentStub: StubElement<*>): DLanguageForeachTypeStub {
-        return DLanguageForeachTypeStub(parentStub, this, psi.name)
-    }
-
-    @Throws(IOException::class)
-    override fun serialize(stub: DLanguageForeachTypeStub, dataStream: StubOutputStream) {
-        dataStream.writeName(stub.name)
+        return DLanguageForeachTypeStub(parentStub, this, psi.name, psi.attributes)
     }
 
     @Throws(IOException::class)
     override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>): DLanguageForeachTypeStub {
-        return DLanguageForeachTypeStub(parentStub, this, dataStream.readName()!!)
+        val namedStubPair = deserializeNamedStub(dataStream, parentStub)
+        return DLanguageForeachTypeStub(parentStub, this, namedStubPair.component1(), namedStubPair.component2())
     }
 }

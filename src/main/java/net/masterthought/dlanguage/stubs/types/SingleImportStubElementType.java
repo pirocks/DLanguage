@@ -4,6 +4,8 @@ import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.util.io.StringRef;
+import kotlin.Pair;
+import net.masterthought.dlanguage.attributes.DAttributes;
 import net.masterthought.dlanguage.psi.DLanguageSingleImport;
 import net.masterthought.dlanguage.psi.impl.named.DLanguageSingleImportImpl;
 import net.masterthought.dlanguage.stubs.DLanguageSingleImportStub;
@@ -33,12 +35,12 @@ public class SingleImportStubElementType extends DNamedStubElementType<DLanguage
         for (final String bind : psi.getApplicableImportBinds()) {
             binds.add(StringRef.fromString(bind));
         }
-        return new DLanguageSingleImportStub(parentStub, this, psi.getName(), ((DLanguageSingleImportImpl) psi).isPublic(), psi.getApplicableImportBinds().size(), binds, psi.getImportedModuleName(), psi.getIdentifier() != null, psi.getIdentifier() != null ? psi.getIdentifier().getName() : "");
+        return new DLanguageSingleImportStub(parentStub, this, psi.getName(), ((DLanguageSingleImportImpl) psi).isPublic(), psi.getApplicableImportBinds().size(), binds, psi.getImportedModuleName(), psi.getIdentifier() != null, psi.getIdentifier() != null ? psi.getIdentifier().getName() : "", psi.getAttributes());
     }
 
     @Override
     public void serialize(@NotNull final DLanguageSingleImportStub stub, @NotNull final StubOutputStream dataStream) throws IOException {
-        dataStream.writeName(stub.getName());
+        super.serialize(stub, dataStream);
         dataStream.writeBoolean(stub.isPublic());
         dataStream.writeInt(stub.numBinds());
         for (final String s : stub.getBinds()) {
@@ -52,7 +54,7 @@ public class SingleImportStubElementType extends DNamedStubElementType<DLanguage
     @NotNull
     @Override
     public DLanguageSingleImportStub deserialize(@NotNull final StubInputStream dataStream, final StubElement parentStub) throws IOException {
-        final StringRef name = dataStream.readName();
+        final Pair<StringRef, DAttributes> namedStubPair = deserializeNamedStub(dataStream, parentStub);
         final boolean isPublic = dataStream.readBoolean();
         final int numBinds = dataStream.readInt();
         final Set<StringRef> binds = new HashSet<>();
@@ -62,6 +64,7 @@ public class SingleImportStubElementType extends DNamedStubElementType<DLanguage
         final StringRef importedModule = dataStream.readName();
         final boolean hasName = dataStream.readBoolean();
         final StringRef importName = dataStream.readName();
-        return new DLanguageSingleImportStub(parentStub, this, name, isPublic, numBinds, binds, importedModule, hasName, importName);
+
+        return new DLanguageSingleImportStub(parentStub, this, namedStubPair.component1(), isPublic, numBinds, binds, importedModule, hasName, importName, namedStubPair.component2());
     }
 }

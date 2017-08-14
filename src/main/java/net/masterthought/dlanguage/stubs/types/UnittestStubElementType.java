@@ -14,24 +14,24 @@ import java.io.IOException;
  * Created by francis on 4/8/2017.
  */
 public class UnittestStubElementType extends DStubElementType<DLanguageUnittestStub, DLanguageUnittest> {
-    public UnittestStubElementType(@NotNull String debugName) {
+    public UnittestStubElementType(final @NotNull String debugName) {
         super(debugName);
     }
 
     @Override
-    public DLanguageUnittest createPsi(@NotNull DLanguageUnittestStub stub) {
+    public DLanguageUnittest createPsi(final @NotNull DLanguageUnittestStub stub) {
         return new DLanguageUnittestImpl(stub, this);
     }
 
     @NotNull
     @Override
-    public DLanguageUnittestStub createStub(@NotNull DLanguageUnittest psi, StubElement parentStub) {
+    public DLanguageUnittestStub createStub(final @NotNull DLanguageUnittest psi, final StubElement parentStub) {
         return new UnittestStubImpl(parentStub, this);
     }
 
     @NotNull
     @Override
-    public DLanguageUnittestStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
+    public DLanguageUnittestStub deserialize(final @NotNull StubInputStream dataStream, final StubElement parentStub) throws IOException {
         return new UnittestStubImpl(parentStub, this);
     }
 }

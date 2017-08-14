@@ -2,7 +2,9 @@ package net.masterthought.dlanguage.stubs.types;
 
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
-import com.intellij.psi.stubs.StubOutputStream;
+import com.intellij.util.io.StringRef;
+import kotlin.Pair;
+import net.masterthought.dlanguage.attributes.DAttributes;
 import net.masterthought.dlanguage.psi.DLanguageStructDeclaration;
 import net.masterthought.dlanguage.psi.impl.named.DLanguageStructDeclarationImpl;
 import net.masterthought.dlanguage.stubs.DLanguageStructDeclarationStub;
@@ -11,29 +13,25 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 
 public class StructDeclarationStubElementType extends DNamedStubElementType<DLanguageStructDeclarationStub, DLanguageStructDeclaration> {
-    public StructDeclarationStubElementType(String debugName) {
+    public StructDeclarationStubElementType(final String debugName) {
         super(debugName);
     }
 
     @Override
-    public DLanguageStructDeclaration createPsi(@NotNull DLanguageStructDeclarationStub stub) {
+    public DLanguageStructDeclaration createPsi(final @NotNull DLanguageStructDeclarationStub stub) {
         return new DLanguageStructDeclarationImpl(stub, this);
     }
 
     @NotNull
     @Override
-    public DLanguageStructDeclarationStub createStub(@NotNull DLanguageStructDeclaration psi, StubElement parentStub) {
-        return new DLanguageStructDeclarationStub(parentStub, this, psi.getName());
-    }
-
-    @Override
-    public void serialize(@NotNull DLanguageStructDeclarationStub stub, @NotNull StubOutputStream dataStream) throws IOException {
-        dataStream.writeName(stub.getName());
+    public DLanguageStructDeclarationStub createStub(final @NotNull DLanguageStructDeclaration psi, final StubElement parentStub) {
+        return new DLanguageStructDeclarationStub(parentStub, this, psi.getName(), psi.getAttributes());
     }
 
     @NotNull
     @Override
-    public DLanguageStructDeclarationStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
-        return new DLanguageStructDeclarationStub(parentStub, this, dataStream.readName());
+    public DLanguageStructDeclarationStub deserialize(final @NotNull StubInputStream dataStream, final StubElement parentStub) throws IOException {
+        final Pair<StringRef, DAttributes> namedStubPair = deserializeNamedStub(dataStream, parentStub);
+        return new DLanguageStructDeclarationStub(parentStub, this, namedStubPair.component1(), namedStubPair.component2());
     }
 }

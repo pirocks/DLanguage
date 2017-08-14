@@ -3,7 +3,6 @@ package net.masterthought.dlanguage.stubs.types
 import com.intellij.lang.ASTNode
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
-import com.intellij.psi.stubs.StubOutputStream
 import net.masterthought.dlanguage.psi.DLanguageIfCondition
 import net.masterthought.dlanguage.psi.impl.named.DLanguageIfConditionImpl
 import net.masterthought.dlanguage.stubs.DLanguageIfConditionStub
@@ -23,16 +22,13 @@ class DLanguageIfConditionStubElementType(debugName: String) : DNamedStubElement
     }
 
     override fun createStub(psi: DLanguageIfCondition, parentStub: StubElement<*>): DLanguageIfConditionStub {
-        return DLanguageIfConditionStub(parentStub, this, psi.name)
-    }
-
-    @Throws(IOException::class)
-    override fun serialize(stub: DLanguageIfConditionStub, dataStream: StubOutputStream) {
-        dataStream.writeName(stub.name)
+        return DLanguageIfConditionStub(parentStub, this, psi.name, psi.attributes)
     }
 
     @Throws(IOException::class)
     override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>): DLanguageIfConditionStub {
-        return DLanguageIfConditionStub(parentStub, this, dataStream.readName()!!)
+        val namedStubPair = deserializeNamedStub(dataStream, parentStub)
+        return DLanguageIfConditionStub(parentStub, this, namedStubPair.component1(), namedStubPair.component2())
+
     }
 }

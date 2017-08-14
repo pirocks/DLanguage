@@ -1,21 +1,20 @@
 package net.masterthought.dlanguage.stubs;
 
 import com.intellij.psi.stubs.IStubElementType;
-import com.intellij.psi.stubs.NamedStubBase;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.io.StringRef;
+import net.masterthought.dlanguage.attributes.DAttributes;
 import net.masterthought.dlanguage.psi.DLanguageConstructor;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by franc on 1/14/2017.
  */
-public class DLanguageConstructorStub extends NamedStubBase<DLanguageConstructor> {
-    public DLanguageConstructorStub(StubElement parent, @NotNull IStubElementType elementType, StringRef name) {
-        super(parent, elementType, name);
+public class DLanguageConstructorStub extends DNamedStubBase<DLanguageConstructor> {
+    public DLanguageConstructorStub(final StubElement parent, final IStubElementType elementType, final String name, final DAttributes attributes) {
+        super(parent, elementType, name, attributes);
     }
 
-    public DLanguageConstructorStub(StubElement parent, @NotNull IStubElementType elementType, String name) {
-        super(parent, elementType, name);
+    public DLanguageConstructorStub(final StubElement parent, final IStubElementType elementType, final StringRef name, final DAttributes attributes) {
+        super(parent, elementType, name, attributes);
     }
 }

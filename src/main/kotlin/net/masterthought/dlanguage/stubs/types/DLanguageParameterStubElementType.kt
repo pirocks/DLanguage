@@ -2,7 +2,6 @@ package net.masterthought.dlanguage.stubs.types
 
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
-import com.intellij.psi.stubs.StubOutputStream
 import net.masterthought.dlanguage.psi.DLanguageParameter
 import net.masterthought.dlanguage.psi.impl.named.DLanguageParameterImpl
 import net.masterthought.dlanguage.stubs.DLanguageParameterStub
@@ -18,16 +17,13 @@ class DLanguageParameterStubElementType(debugName: String) : DNamedStubElementTy
     }
 
     override fun createStub(psi: DLanguageParameter, parentStub: StubElement<*>): DLanguageParameterStub {
-        return DLanguageParameterStub(parentStub, this, psi.name)
-    }
-
-    @Throws(IOException::class)
-    override fun serialize(stub: DLanguageParameterStub, dataStream: StubOutputStream) {
-        dataStream.writeName(stub.name)
+        return DLanguageParameterStub(parentStub, this, psi.name, psi.attributes)
     }
 
     @Throws(IOException::class)
     override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>): DLanguageParameterStub {
-        return DLanguageParameterStub(parentStub, this, dataStream.readName()!!)
+        val namedStubPair = deserializeNamedStub(dataStream, parentStub)
+        return DLanguageParameterStub(parentStub, this, namedStubPair.component1(), namedStubPair.component2())
+
     }
 }

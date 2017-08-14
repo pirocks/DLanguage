@@ -7,23 +7,24 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.stubs.IStubElementType;
-import com.intellij.psi.stubs.NamedStubBase;
+import net.masterthought.dlanguage.attributes.DAttributes;
 import net.masterthought.dlanguage.icons.DLanguageIcons;
 import net.masterthought.dlanguage.psi.DLanguageFile;
 import net.masterthought.dlanguage.psi.DLanguageIdentifier;
 import net.masterthought.dlanguage.psi.interfaces.DNamedElement;
 import net.masterthought.dlanguage.psi.references.DReference;
+import net.masterthought.dlanguage.stubs.DNamedStubBase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public abstract class DNamedStubbedPsiElementBase<T extends NamedStubBase<?>> extends DStubbedPsiElementBase<T> implements DNamedElement {
-    public DNamedStubbedPsiElementBase(@NotNull T stub, IStubElementType nodeType) {
+public abstract class DNamedStubbedPsiElementBase<T extends DNamedStubBase<?>> extends DStubbedPsiElementBase<T> implements DNamedElement {
+    public DNamedStubbedPsiElementBase(@NotNull final T stub, final IStubElementType nodeType) {
         super(stub, nodeType);
     }
 
-    public DNamedStubbedPsiElementBase(ASTNode node) {
+    public DNamedStubbedPsiElementBase(final ASTNode node) {
         super(node);
     }
 
@@ -80,5 +81,19 @@ public abstract class DNamedStubbedPsiElementBase<T extends NamedStubBase<?>> ex
         return new DReference(this, TextRange.from(0, (this).getName().length()));
     }//not sure if this should only be implemented for identifier todo
 
+    @NotNull
+    @Override
+    public DAttributes getAttributes() {
+        if (getStub() != null) {
+            return getStub().getAttributes();
+        }
+        final PsiElement startingElement;
+        if (getNameIdentifier() != null)
+            startingElement = getNameIdentifier();
+        else
+            startingElement = this;
+        return new DAttributes(startingElement);
+
+    }
 }
 

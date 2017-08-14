@@ -29,14 +29,14 @@ public class DDocumentationProvider extends AbstractDocumentationProvider implem
      */
     @Nullable
     @Override
-    public String getQuickNavigateInfo(PsiElement element, PsiElement originalElement) {
+    public String getQuickNavigateInfo(final PsiElement element, final PsiElement originalElement) {
         return null;
     }
 
     @Nullable
     @Override
-    public List<String> getUrlFor(PsiElement element, PsiElement originalElement) {
-        return new ArrayList<>();
+    public List<String> getUrlFor(final PsiElement element, final PsiElement originalElement) {
+        return new ArrayList<>();//todo add if doumentation paths for std lib ae added
     }
 
     @Nullable
@@ -67,9 +67,7 @@ public class DDocumentationProvider extends AbstractDocumentationProvider implem
             }
             String blurb = "This symbol is:";//todo
             if (!a.isLocal()) {
-                blurb += String.format("%10s%n", a.isPrivate() ? "private " : "");
-                blurb += String.format("%10s%n", a.isPublic() ? "public " : "");
-                blurb += String.format("%10s%n", a.isProtected() ? "protected " : "");
+                blurb += String.format("%10s%n", a.isVisible().toString());
             }
             blurb += String.format("%10s%n", a.isProperty() ? "property " : "");
             blurb += String.format("%10s%n", a.isStatic() ? "static " : "");
@@ -77,7 +75,7 @@ public class DDocumentationProvider extends AbstractDocumentationProvider implem
             blurb += String.format("%10s%n", a.isNoGC() ? "nogc" : "");
             blurb += String.format("%10s%n", a.isLocal() ? "local" : "");
             return blurb;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         }
         return null;
@@ -85,13 +83,14 @@ public class DDocumentationProvider extends AbstractDocumentationProvider implem
 
     @Nullable
     @Override
-    public PsiElement getDocumentationElementForLookupItem(PsiManager psiManager, Object object, PsiElement element) {
+    public PsiElement getDocumentationElementForLookupItem(final PsiManager psiManager, final Object
+        object, final PsiElement element) {
         return null;
     }
 
     @Nullable
     @Override
-    public PsiElement getDocumentationElementForLink(PsiManager psiManager, String link, PsiElement context) {
+    public PsiElement getDocumentationElementForLink(final PsiManager psiManager, final String link, final PsiElement context) {
         return null;
     }
 }

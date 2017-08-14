@@ -2,7 +2,9 @@ package net.masterthought.dlanguage.stubs.types;
 
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
-import com.intellij.psi.stubs.StubOutputStream;
+import com.intellij.util.io.StringRef;
+import kotlin.Pair;
+import net.masterthought.dlanguage.attributes.DAttributes;
 import net.masterthought.dlanguage.psi.DLanguageTemplateDeclaration;
 import net.masterthought.dlanguage.psi.impl.named.DLanguageTemplateDeclarationImpl;
 import net.masterthought.dlanguage.stubs.DLanguageTemplateDeclarationStub;
@@ -11,29 +13,26 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 
 public class DLanguageTemplateDeclarationStubElementType extends DNamedStubElementType<DLanguageTemplateDeclarationStub, DLanguageTemplateDeclaration> {
-    public DLanguageTemplateDeclarationStubElementType(String debugName) {
+    public DLanguageTemplateDeclarationStubElementType(final String debugName) {
         super(debugName);
     }
 
     @Override
-    public DLanguageTemplateDeclaration createPsi(@NotNull DLanguageTemplateDeclarationStub stub) {
+    public DLanguageTemplateDeclaration createPsi(@NotNull final DLanguageTemplateDeclarationStub stub) {
         return new DLanguageTemplateDeclarationImpl(stub, this);
     }
 
     @NotNull
     @Override
-    public DLanguageTemplateDeclarationStub createStub(@NotNull DLanguageTemplateDeclaration psi, StubElement parentStub) {
-        return new DLanguageTemplateDeclarationStub(parentStub, this, psi.getName());
-    }
-
-    @Override
-    public void serialize(@NotNull DLanguageTemplateDeclarationStub stub, @NotNull StubOutputStream dataStream) throws IOException {
-        dataStream.writeName(stub.getName());
+    public DLanguageTemplateDeclarationStub createStub(@NotNull final DLanguageTemplateDeclaration psi, final StubElement parentStub) {
+        return new DLanguageTemplateDeclarationStub(parentStub, this, psi.getName(), psi.getAttributes());
     }
 
     @NotNull
     @Override
-    public DLanguageTemplateDeclarationStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
-        return new DLanguageTemplateDeclarationStub(parentStub, this, dataStream.readName());
+    public DLanguageTemplateDeclarationStub deserialize(@NotNull final StubInputStream dataStream, final StubElement parentStub) throws IOException {
+        final Pair<StringRef, DAttributes> namedStubPair = deserializeNamedStub(dataStream, parentStub);
+        return new DLanguageTemplateDeclarationStub(parentStub, this, namedStubPair.component1(), namedStubPair.component2());
+
     }
 }

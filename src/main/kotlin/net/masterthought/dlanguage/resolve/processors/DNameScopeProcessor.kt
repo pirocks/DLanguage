@@ -68,7 +68,7 @@ class DNameScopeProcessor(var start: Identifier, val profile: Boolean = false) :
             result.addAll(DTopLevelDeclarationIndex.getTopLevelSymbols(start.name, element.importedModuleName, project))
         } else {
             val bindDecls = element.applicableImportBinds.flatMap { DTopLevelDeclarationIndex.getTopLevelSymbols(it, element.importedModuleName, project) }
-            if (!bindDecls.filter { it.name == start.name }.isEmpty()) {//todo it appears that for some of these psi is being loaded
+            if (!bindDecls.filter { it.name == start.name }.isEmpty()) { //todo it appears that for some of these psi is being loaded
                 result.addAll(bindDecls.filter { it.name == start.name })
                 return false
             }

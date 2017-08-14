@@ -3,7 +3,6 @@ package net.masterthought.dlanguage.stubs.types
 import com.intellij.lang.ASTNode
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
-import com.intellij.psi.stubs.StubOutputStream
 import net.masterthought.dlanguage.psi.DLanguageCatch
 import net.masterthought.dlanguage.psi.impl.named.DLanguageCatchImpl
 import net.masterthought.dlanguage.stubs.DLanguageCatchStub
@@ -23,17 +22,14 @@ class CatchStubElementType(debugName: String) : DNamedStubElementType<DLanguageC
     }
 
     override fun createStub(psi: DLanguageCatch, parentStub: StubElement<*>): DLanguageCatchStub {
-        return DLanguageCatchStub(parentStub, this, psi.name)
-    }
-
-    @Throws(IOException::class)
-    override fun serialize(stub: DLanguageCatchStub, dataStream: StubOutputStream) {
-        dataStream.writeName(stub.name)
+        return DLanguageCatchStub(parentStub, this, psi.name, psi.attributes)
     }
 
     @Throws(IOException::class)
     override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>): DLanguageCatchStub {
-        return DLanguageCatchStub(parentStub, this, dataStream.readName()!!)
+        val namedStubPair = deserializeNamedStub(dataStream, parentStub)
+        return DLanguageCatchStub(parentStub, this, namedStubPair.component1(), namedStubPair.component2())
+
     }
 
 }

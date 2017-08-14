@@ -1,7 +1,12 @@
 package net.masterthought.dlanguage.resolve.processors.parameters
 
 import com.intellij.psi.PsiElement
-import net.masterthought.dlanguage.psi.*
+import com.intellij.psi.stubs.StubInputStream
+import com.intellij.psi.stubs.StubOutputStream
+import net.masterthought.dlanguage.psi.DLanguageAttribute
+import net.masterthought.dlanguage.psi.DLanguageFile
+import net.masterthought.dlanguage.psi.DLanguageSingleImport
+import net.masterthought.dlanguage.psi.DLanguageUnittest
 import net.masterthought.dlanguage.psi.interfaces.DNamedElement
 import net.masterthought.dlanguage.utils.*
 
@@ -16,8 +21,19 @@ class DAttributesFinder {
         this.startingPoint = startingPoint
     }
 
-    enum class Visibility {
-        PUBLIC, PRIVATE, PROTECTED, LOCAL
+    enum class Visibility(val value: Int) {
+        PUBLIC(0), PRIVATE(1), PROTECTED(2), LOCAL(3);
+
+        fun write(stream: StubOutputStream) {
+            stream.writeInt(this.value)
+        }
+
+        companion object {
+            fun from(findValue: Int): Visibility = Visibility.values().first { it.value == findValue }
+            fun read(x: StubInputStream): Visibility {
+                return from(x.readInt())
+            }
+        }
     }
 
     private var visibility: Visibility? = null
@@ -31,9 +47,7 @@ class DAttributesFinder {
     private var isImmutable: Boolean? = null
 
     var defaultsToStatic: Boolean = true
-    var defaultsToPrivate: Boolean = false
-    var defaultsToProtected: Boolean = false
-    var defaultsToPublic: Boolean = true
+    var defaultVisibility: Visibility = Visibility.PUBLIC
     var defaultsToProperty: Boolean = false
     var defaultsToNoGC: Boolean = false
     var defaultsToExtern: Boolean = false
@@ -48,34 +62,8 @@ class DAttributesFinder {
         if (startingPoint is DNamedElement) {
             if (startingPoint is Constructor) {
                 recurseUpImpl(startingPoint.kW_THIS!!)
-            } else if (startingPoint is FunctionDeclaration) {
-                recurseUpImpl(startingPoint.identifier!!)
-            } else if (startingPoint is InterfaceOrClass) {
-                recurseUpImpl(startingPoint.identifier!!)
-            } else if (startingPoint is UnionDeclaration) {
-                recurseUpImpl(startingPoint.identifier!!)
-            } else if (startingPoint is StructDeclaration) {
-                recurseUpImpl(startingPoint.identifier!!)
-            } else if (startingPoint is LabeledStatement) {
-                recurseUpImpl(startingPoint.identifier!!)
-            } else if (startingPoint is AutoDeclarationPart) {
-                recurseUpImpl(startingPoint.identifier!!)
-            } else if (startingPoint is EnumDeclaration) {
-                recurseUpImpl(startingPoint.identifier!!)
-            } else if (startingPoint is Catch) {
-                recurseUpImpl(startingPoint.identifier!!)
-            } else if (startingPoint is Declarator) {
-                recurseUpImpl(startingPoint.identifier!!)
-            } else if (startingPoint is EponymousTemplateDeclaration) {
-                recurseUpImpl(startingPoint.identifier!!)
-            } else if (startingPoint is ForeachType) {
-                recurseUpImpl(startingPoint.identifier!!)
-            } else if (startingPoint is DLanguageIfCondition) {
-                recurseUpImpl(startingPoint.identifier!!)
-            } /*else if (startingPoint is SingleImport) {
-                recurseUpImpl(startingPoint.identifier!!)
-            }*/ else if (startingPoint is TemplateDeclaration) {
-                recurseUpImpl(startingPoint.identifier!!)
+            } else if (startingPoint.nameIdentifier != null) {
+                recurseUpImpl(startingPoint.nameIdentifier!!)
             }
         }
         recurseUpImpl(startingPoint)
@@ -108,11 +96,9 @@ class DAttributesFinder {
         return isParent(parent, child.parent)
     }
 
-
     fun execute(element: PsiElement): Boolean {
         if (element is DLanguageSingleImport && isParent(element, startingPoint)) {
-            defaultsToPrivate = true
-            defaultsToPublic = false
+            defaultVisibility = Visibility.PRIVATE
             defaultsToStatic = false
         }
         if (element is FunctionDeclaration || element is DLanguageUnittest || element is Parameters || element is TemplateParameters) {
@@ -145,7 +131,6 @@ class DAttributesFinder {
         }
         return true
     }
-
 
     fun updateFromAttribute(attribute: DLanguageAttribute) {
         if (attribute.textOffset < startingPoint.textOffset) {
@@ -190,9 +175,11 @@ class DAttributesFinder {
                 }
             } else if (attribute.alignAttribute != null) {
             } else if (attribute.atAttribute != null) {
-                if (attribute.atAttribute!!.identifier!!.name == "property") {
-                    if (isProperty == null) {
-                        isProperty = true
+                if (attribute.atAttribute?.identifier?.name != null) {
+                    if (attribute.atAttribute!!.identifier!!.name == "property") {
+                        if (isProperty == null) {
+                            isProperty = true
+                        }
                     }
                 }
             } else if (attribute.linkageAttribute != null) {
@@ -205,24 +192,11 @@ class DAttributesFinder {
         return isStatic ?: defaultsToStatic
     }
 
-    fun isPrivate(): Boolean {
+    fun isVisible(): Visibility {
         if (visibility == null)
-            return defaultsToPrivate
-        return visibility == Visibility.PRIVATE
+            return defaultVisibility
+        return visibility as Visibility
     }
-
-    fun isProtected(): Boolean {
-        if (visibility == null)
-            return defaultsToProtected
-        return visibility == Visibility.PROTECTED
-    }
-
-    fun isPublic(): Boolean {
-        if (visibility == null)
-            return defaultsToPublic
-        return visibility == Visibility.PUBLIC
-    }
-
     fun isProperty(): Boolean {
         return isProperty ?: defaultsToProperty
     }
@@ -249,6 +223,14 @@ class DAttributesFinder {
         return isNothrow ?: defaultsToNothrow
     }
 
+    fun isConst(): Boolean {
+        return isConst ?: defaultsToConst
+    }
+
+    fun isImmutable(): Boolean {
+        return isImmutable ?: defaultsToImmutable
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other?.javaClass != javaClass) return false
@@ -266,9 +248,7 @@ class DAttributesFinder {
         if (isConst != other.isConst) return false
         if (isImmutable != other.isImmutable) return false
         if (defaultsToStatic != other.defaultsToStatic) return false
-        if (defaultsToPrivate != other.defaultsToPrivate) return false
-        if (defaultsToProtected != other.defaultsToProtected) return false
-        if (defaultsToPublic != other.defaultsToPublic) return false
+        if (defaultVisibility != other.defaultVisibility) return false
         if (defaultsToProperty != other.defaultsToProperty) return false
         if (defaultsToNoGC != other.defaultsToNoGC) return false
         if (defaultsToExtern != other.defaultsToExtern) return false
@@ -293,9 +273,7 @@ class DAttributesFinder {
         result = 31 * result + (isConst?.hashCode() ?: 0)
         result = 31 * result + (isImmutable?.hashCode() ?: 0)
         result = 31 * result + defaultsToStatic.hashCode()
-        result = 31 * result + defaultsToPrivate.hashCode()
-        result = 31 * result + defaultsToProtected.hashCode()
-        result = 31 * result + defaultsToPublic.hashCode()
+        result = 31 * result + defaultVisibility.hashCode()
         result = 31 * result + defaultsToProperty.hashCode()
         result = 31 * result + defaultsToNoGC.hashCode()
         result = 31 * result + defaultsToExtern.hashCode()

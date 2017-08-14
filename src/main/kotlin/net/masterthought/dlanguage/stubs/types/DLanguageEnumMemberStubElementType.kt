@@ -2,7 +2,6 @@ package net.masterthought.dlanguage.stubs.types
 
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
-import com.intellij.psi.stubs.StubOutputStream
 import net.masterthought.dlanguage.psi.DLanguageEnumMember
 import net.masterthought.dlanguage.psi.impl.named.DLanguageEnumMemberImpl
 import net.masterthought.dlanguage.stubs.DLanguageEnumMemberStub
@@ -18,16 +17,12 @@ class DLanguageEnumMemberStubElementType(debugName: String) : DNamedStubElementT
     }
 
     override fun createStub(psi: DLanguageEnumMember, parentStub: StubElement<*>): DLanguageEnumMemberStub {
-        return DLanguageEnumMemberStub(parentStub, this, psi.name)
-    }
-
-    @Throws(IOException::class)
-    override fun serialize(stub: DLanguageEnumMemberStub, dataStream: StubOutputStream) {
-        dataStream.writeName(stub.name)
+        return DLanguageEnumMemberStub(parentStub, this, psi.name, psi.attributes)
     }
 
     @Throws(IOException::class)
     override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>): DLanguageEnumMemberStub {
-        return DLanguageEnumMemberStub(parentStub, this, dataStream.readName()!!)
+        val namedStubPair = deserializeNamedStub(dataStream, parentStub)
+        return DLanguageEnumMemberStub(parentStub, this, namedStubPair.component1(), namedStubPair.component2())
     }
 }

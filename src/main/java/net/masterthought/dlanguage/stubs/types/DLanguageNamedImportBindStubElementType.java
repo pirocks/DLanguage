@@ -2,7 +2,9 @@ package net.masterthought.dlanguage.stubs.types;
 
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
-import com.intellij.psi.stubs.StubOutputStream;
+import com.intellij.util.io.StringRef;
+import kotlin.Pair;
+import net.masterthought.dlanguage.attributes.DAttributes;
 import net.masterthought.dlanguage.psi.DLanguageNamedImportBind;
 import net.masterthought.dlanguage.psi.impl.named.DLanguageNamedImportBindImpl;
 import net.masterthought.dlanguage.stubs.DLanguageNamedImportBindStub;
@@ -11,29 +13,26 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 
 public class DLanguageNamedImportBindStubElementType extends DNamedStubElementType<DLanguageNamedImportBindStub, DLanguageNamedImportBind> {
-    public DLanguageNamedImportBindStubElementType(String debugName) {
+    public DLanguageNamedImportBindStubElementType(final String debugName) {
         super(debugName);
     }
 
     @Override
-    public DLanguageNamedImportBind createPsi(@NotNull DLanguageNamedImportBindStub stub) {
+    public DLanguageNamedImportBind createPsi(@NotNull final DLanguageNamedImportBindStub stub) {
         return new DLanguageNamedImportBindImpl(stub, this);
     }
 
     @NotNull
     @Override
-    public DLanguageNamedImportBindStub createStub(@NotNull DLanguageNamedImportBind psi, StubElement parentStub) {
-        return new DLanguageNamedImportBindStub(parentStub, this, psi.getName());
-    }
-
-    @Override
-    public void serialize(@NotNull DLanguageNamedImportBindStub stub, @NotNull StubOutputStream dataStream) throws IOException {
-        dataStream.writeName(stub.getName());
+    public DLanguageNamedImportBindStub createStub(@NotNull final DLanguageNamedImportBind psi, final StubElement parentStub) {
+        return new DLanguageNamedImportBindStub(parentStub, this, psi.getName(), psi.getAttributes());
     }
 
     @NotNull
     @Override
-    public DLanguageNamedImportBindStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
-        return new DLanguageNamedImportBindStub(parentStub, this, dataStream.readName());
+    public DLanguageNamedImportBindStub deserialize(@NotNull final StubInputStream dataStream, final StubElement parentStub) throws IOException {
+        final Pair<StringRef, DAttributes> namedStubPair = deserializeNamedStub(dataStream, parentStub);
+        return new DLanguageNamedImportBindStub(parentStub, this, namedStubPair.component1(), namedStubPair.component2());
+
     }
 }
