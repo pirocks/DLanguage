@@ -72,7 +72,7 @@ class DLangParser {
         tokenTypeIndex.put("stringLiteral", new Token.IdType(DOUBLE_QUOTED_STRING));
         tokenTypeIndex.put("dstringLiteral", new Token.IdType(ALTERNATE_WYSIWYG_STRING));//todo create an actual lexer entry for this
         tokenTypeIndex.put("wstringLiteral", new Token.IdType(WYSIWYG_STRING));//todo create an actual lexer entry for this
-        tokenTypeIndex.put("tokenstringLiteral", new Token.IdType(TOKEN_STRING));//note has a special rule in advance to make up for the shortcomings of jflex. improve this todo
+        tokenTypeIndex.put("tokenStringLiteral", new Token.IdType(TOKEN_STRING));//note has a special rule in advance to make up for the shortcomings of jflex. improve this todo
         tokenTypeIndex.put("typedef", new Token.IdType(ID));//todo create an actual lexer entry for this, could be the source of bugs
     }
 
@@ -80,14 +80,13 @@ class DLangParser {
 
     @Deprecated
     final int MAX_ERRORS = 200;
-    private final Token.IdType[] stringLiteralsArray = {tok("stringLiteral"), tok("wstringLiteral"), tok("dstringLiteral"), tok("tokenstringLiteral")};
-    private final Set<Token.IdType> literals = Sets.newHashSet(tok("dstringLiteral"), tok("stringLiteral"), tok("wstringLiteral"), tok("tokenstringLiteral"), tok("characterLiteral"), tok("true"), tok("false"), tok("null"), tok("$"), tok("doubleLiteral"), tok("floatLiteral"), tok("idoubleLiteral"), tok("ifloatLiteral"), tok("intLiteral"), tok("longLiteral"), tok("realLiteral"), tok("irealLiteral"), tok("uintLiteral"), tok("ulongLiteral"), tok("__DATE__"), tok("__TIME__"), tok("__TIMESTAMP__"), tok("__VENDOR__"), tok("__VERSION__"), tok("__FILE__"), tok("__FILE_FULL_PATH__"), tok("__LINE__"), tok("__MODULE__"), tok("__FUNCTION__"), tok("__PRETTY_FUNCTION__"));
+    private final Token.IdType[] stringLiteralsArray = {tok("stringLiteral"), tok("wstringLiteral"), tok("dstringLiteral"), tok("tokenStringLiteral")};
+    private final Set<Token.IdType> literals = Sets.newHashSet(tok("dstringLiteral"), tok("stringLiteral"), tok("wstringLiteral"), tok("tokenStringLiteral"), tok("characterLiteral"), tok("true"), tok("false"), tok("null"), tok("$"), tok("doubleLiteral"), tok("floatLiteral"), tok("idoubleLiteral"), tok("ifloatLiteral"), tok("intLiteral"), tok("longLiteral"), tok("realLiteral"), tok("irealLiteral"), tok("uintLiteral"), tok("ulongLiteral"), tok("__DATE__"), tok("__TIME__"), tok("__TIMESTAMP__"), tok("__VENDOR__"), tok("__VERSION__"), tok("__FILE__"), tok("__FILE_FULL_PATH__"), tok("__LINE__"), tok("__MODULE__"), tok("__FUNCTION__"), tok("__PRETTY_FUNCTION__"));
     private final Set<Token.IdType> basicTypes = Sets.newHashSet(tok("int"), tok("bool"), tok("byte"), tok("cdouble"), tok("cent"), tok("cfloat"), tok("char"), tok("creal"), tok("dchar"), tok("double"), tok("float"), tok("idouble"), tok("ifloat"), tok("ireal"), tok("long"), tok("real"), tok("short"), tok("ubyte"), tok("ucent"), tok("uint"), tok("ulong"), tok("ushort"), tok("void"), tok("wchar"));
     private final Set<Token.IdType> Protections = Sets.newHashSet(tok("export"), tok("package"),
         tok("private"), tok("public"), tok("protected"));
     @NotNull
-    private final
-    PsiBuilder builder;
+    private final PsiBuilder builder;
     private final Map<Integer, Boolean> cachedAAChecks = new HashMap<>();
     ////    private final HashMap<Marker, Integer> beginnings = new HashMap<>();//todo this maybe useful in the future but commented out for now
     Bookmark debugBookmark = null;//used to be able to eval expressions while debugging and then rollback side effects
@@ -8507,29 +8506,47 @@ class DLangParser {
         if (!builder.getTokenType().equals(tokens[index].type.type)) {
             throw new AssertionError();
         }
-        Marker identifierMarker = null;
-        Marker tokenStringMarker = null;
-        if (currentIs(tok("identifier"))) {
-            identifierMarker = enter_section_(builder);
-        }
-        if (currentIs(tok("tokenstringLiteral"))) {
-            tokenStringMarker = enter_section_modified(builder);
-        }
+        if (currentIs(tok("identifier")) || currentIs(tok("tokenStringLiteral")) || currentIs(tok("super")) || currentIs(tok("this")))
+            return specialAdvance();
+        return doAdvance();
+    }
+
+    private Token doAdvance() {
         builder.advanceLexer();
         index++;
-        if (identifierMarker != null) {
-            exit_section_(builder, identifierMarker, IDENTIFIER, true);
-        }
-        if (tokenStringMarker != null) {
-            while (builder.getTokenType().equals(TOKEN_STRING)) {
-                builder.advanceLexer();
-                index++;
-            }
-            exit_section_(builder, tokenStringMarker, STRING_LIT, true);
-            //todo this is not necessary in expect but may be necessary in the future.
-        }
         return tokens[index - 1];
     }
+
+
+    private Token specialAdvance() {
+        if (currentIs(tok("identifier"))) {
+            return specialAdvanceIdentifier(IDENTIFIER);
+        } else if (currentIs(tok("tokenStringLiteral"))) {
+            return specialAdvanceTokenString();
+        } else if (currentIs(tok("this"))) {
+            return specialAdvanceIdentifier(THIS_IDENTIFIER);
+        } else if (currentIs(tok("super"))) {
+            return specialAdvanceIdentifier(SUPER_IDENTIFIER);
+        }
+        throw new IllegalStateException();
+    }
+
+    private Token specialAdvanceTokenString() {
+        final Marker tokenStringMarker = enter_section_modified(builder);
+        while (builder.getTokenType().equals(TOKEN_STRING)) {
+            doAdvance();
+        }
+        exit_section_(builder, tokenStringMarker, STRING_LIT, true);
+        return tokens[index - 1];
+    }
+
+    private Token specialAdvanceIdentifier(final IElementType type) {
+        final Marker marker = enter_section_modified(builder);
+        final Token res = doAdvance();
+        exit_section_modified(builder, marker, type, true);
+        return res;
+    }
+
 
     /**
      * Returns: true if the current token has the given type

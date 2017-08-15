@@ -55,6 +55,8 @@ public interface DLanguageTypes {
     IElementType EPONYMOUS_TEMPLATE_DECLARATION = DElementTypeFactory.factory("EPONYMOUS_TEMPLATE_DECLARATION");
     IElementType ENUM_MEMBER = DElementTypeFactory.factory("ENUM_MEMBER");
     IElementType NAMED_IMPORT_BIND = DElementTypeFactory.factory("NAMED_IMPORT_BIND");
+    IElementType THIS_IDENTIFIER = DElementTypeFactory.factory("THIS_IDENTIFIER");
+    IElementType SUPER_IDENTIFIER = DElementTypeFactory.factory("SUPER_IDENTIFIER");
     IElementType ALIAS_DECLARATION = new DLanguageElementType("ALIAS_DECLARATION");
     IElementType ALIAS_THIS_DECLARATION = new DLanguageElementType("ALIAS_THIS_DECLARATION");
     IElementType ALIGN_ATTRIBUTE = new DLanguageElementType("ALIGN_ATTRIBUTE");
@@ -816,6 +818,10 @@ public interface DLanguageTypes {
                 return new DLanguageBuiltinTypeImpl(node);
             } else if (type == NAMED_IMPORT_BIND) {
                 return new DLanguageNamedImportBindImpl(node);
+            } else if (type == THIS_IDENTIFIER) {
+                return new DLanguageThisIdentifierImpl(node);
+            } else if (type == SUPER_IDENTIFIER) {
+                return new DLanguageSuperIdentifierImpl(node);
             }
 
 

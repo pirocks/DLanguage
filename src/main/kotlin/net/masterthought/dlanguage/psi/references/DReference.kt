@@ -7,9 +7,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.IncorrectOperationException
-import net.masterthought.dlanguage.index.DModuleIndex
 import net.masterthought.dlanguage.processors.DCompletionProcessor
-import net.masterthought.dlanguage.processors.DImportScopeProcessor
 import net.masterthought.dlanguage.psi.DLanguageFile
 import net.masterthought.dlanguage.psi.DLanguageIdentifier
 import net.masterthought.dlanguage.psi.interfaces.DNamedElement
@@ -244,6 +242,14 @@ class DReference(element: PsiNamedElement, textRange: TextRange) : PsiReferenceB
             return element
         }
         return super.handleElementRename(newName)
+    }
+
+    override fun isReferenceTo(element: PsiElement?): Boolean {
+        for (result in multiResolve(false)) {
+            if (getElement().manager.areElementsEquivalent(result.element, element))
+                return true
+        }
+        return false
     }
 
     companion object {

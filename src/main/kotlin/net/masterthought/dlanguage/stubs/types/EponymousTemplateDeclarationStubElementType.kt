@@ -11,7 +11,7 @@ import java.io.IOException
 /**
  * Created by francis on 6/13/2017.
  */
-class DLanguageEponymousTemplateDeclarationStubElementType(debugName: String) : DNamedStubElementType<DLanguageEponymousTemplateDeclarationStub, DLanguageEponymousTemplateDeclaration>(debugName) {
+class EponymousTemplateDeclarationStubElementType(debugName: String) : DNamedStubElementType<DLanguageEponymousTemplateDeclarationStub, DLanguageEponymousTemplateDeclaration>(debugName) {
 
     override fun createPsi(stub: DLanguageEponymousTemplateDeclarationStub): DLanguageEponymousTemplateDeclaration {
         return DLanguageEponymousTemplateDeclarationImpl(stub, this)

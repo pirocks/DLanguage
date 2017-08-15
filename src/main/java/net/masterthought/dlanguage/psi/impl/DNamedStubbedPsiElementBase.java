@@ -33,9 +33,9 @@ public abstract class DNamedStubbedPsiElementBase<T extends DNamedStubBase<?>> e
 
     @NotNull
     public String getName() {
-        if (getStub() != null) {
-            if (getStub().getName() != null)
-                return getStub().getName();
+        if (getGreenStub() != null) {
+            if (getGreenStub().getName() != null)
+                return getGreenStub().getName();
         }
         if (getNameIdentifier() == null) {
             return DReference.Companion.getNAME_NOT_FOUND_STRING();
@@ -84,8 +84,8 @@ public abstract class DNamedStubbedPsiElementBase<T extends DNamedStubBase<?>> e
     @NotNull
     @Override
     public DAttributes getAttributes() {
-        if (getStub() != null) {
-            return getStub().getAttributes();
+        if (getGreenStub() != null) {
+            return getGreenStub().getAttributes();
         }
         final PsiElement startingElement;
         if (getNameIdentifier() != null)

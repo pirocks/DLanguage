@@ -55,13 +55,8 @@ public class DLanguageSingleImportImpl extends DNamedStubbedPsiElementBase<DLang
     @NotNull
     @Override
     public Set<String> getApplicableImportBinds() {
-        if (getStub() != null) {
-            assert getStub() != null;
-            try {
-                return getStub().getApplicableImportBinds();
-            } catch (final NullPointerException e) {
-                e.printStackTrace();
-            }
+        if (getGreenStub() != null) {
+            return getGreenStub().getApplicableImportBinds();
         }
         if (((DLanguageImportDeclaration) getParent()).getImportBindings() != null) {
             return ((DLanguageImportDeclaration) getParent()).getImportBindings().getImportBinds().stream().map(dLanguageImportBind -> dLanguageImportBind.getIdentifier().getName()).collect(Collectors.toSet());
@@ -72,13 +67,8 @@ public class DLanguageSingleImportImpl extends DNamedStubbedPsiElementBase<DLang
     @NotNull
     @Override
     public String getImportedModuleName() {
-        if (getStub() != null) {
-            assert getStub() != null;
-            try {
-                return getStub().getImportedModule();
-            } catch (final NullPointerException e) {
-                e.printStackTrace();
-            }
+        if (getGreenStub() != null) {
+            return getGreenStub().getImportedModule();
         }
         return getIdentifierChain().getText();
     }
