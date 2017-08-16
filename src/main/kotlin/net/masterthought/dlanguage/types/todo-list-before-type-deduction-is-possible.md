@@ -1,6 +1,6 @@
 ####Easy stuff
 
-- make this and super references
+- ~~make this and super references~~
   - possible inspection for this and super references where they shouldn't be
 - resolve cache
 - make MembersIndex respect inheritance

@@ -44,11 +44,11 @@ class PossiblyUndefinedSymbol : LocalInspectionTool() {
                 if (DResolveUtil.getInstance(identifier.project).findDefinitionNode(identifier, false).isEmpty() && !symbolIsDefinedByDefault(identifier)) {
                     holder.registerProblem(identifier, "Possibly undefined symbol")//todo add quick fix
                 }
-                val end = System.currentTimeMillis()
-                if (end - start > 50) {
-                    log.info("resolve took a while" + (end - start))
-                    DResolveUtil.getInstance(identifier.project).findDefinitionNode(identifier, false)
-                }
+//                val end = System.currentTimeMillis()
+//                if (end - start > 50) {
+//                    log.info("resolve took a while" + (end - start))
+//                    DResolveUtil.getInstance(identifier.project).findDefinitionNode(identifier, false)
+//                }
 //                log.info("time to resolve in inspection:" + (end - start))
             }
         }
