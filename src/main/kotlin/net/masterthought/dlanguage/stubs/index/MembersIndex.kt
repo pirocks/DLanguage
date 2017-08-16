@@ -8,6 +8,7 @@ import net.masterthought.dlanguage.psi.interfaces.DNamedElement
 import net.masterthought.dlanguage.stubs.*
 import net.masterthought.dlanguage.stubs.interfaces.DLanguageUnittestStub
 import net.masterthought.dlanguage.stubs.interfaces.HasMembersStub
+import net.masterthought.dlanguage.utils.InterfaceOrClass
 import java.util.*
 
 /**
@@ -20,7 +21,7 @@ class DMembersIndex : StringStubIndexExtension<DNamedElement>() {
         return super.getVersion() + VERSION
     }
 
-    //use with caution, prefer static methods
+    //use with caution, prefer static utility methods
     override fun getKey(): StubIndexKey<String, DNamedElement> {
         return KEY
     }
@@ -32,17 +33,21 @@ class DMembersIndex : StringStubIndexExtension<DNamedElement>() {
             if (getParentHasMembers(stub).size > 1)
                 return
             for (hasMembers in getParentHasMembers(stub)) {
-                if (hasMembers.name == null) {
-                    throw IllegalStateException()
-                }
                 sink.occurrence(DMembersIndex.KEY, hasMembers.name)
             }
         }
 
-        fun getMemberSymbols(name: String, module: String, project: Project): Set<DNamedElement> {
+        fun getMemberSymbols(name: String, module: String, project: Project, includeInheritance: Boolean = true): Set<DNamedElement> {
             val elements = mutableSetOf<DNamedElement>()
             for (file in DModuleIndex.getFilesByModuleName(project, module, GlobalSearchScope.everythingScope(project))) {
-                elements.addAll(StubIndex.getElements(KEY, name, project, GlobalSearchScope.fileScope(file), DNamedElement::class.java))//todp assert that this should only be called once
+                elements.addAll(StubIndex.getElements(KEY, name, project, GlobalSearchScope.fileScope(file), DNamedElement::class.java))//todo assert that this should only be called once
+                if (includeInheritance) {
+                    for (element in DTopLevelDeclarationsByModuleAndName.getSymbol(name, file.moduleOrFileName, project)) {
+                        if (element is InterfaceOrClass) {
+                            element
+                        }
+                    }
+                }
             }
             return elements
         }

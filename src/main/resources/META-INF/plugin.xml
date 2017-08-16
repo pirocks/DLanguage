@@ -96,6 +96,8 @@
         <stubIndex implementation="net.masterthought.dlanguage.stubs.index.DTopLevelDeclarationsByModule"/>
         <stubIndex implementation="net.masterthought.dlanguage.stubs.index.DPublicImportIndex"/>
         <stubIndex implementation="net.masterthought.dlanguage.stubs.index.DMembersIndex"/>
+        <stubIndex implementation="net.masterthought.dlanguage.stubs.index.ImportsByModule"/>
+        <stubIndex implementation="net.masterthought.dlanguage.stubs.index.DTopLevelDeclarationsByModuleAndName"/>
         <gotoSymbolContributor implementation="net.masterthought.dlanguage.features.DChooseByNameContributor"/>
         <gotoClassContributor implementation="net.masterthought.dlanguage.features.DClassContributor"/>
         <!-- Project settings -->

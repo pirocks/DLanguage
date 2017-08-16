@@ -52,7 +52,7 @@ class DPublicImportIndex : StringStubIndexExtension<SingleImport>() {
                 val tempSet = mutableSetOf<SingleImport>()
                 for (import in toProcess) {
                     if (!alreadyProcessed.contains(import)) {
-                        tempSet += StubIndex.getElements(DPublicImportIndex.KEY, import.importedModuleName, project, GlobalSearchScope.everythingScope(project), SingleImport::class.java)
+                        tempSet += StubIndex.getElements(KEY, import.importedModuleName, project, GlobalSearchScope.everythingScope(project), SingleImport::class.java)
                     }
                 }
                 alreadyProcessed.addAll(toProcess)
@@ -62,6 +62,34 @@ class DPublicImportIndex : StringStubIndexExtension<SingleImport>() {
             }
             return toProcess
         }
+    }
+}
 
+
+class ImportsByModule : StringStubIndexExtension<SingleImport>() {
+
+    override fun getVersion(): Int {
+        return super.getVersion() + VERSION
+    }
+
+    /**
+     * use this method sparingly. better to implement stuff here, than doing raw queries
+     */
+    override fun getKey(): StubIndexKey<String, SingleImport> {
+        return KEY
+    }
+
+    companion object {
+        private val KEY: StubIndexKey<String, SingleImport> = StubIndexKey.createIndexKey<String, SingleImport>("d.globally.accessible.import.module")
+        val VERSION = 2
+        fun <S : NamedStubBase<T>, T : DNamedElement> indexTopLevelImports(stub: S, sink: IndexSink) {
+            if (stub is DLanguageSingleImportStub && topLevelDeclaration<S, T>(stub)) {
+                sink.occurrence(KEY, (stub.psi.containingFile as DLanguageFile).moduleOrFileName)
+            }
+        }
+
+        fun getTopLevelImports(module: String, project: Project): Set<SingleImport> {
+            return StubIndex.getElements(KEY, module, project, GlobalSearchScope.everythingScope(project), SingleImport::class.java).toSet()
+        }
     }
 }

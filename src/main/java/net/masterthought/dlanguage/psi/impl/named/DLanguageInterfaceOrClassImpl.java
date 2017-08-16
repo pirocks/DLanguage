@@ -73,9 +73,6 @@ public class DLanguageInterfaceOrClassImpl extends DNamedStubbedPsiElementBase<D
     public DLanguageStructBody getStructBody() {
         return PsiTreeUtil.getChildOfType(this, DLanguageStructBody.class);
     }
-//    public String getFullName() {
-//        return DPsiImplUtil.getFullName(this);
-//    }
 
     @Nullable
     public DLanguageIdentifier getNameIdentifier() {

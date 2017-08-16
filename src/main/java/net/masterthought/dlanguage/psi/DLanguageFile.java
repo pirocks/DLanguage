@@ -9,7 +9,6 @@ import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.stubs.StubElement;
 import net.masterthought.dlanguage.DLanguage;
 import net.masterthought.dlanguage.DLanguageFileType;
-import net.masterthought.dlanguage.resolve.ScopeProcessorImpl;
 import net.masterthought.dlanguage.resolve.ScopeProcessorImplUtil;
 import net.masterthought.dlanguage.stubs.DLanguageFileStub;
 import org.jetbrains.annotations.NotNull;
@@ -56,6 +55,8 @@ public class DLanguageFile extends PsiFileBase {
      */
     @NotNull
     public String getModuleOrFileName() {
+        if (getGreenStub() != null)
+            return ((DLanguageFileStub) getGreenStub()).getModuleName();
         final String moduleName = getModuleName();
         return moduleName == null ? getName() : moduleName;
     }

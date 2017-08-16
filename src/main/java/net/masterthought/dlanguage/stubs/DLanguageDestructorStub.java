@@ -8,9 +8,9 @@ import net.masterthought.dlanguage.psi.DLanguageDestructor;
 /**
  * Created by franc on 1/14/2017.
  */
-public class DLanguageDestructorStub extends StubBase<DLanguageDestructor> implements StubElement<DLanguageDestructor> {
+public class DLanguageDestructorStub extends StubBase<DLanguageDestructor> implements DStubElement<DLanguageDestructor> {
 
-    public DLanguageDestructorStub(StubElement parent, IStubElementType elementType) {
+    public DLanguageDestructorStub(final StubElement parent, final IStubElementType elementType) {
         super(parent, elementType);
     }
 }

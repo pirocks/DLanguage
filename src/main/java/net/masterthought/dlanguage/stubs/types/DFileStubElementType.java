@@ -29,7 +29,7 @@ public class DFileStubElementType extends IStubFileElementType<DLanguageFileStub
             @Override
             protected StubElement createStubForFile(@NotNull final PsiFile file) {
                 if (file instanceof DLanguageFile) {
-                    return new DLanguageFileStub((DLanguageFile) file);
+                    return new DLanguageFileStub((DLanguageFile) file, ((DLanguageFile) file).getModuleOrFileName());
                 }
                 return super.createStubForFile(file);
             }
@@ -43,13 +43,13 @@ public class DFileStubElementType extends IStubFileElementType<DLanguageFileStub
 
     @Override
     public void serialize(@NotNull final DLanguageFileStub stub, @NotNull final StubOutputStream dataStream) throws IOException {
-        // todo make files named?
+        dataStream.writeName(stub.getModuleName());
     }
 
     @NotNull
     @Override
     public DLanguageFileStub deserialize(@NotNull final StubInputStream dataStream, final StubElement parentStub) throws IOException {
-        return new DLanguageFileStub(null);
+        return new DLanguageFileStub(null, dataStream.readName().getString());
     }
 
     @NotNull

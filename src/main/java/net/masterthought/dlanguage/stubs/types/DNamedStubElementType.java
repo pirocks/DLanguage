@@ -53,6 +53,7 @@ public abstract class DNamedStubElementType<S extends DNamedStubBase<T>, T exten
         DTopLevelDeclarationsByModule.Companion.indexTopLevelDeclarationsByModule(stub, sink);
         DPublicImportIndex.Companion.indexPublicImports(stub, sink);
         DMembersIndex.Companion.indexMembers(stub, sink);
+        ImportsByModule.Companion.indexTopLevelImports(stub, sink);
 
     }
 

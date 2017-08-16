@@ -11,7 +11,7 @@ import net.masterthought.dlanguage.resolve.processors.parameters.DAttributesFind
 /**
  * Created by francis on 8/13/2017.
  */
-public class DNamedStubBase<T extends DNamedElement> extends NamedStubBase<T> {
+public class DNamedStubBase<T extends DNamedElement> extends NamedStubBase<T> implements DStubElement<T> {
 
     private final DAttributes attributes;
 
