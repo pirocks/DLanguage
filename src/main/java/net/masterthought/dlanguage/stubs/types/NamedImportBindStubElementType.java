@@ -12,8 +12,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
-public class DLanguageNamedImportBindStubElementType extends DNamedStubElementType<DLanguageNamedImportBindStub, DLanguageNamedImportBind> {
-    public DLanguageNamedImportBindStubElementType(final String debugName) {
+public class NamedImportBindStubElementType extends DNamedStubElementType<DLanguageNamedImportBindStub, DLanguageNamedImportBind> {
+    public NamedImportBindStubElementType(final String debugName) {
         super(debugName);
     }
 

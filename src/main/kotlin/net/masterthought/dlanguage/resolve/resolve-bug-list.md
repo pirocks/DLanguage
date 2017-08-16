@@ -1,5 +1,11 @@
 scoped import on enum with enum members not resolved
 
+static import correct handling
+
+labelled statement handling
+
+
+
 
 
 ```d

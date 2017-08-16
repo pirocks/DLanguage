@@ -11,7 +11,7 @@ import java.io.IOException
 /**
  * Created by francis on 6/13/2017.
  */
-class DLanguageIfConditionStubElementType(debugName: String) : DNamedStubElementType<DLanguageIfConditionStub, DLanguageIfCondition>(debugName) {
+class IfConditionStubElementType(debugName: String) : DNamedStubElementType<DLanguageIfConditionStub, DLanguageIfCondition>(debugName) {
 
     override fun createPsi(stub: DLanguageIfConditionStub):DLanguageIfCondition{
         return DLanguageIfConditionImpl(stub, this)

@@ -9,17 +9,17 @@ import java.util.List;
 
 public interface DLanguageAnonymousEnumDeclaration extends PsiElement {
     @Nullable
-    DLanguageAssignExpression getAssignExpression();
+    public DLanguageAssignExpression getAssignExpression();
 
     @Nullable
-    PsiElement getOP_COLON();
+    public PsiElement getOP_COLON();
 
     @Nullable
-    PsiElement getKW_ENUM();
+    public PsiElement getKW_ENUM();
 
     @Nullable
-    DLanguageType getType();
+    public DLanguageType getType();
 
     @NotNull
-    List<DLanguageEnumMember> getEnumMembers();
+    public List<DLanguageEnumMember> getEnumMembers();
 }

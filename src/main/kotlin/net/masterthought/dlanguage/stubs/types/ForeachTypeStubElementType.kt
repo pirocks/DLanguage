@@ -10,7 +10,7 @@ import java.io.IOException
 /**
  * Created by francis on 6/13/2017.
  */
-class DLanguageForeachTypeStubElementType(debugName: String) : DNamedStubElementType<DLanguageForeachTypeStub, DLanguageForeachType>(debugName) {
+class ForeachTypeStubElementType(debugName: String) : DNamedStubElementType<DLanguageForeachTypeStub, DLanguageForeachType>(debugName) {
 
     override fun createPsi(stub: DLanguageForeachTypeStub): DLanguageForeachType {
         return DLanguageForeachTypeImpl(stub, this)
