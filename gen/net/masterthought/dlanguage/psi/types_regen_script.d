@@ -160,7 +160,7 @@ static this() {
     types_children["PrimaryExpression"] = ["Type","Arguments","FunctionLiteralExpression","TypeofExpression", "TypeidExpression","Vector","AssocArrayLiteral","ArrayLiteral","Expression","OP_PAR_LEFT","OP_PAR_RIGHT","IsExpression","LambdaExpression","TraitsExpression","MixinExpression","ImportExpression","KW_SUPER","KW_THIS","OP_DOLLAR","KW_TRUE","KW_FALSE","KW___DATE__","KW___EOF__","KW___FILE__","KW___FILE_FULL_PATH__","KW___FUNCTION__","KW___GSHARED","KW___LINE__","KW___MODULE__","KW___PARAMETERS","KW___PRETTY_FUNCTION__","KW___TIME__","KW___TIMESTAMP__","KW___TRAITS","KW___VECTOR","KW___VENDOR__","KW___VERSION__ ","INTEGER_LITERAL","FLOAT_LITERAL","DOUBLE_QUOTED_STRING*","CHARACTER_LITERAL","IdentifierOrTemplateInstance","OP_DOT","TypeConstructor"/*todo add basicTypes*/];
     types_children["Register"] = ["Identifier","INTEGER_LITERAL", "OP_PAR_RIGHT", "OP_PAR_LEFT"];
     types_children["RelExpression"] = ["RelExpression", "ShiftExpression","OP_GT","OP_GT_EQ","OP_LESS","OP_LESS_EQ","OP_LESS_GR","OP_LESS_GR_EQ","OP_NOT_GR","OP_NOT_GR_EQ","OP_NOT_LESS","OP_NOT_LESS_EQ","OP_UNORD","OP_UNORD_EQ"];
-    types_children["ReturnStatement"] = ["KW_RETURN","Expression","OP_SCOLON"];
+//    types_children["ReturnStatement"] = ["KW_RETURN","Expression","OP_SCOLON"];
     types_children["ScopeGuardStatement"] = ["KW_SCOPE","Identifier","StatementNoCaseNoDefault","OP_PAR_LEFT","OP_PAR_RIGHT"];
     stub_children ["SharedStaticConstructor"] = ["KW_STATIC","KW_SHARED","KW_THIS","OP_PAR_LEFT","OP_PAR_RIGHT","FunctionBody"];
     stub_children ["SharedStaticDestructor"] = ["OP_TILDA","KW_STATIC","KW_SHARED","KW_THIS","OP_PAR_LEFT","OP_PAR_RIGHT","FunctionBody"];
@@ -204,11 +204,12 @@ static this() {
     types_children["TemplateValueParameter"] = ["Type","Identifier","OP_COLON","AssignExpression",  "TemplateValueParameterDefault"];
     types_children["TemplateValueParameterDefault"] = ["OP_EQ","AssignExpression","KW___FILE__","KW___FUNCTION__","KW___LINE__","KW___MODULE__","KW___PRETTY_FUNCTION__"];
     types_children["TernaryExpression"] = ["OP_QUEST","OP_COLON","OrOrExpression","Expression","TernaryExpression"];
-    types_children["ThrowStatement"] = ["KW_THROW","Expression","OP_SCOLON"];
+//    types_children["ThrowStatement"] = ["KW_THROW","Expression","OP_SCOLON"];
     types_children["TraitsExpression"] = ["KW___TRAITS","TemplateArgumentList","Identifier","OP_PAR_RIGHT","OP_PAR_LEFT"];
     types_children["TryStatement"] = ["KW_TRY","DeclarationOrStatement","Catches","Finally"];
     types_children["Type"] = ["Attribute","Type_2","TypeSuffix*"];
-    types_children["Type_2"] = [/*todo builtin type*/"Symbol","TypeofExpression","TypeConstructor","Vector","Type","IdentifierOrTemplateChain","OP_DOT","OP_PAR_RIGHT","OP_PAR_LEFT"];
+    types_children["Type_2"] = ["Symbol","TypeofExpression","TypeConstructor","Vector","Type","IdentifierOrTemplateChain","OP_DOT","OP_PAR_RIGHT","OP_PAR_LEFT","BuiltinType"];
+    types_children["BuiltinType"] = ["KW_BOOL","KW_BYTE","KW_UBYTE","KW_SHORT","KW_USHORT","KW_INT","KW_UINT","KW_LONG","KW_ULONG","KW_CHAR","KW_WCHAR","KW_DCHAR","KW_FLOAT","KW_DOUBLE","KW_REAL","KW_IFLOAT","KW_IDOUBLE","KW_IREAL","KW_CFLOAT","KW_CDOUBLE","KW_CREAL","KW_VOID"];
     types_children["TypeConstructor"] = ["KW_CONST","KW_IMMUTABLE","KW_INOUT","KW_SHARED","KW_SCOPE"];
     types_children["TypeConstructors"] = ["TypeConstructor*"];
     types_children["TypeidExpression"] = ["Expression","KW_TYPEID","Type","OP_PAR_RIGHT","OP_PAR_LEFT"];

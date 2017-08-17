@@ -9,8 +9,8 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Created by francis on 1/14/2017.
  */
-public class DLanguageSharedStaticDestructorStub extends StubBase<DLanguageSharedStaticDestructor> implements StubElement<DLanguageSharedStaticDestructor> {
-    public DLanguageSharedStaticDestructorStub(StubElement parent, @NotNull IStubElementType elementType) {
+public class DLanguageSharedStaticDestructorStub extends StubBase<DLanguageSharedStaticDestructor> implements DStubElement<DLanguageSharedStaticDestructor> {
+    public DLanguageSharedStaticDestructorStub(final StubElement parent, @NotNull final IStubElementType elementType) {
         super(parent, elementType);
     }
 }

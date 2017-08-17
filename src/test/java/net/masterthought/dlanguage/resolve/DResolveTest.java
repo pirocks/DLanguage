@@ -56,5 +56,9 @@ public class DResolveTest extends DResolveTestCase {
     public void testImportBindresolve() {
         doTest();
     }
+
+    public void testSuperResolve() {
+        doTest();
+    }
 }
 

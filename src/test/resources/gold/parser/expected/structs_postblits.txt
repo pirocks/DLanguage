@@ -22,9 +22,11 @@ D Language File
         PsiComment(DLanguageTokenType.LINE_COMMENT)('// array is privately owned by this instance')
         DLanguageDeclarationImpl(DECLARATION)
           DLanguagePostblitImpl(POSTBLIT)
-            PsiElement(DLanguageTokenType.this)('this')
+            THIS_IDENTIFIER
+              PsiElement(DLanguageTokenType.this)('this')
             PsiElement(DLanguageTokenType.()('(')
-            PsiElement(DLanguageTokenType.this)('this')
+            THIS_IDENTIFIER
+              PsiElement(DLanguageTokenType.this)('this')
             PsiElement(DLanguageTokenType.))(')')
             DLanguageFunctionBodyImpl(FUNCTION_BODY)
               DLanguageBlockStatementImpl(BLOCK_STATEMENT)
@@ -71,9 +73,11 @@ D Language File
               IDENTIFIER
                 PsiElement(DLanguageTokenType.ID)('disable')
           DLanguagePostblitImpl(POSTBLIT)
-            PsiElement(DLanguageTokenType.this)('this')
+            THIS_IDENTIFIER
+              PsiElement(DLanguageTokenType.this)('this')
             PsiElement(DLanguageTokenType.()('(')
-            PsiElement(DLanguageTokenType.this)('this')
+            THIS_IDENTIFIER
+              PsiElement(DLanguageTokenType.this)('this')
             PsiElement(DLanguageTokenType.))(')')
             PsiElement(DLanguageTokenType.;)(';')
         PsiComment(DLanguageTokenType.LINE_COMMENT)('// disabling makes T not copyable')

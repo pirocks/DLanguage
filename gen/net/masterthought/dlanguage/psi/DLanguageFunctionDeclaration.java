@@ -10,31 +10,36 @@ import net.masterthought.dlanguage.stubs.DLanguageFunctionDeclarationStub;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 
 public interface DLanguageFunctionDeclaration extends PsiElement, DNamedElement, StubBasedPsiElement<DLanguageFunctionDeclarationStub> {
     @Nullable
-    public DLanguageType getType();
+    DLanguageType getType();
 
     @Nullable
-    public DLanguageIdentifier getIdentifier();
+    DLanguageIdentifier getIdentifier();
 
     @Nullable
-    public DLanguageTemplateParameters getTemplateParameters();
+    List<DLanguageStorageClass> getStorageClasses();
 
     @Nullable
-    public DLanguageParameters getParameters();
+    DLanguageTemplateParameters getTemplateParameters();
 
     @Nullable
-    public DLanguageConstraint getConstraint();
+    DLanguageParameters getParameters();
 
     @Nullable
-    public DLanguageFunctionBody getFunctionBody();
+    DLanguageConstraint getConstraint();
+
+    @Nullable
+    DLanguageFunctionBody getFunctionBody();
 
     @Override
-    default public boolean processDeclarations(@NotNull PsiScopeProcessor processor,
-                                               @NotNull ResolveState state,
-                                               PsiElement lastParent,
-                                               @NotNull PsiElement place) {
+    default boolean processDeclarations(@NotNull PsiScopeProcessor processor,
+                                        @NotNull ResolveState state,
+                                        PsiElement lastParent,
+                                        @NotNull PsiElement place) {
         return ScopeProcessorImpl.INSTANCE.processDeclarations(this, processor, state, lastParent, place);
     }
 }

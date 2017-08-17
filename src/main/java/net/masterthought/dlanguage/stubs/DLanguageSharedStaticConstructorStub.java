@@ -8,9 +8,9 @@ import net.masterthought.dlanguage.psi.DLanguageSharedStaticConstructor;
 /**
  * Created by francis on 1/14/2017.
  */
-public class DLanguageSharedStaticConstructorStub extends StubBase<DLanguageSharedStaticConstructor> implements StubElement<DLanguageSharedStaticConstructor> {
+public class DLanguageSharedStaticConstructorStub extends StubBase<DLanguageSharedStaticConstructor> implements DStubElement<DLanguageSharedStaticConstructor> {
 
-    public DLanguageSharedStaticConstructorStub(StubElement parent, IStubElementType elementType) {
+    public DLanguageSharedStaticConstructorStub(final StubElement parent, final IStubElementType elementType) {
         super(parent, elementType);
     }
 }

@@ -9182,7 +9182,8 @@ D Language File
                               DLanguageCmpExpressionImpl(CMP_EXPRESSION)
                                 DLanguageUnaryExpressionImpl(UNARY_EXPRESSION)
                                   DLanguagePrimaryExpressionImpl(PRIMARY_EXPRESSION)
-                                    PsiElement(DLanguageTokenType.this)('this')
+                                    THIS_IDENTIFIER
+                                      PsiElement(DLanguageTokenType.this)('this')
                           PsiElement(DLanguageTokenType.))(')')
                     IDENTIFIER
                       PsiElement(DLanguageTokenType.ID)('save')
@@ -10944,7 +10945,8 @@ D Language File
                               DLanguageCmpExpressionImpl(CMP_EXPRESSION)
                                 DLanguageUnaryExpressionImpl(UNARY_EXPRESSION)
                                   DLanguagePrimaryExpressionImpl(PRIMARY_EXPRESSION)
-                                    PsiElement(DLanguageTokenType.this)('this')
+                                    THIS_IDENTIFIER
+                                      PsiElement(DLanguageTokenType.this)('this')
                           PsiElement(DLanguageTokenType.))(')')
                     IDENTIFIER
                       PsiElement(DLanguageTokenType.ID)('save')
@@ -10971,7 +10973,8 @@ D Language File
                                           DLanguageCmpExpressionImpl(CMP_EXPRESSION)
                                             DLanguageUnaryExpressionImpl(UNARY_EXPRESSION)
                                               DLanguagePrimaryExpressionImpl(PRIMARY_EXPRESSION)
-                                                PsiElement(DLanguageTokenType.this)('this')
+                                                THIS_IDENTIFIER
+                                                  PsiElement(DLanguageTokenType.this)('this')
                                   PsiElement(DLanguageTokenType.;)(';')
                           DLanguageDeclarationOrStatementImpl(DECLARATION_OR_STATEMENT)
                             DLanguageStatementImpl(STATEMENT)
@@ -20213,7 +20216,8 @@ D Language File
                               DLanguageCmpExpressionImpl(CMP_EXPRESSION)
                                 DLanguageUnaryExpressionImpl(UNARY_EXPRESSION)
                                   DLanguagePrimaryExpressionImpl(PRIMARY_EXPRESSION)
-                                    PsiElement(DLanguageTokenType.this)('this')
+                                    THIS_IDENTIFIER
+                                      PsiElement(DLanguageTokenType.this)('this')
                           PsiElement(DLanguageTokenType.))(')')
                     IDENTIFIER
                       PsiElement(DLanguageTokenType.ID)('save')
@@ -22464,7 +22468,8 @@ D Language File
                               DLanguageCmpExpressionImpl(CMP_EXPRESSION)
                                 DLanguageUnaryExpressionImpl(UNARY_EXPRESSION)
                                   DLanguagePrimaryExpressionImpl(PRIMARY_EXPRESSION)
-                                    PsiElement(DLanguageTokenType.this)('this')
+                                    THIS_IDENTIFIER
+                                      PsiElement(DLanguageTokenType.this)('this')
                           PsiElement(DLanguageTokenType.))(')')
                     IDENTIFIER
                       PsiElement(DLanguageTokenType.ID)('save')
@@ -22491,7 +22496,8 @@ D Language File
                                           DLanguageCmpExpressionImpl(CMP_EXPRESSION)
                                             DLanguageUnaryExpressionImpl(UNARY_EXPRESSION)
                                               DLanguagePrimaryExpressionImpl(PRIMARY_EXPRESSION)
-                                                PsiElement(DLanguageTokenType.this)('this')
+                                                THIS_IDENTIFIER
+                                                  PsiElement(DLanguageTokenType.this)('this')
                                   PsiElement(DLanguageTokenType.;)(';')
                           DLanguageDeclarationOrStatementImpl(DECLARATION_OR_STATEMENT)
                             DLanguageStatementImpl(STATEMENT)
@@ -23186,7 +23192,8 @@ D Language File
                                     DLanguageFunctionCallExpressionImpl(FUNCTION_CALL_EXPRESSION)
                                       DLanguageUnaryExpressionImpl(UNARY_EXPRESSION)
                                         DLanguagePrimaryExpressionImpl(PRIMARY_EXPRESSION)
-                                          PsiElement(DLanguageTokenType.super)('super')
+                                          SUPER_IDENTIFIER
+                                            PsiElement(DLanguageTokenType.super)('super')
                                       DLanguageArgumentsImpl(ARGUMENTS)
                                         PsiElement(DLanguageTokenType.()('(')
                                         DLanguageArgumentListImpl(ARGUMENT_LIST)

@@ -299,7 +299,8 @@ D Language File
                                 DLanguageCmpExpressionImpl(CMP_EXPRESSION)
                                   DLanguageUnaryExpressionImpl(UNARY_EXPRESSION)
                                     DLanguagePrimaryExpressionImpl(PRIMARY_EXPRESSION)
-                                      PsiElement(DLanguageTokenType.this)('this')
+                                      THIS_IDENTIFIER
+                                        PsiElement(DLanguageTokenType.this)('this')
                             PsiElement(DLanguageTokenType.;)(';')
                   PsiElement(DLanguageTokenType.})('}')
           PsiElement(DLanguageTokenType.})('}')
@@ -372,7 +373,8 @@ D Language File
                                 DLanguageCmpExpressionImpl(CMP_EXPRESSION)
                                   DLanguageUnaryExpressionImpl(UNARY_EXPRESSION)
                                     DLanguagePrimaryExpressionImpl(PRIMARY_EXPRESSION)
-                                      PsiElement(DLanguageTokenType.this)('this')
+                                      THIS_IDENTIFIER
+                                        PsiElement(DLanguageTokenType.this)('this')
                             PsiElement(DLanguageTokenType.;)(';')
                   PsiElement(DLanguageTokenType.})('}')
           PsiElement(DLanguageTokenType.})('}')
@@ -544,7 +546,8 @@ D Language File
                                       PsiElement(DLanguageTokenType.))(')')
                                       DLanguageUnaryExpressionImpl(UNARY_EXPRESSION)
                                         DLanguagePrimaryExpressionImpl(PRIMARY_EXPRESSION)
-                                          PsiElement(DLanguageTokenType.this)('this')
+                                          THIS_IDENTIFIER
+                                            PsiElement(DLanguageTokenType.this)('this')
                             PsiElement(DLanguageTokenType.;)(';')
                   PsiComment(DLanguageTokenType.LINE_COMMENT)('// cast is necessary, but safe')
                   PsiElement(DLanguageTokenType.})('}')
@@ -618,7 +621,8 @@ D Language File
                                 DLanguageCmpExpressionImpl(CMP_EXPRESSION)
                                   DLanguageUnaryExpressionImpl(UNARY_EXPRESSION)
                                     DLanguagePrimaryExpressionImpl(PRIMARY_EXPRESSION)
-                                      PsiElement(DLanguageTokenType.this)('this')
+                                      THIS_IDENTIFIER
+                                        PsiElement(DLanguageTokenType.this)('this')
                             PsiElement(DLanguageTokenType.;)(';')
                   PsiElement(DLanguageTokenType.})('}')
           PsiElement(DLanguageTokenType.})('}')
