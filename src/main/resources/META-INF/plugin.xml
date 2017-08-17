@@ -147,6 +147,9 @@
         <localInspection language="D" shortName="PossiblyUndefinedSymbol" bundle="messages.PropertiesBundle"
                          enabledByDefault="true" level="WARNING"
                          implementationClass="net.masterthought.dlanguage.inspections.PossiblyUndefinedSymbol"/>
+        <localInspection language="D" shortName="MissingExitPoint" bundle="messages.PropertiesBundle"
+                         enabledByDefault="true" level="ERROR"
+                         implementationClass="net.masterthought.dlanguage.inspections.ExitPointsMissing"/>
     </extensions>
 
     <application-components>

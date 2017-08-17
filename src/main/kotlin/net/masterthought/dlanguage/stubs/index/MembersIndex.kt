@@ -8,7 +8,6 @@ import net.masterthought.dlanguage.psi.interfaces.DNamedElement
 import net.masterthought.dlanguage.stubs.*
 import net.masterthought.dlanguage.stubs.interfaces.DLanguageUnittestStub
 import net.masterthought.dlanguage.stubs.interfaces.HasMembersStub
-import net.masterthought.dlanguage.utils.InterfaceOrClass
 import java.util.*
 
 /**
@@ -41,13 +40,13 @@ class DMembersIndex : StringStubIndexExtension<DNamedElement>() {
             val elements = mutableSetOf<DNamedElement>()
             for (file in DModuleIndex.getFilesByModuleName(project, module, GlobalSearchScope.everythingScope(project))) {
                 elements.addAll(StubIndex.getElements(KEY, name, project, GlobalSearchScope.fileScope(file), DNamedElement::class.java))//todo assert that this should only be called once
-                if (includeInheritance) {
-                    for (element in DTopLevelDeclarationsByModuleAndName.getSymbol(name, file.moduleOrFileName, project)) {
-                        if (element is InterfaceOrClass) {
-                            element
-                        }
-                    }
-                }
+//                if (includeInheritance) {
+//                    for (element in DTopLevelDeclarationsByModuleAndName.getSymbol(name, file.moduleOrFileName, project)) {
+//                        if (element is InterfaceOrClass) {
+//                            element
+//                        }
+//                    }
+//                }
             }
             return elements
         }

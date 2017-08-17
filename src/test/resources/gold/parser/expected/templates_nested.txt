@@ -97,7 +97,8 @@ D Language File
                                     DLanguageCmpExpressionImpl(CMP_EXPRESSION)
                                       DLanguageUnaryExpressionImpl(UNARY_EXPRESSION)
                                         DLanguagePrimaryExpressionImpl(PRIMARY_EXPRESSION)
-                                          PsiElement(DLanguageTokenType.this)('this')
+                                          THIS_IDENTIFIER
+                                            PsiElement(DLanguageTokenType.this)('this')
                                         PsiElement(DLanguageTokenType..)('.')
                                         DLanguageIdentifierOrTemplateInstanceImpl(IDENTIFIER_OR_TEMPLATE_INSTANCE)
                                           IDENTIFIER
@@ -519,7 +520,8 @@ D Language File
                                         DLanguageCmpExpressionImpl(CMP_EXPRESSION)
                                           DLanguageUnaryExpressionImpl(UNARY_EXPRESSION)
                                             DLanguagePrimaryExpressionImpl(PRIMARY_EXPRESSION)
-                                              PsiElement(DLanguageTokenType.this)('this')
+                                              THIS_IDENTIFIER
+                                                PsiElement(DLanguageTokenType.this)('this')
                                             PsiElement(DLanguageTokenType..)('.')
                                             DLanguageIdentifierOrTemplateInstanceImpl(IDENTIFIER_OR_TEMPLATE_INSTANCE)
                                               IDENTIFIER
@@ -643,7 +645,8 @@ D Language File
                                         DLanguageCmpExpressionImpl(CMP_EXPRESSION)
                                           DLanguageUnaryExpressionImpl(UNARY_EXPRESSION)
                                             DLanguagePrimaryExpressionImpl(PRIMARY_EXPRESSION)
-                                              PsiElement(DLanguageTokenType.this)('this')
+                                              THIS_IDENTIFIER
+                                                PsiElement(DLanguageTokenType.this)('this')
                                             PsiElement(DLanguageTokenType..)('.')
                                             DLanguageIdentifierOrTemplateInstanceImpl(IDENTIFIER_OR_TEMPLATE_INSTANCE)
                                               IDENTIFIER

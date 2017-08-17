@@ -71,4 +71,8 @@ public class DLanguageType_2Impl extends ASTWrapperPsiElement implements DLangua
         return findChildByType(OP_PAR_LEFT);
     }
 
+    @Nullable
+    public DLanguageBuiltinType getBuiltinType() {
+        return PsiTreeUtil.getChildOfType(this, DLanguageBuiltinType.class);
+    }
 }

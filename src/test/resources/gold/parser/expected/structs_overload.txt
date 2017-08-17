@@ -156,7 +156,8 @@ D Language File
                           DLanguageCmpExpressionImpl(CMP_EXPRESSION)
                             DLanguageUnaryExpressionImpl(UNARY_EXPRESSION)
                               DLanguagePrimaryExpressionImpl(PRIMARY_EXPRESSION)
-                                PsiElement(DLanguageTokenType.this)('this')
+                                THIS_IDENTIFIER
+                                  PsiElement(DLanguageTokenType.this)('this')
                   PsiElement(DLanguageTokenType.;)(';')
             PsiComment(DLanguageTokenType.LINE_COMMENT)('// bitcopy this into tmp')
             DLanguageDeclarationOrStatementImpl(DECLARATION_OR_STATEMENT)
@@ -168,7 +169,8 @@ D Language File
                         DLanguageCmpExpressionImpl(CMP_EXPRESSION)
                           DLanguageUnaryExpressionImpl(UNARY_EXPRESSION)
                             DLanguagePrimaryExpressionImpl(PRIMARY_EXPRESSION)
-                              PsiElement(DLanguageTokenType.this)('this')
+                              THIS_IDENTIFIER
+                                PsiElement(DLanguageTokenType.this)('this')
                         PsiElement(DLanguageTokenType.=)('=')
                         DLanguageAssignExpressionImpl(ASSIGN_EXPRESSION)
                           DLanguageCmpExpressionImpl(CMP_EXPRESSION)
@@ -212,7 +214,8 @@ D Language File
                         DLanguageCmpExpressionImpl(CMP_EXPRESSION)
                           DLanguageUnaryExpressionImpl(UNARY_EXPRESSION)
                             DLanguagePrimaryExpressionImpl(PRIMARY_EXPRESSION)
-                              PsiElement(DLanguageTokenType.this)('this')
+                              THIS_IDENTIFIER
+                                PsiElement(DLanguageTokenType.this)('this')
                     PsiElement(DLanguageTokenType.;)(';')
           PsiElement(DLanguageTokenType.})('}')
   DLanguageDeclarationImpl(DECLARATION)
@@ -312,14 +315,17 @@ D Language File
                               DLanguageCmpExpressionImpl(CMP_EXPRESSION)
                                 DLanguageUnaryExpressionImpl(UNARY_EXPRESSION)
                                   DLanguagePrimaryExpressionImpl(PRIMARY_EXPRESSION)
-                                    PsiElement(DLanguageTokenType.this)('this')
+                                    THIS_IDENTIFIER
+                                      PsiElement(DLanguageTokenType.this)('this')
                           PsiElement(DLanguageTokenType.;)(';')
                 PsiElement(DLanguageTokenType.})('}')
         DLanguageDeclarationImpl(DECLARATION)
           DLanguagePostblitImpl(POSTBLIT)
-            PsiElement(DLanguageTokenType.this)('this')
+            THIS_IDENTIFIER
+              PsiElement(DLanguageTokenType.this)('this')
             PsiElement(DLanguageTokenType.()('(')
-            PsiElement(DLanguageTokenType.this)('this')
+            THIS_IDENTIFIER
+              PsiElement(DLanguageTokenType.this)('this')
             PsiElement(DLanguageTokenType.))(')')
             DLanguageFunctionBodyImpl(FUNCTION_BODY)
               DLanguageBlockStatementImpl(BLOCK_STATEMENT)

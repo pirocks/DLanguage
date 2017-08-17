@@ -61,7 +61,8 @@ D Language File
                                 DLanguageCmpExpressionImpl(CMP_EXPRESSION)
                                   DLanguageUnaryExpressionImpl(UNARY_EXPRESSION)
                                     DLanguagePrimaryExpressionImpl(PRIMARY_EXPRESSION)
-                                      PsiElement(DLanguageTokenType.this)('this')
+                                      THIS_IDENTIFIER
+                                        PsiElement(DLanguageTokenType.this)('this')
                             PsiElement(DLanguageTokenType.))(')')
                             DLanguageStatementNoCaseNoDefaultImpl(STATEMENT_NO_CASE_NO_DEFAULT)
                               DLanguageBlockStatementImpl(BLOCK_STATEMENT)

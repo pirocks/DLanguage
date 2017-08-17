@@ -2,6 +2,7 @@ package net.masterthought.dlanguage.psi.impl.named;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.stubs.IStubElementType;
@@ -13,17 +14,28 @@ import net.masterthought.dlanguage.stubs.DLanguageFunctionDeclarationStub;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 /**
  * Created by francis on 7/14/2017.
  */
 public class DLanguageFunctionDeclarationImpl extends DNamedStubbedPsiElementBase<DLanguageFunctionDeclarationStub> implements DLanguageFunctionDeclaration {
 
-    public DLanguageFunctionDeclarationImpl(@NotNull DLanguageFunctionDeclarationStub stub, IStubElementType nodeType) {
+    public DLanguageFunctionDeclarationImpl(@NotNull final DLanguageFunctionDeclarationStub stub, final IStubElementType nodeType) {
         super(stub, nodeType);
     }
 
-    public DLanguageFunctionDeclarationImpl(ASTNode node) {
+    public DLanguageFunctionDeclarationImpl(final ASTNode node) {
         super(node);
+    }
+
+    public void accept(@NotNull final DLanguageVisitor visitor) {
+        visitor.visitFunctionDeclaration(this);
+    }
+
+    public void accept(@NotNull final PsiElementVisitor visitor) {
+        if (visitor instanceof DLanguageVisitor) accept((DLanguageVisitor) visitor);
+        else super.accept(visitor);
     }
 
     @Nullable
@@ -42,6 +54,12 @@ public class DLanguageFunctionDeclarationImpl extends DNamedStubbedPsiElementBas
     @Override
     public DLanguageIdentifier getIdentifier() {
         return PsiTreeUtil.getChildOfType(this, DLanguageIdentifier.class);
+    }
+
+    @NotNull
+    @Override
+    public List<DLanguageStorageClass> getStorageClasses() {
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, DLanguageStorageClass.class);
     }
 
     @Nullable
@@ -69,7 +87,11 @@ public class DLanguageFunctionDeclarationImpl extends DNamedStubbedPsiElementBas
     }
 
     @Override
-    public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, PsiElement lastParent, @NotNull PsiElement place) {
+    public boolean processDeclarations(@NotNull final PsiScopeProcessor processor, @NotNull final ResolveState state, final PsiElement lastParent, @NotNull final PsiElement place) {
         return ScopeProcessorImpl.INSTANCE.processDeclarations(this,processor, state, lastParent, place);
     }
+
+//    public Set<ExitPoint> getExitPoints(){
+//
+//    }
 }
