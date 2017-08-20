@@ -11,6 +11,8 @@ import net.masterthought.dlanguage.psi.*;
 import net.masterthought.dlanguage.psi.impl.DNamedStubbedPsiElementBase;
 import net.masterthought.dlanguage.resolve.ScopeProcessorImpl;
 import net.masterthought.dlanguage.stubs.DLanguageCatchStub;
+import net.masterthought.dlanguage.types.DType;
+import net.masterthought.dlanguage.types.TypeUtilsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -79,5 +81,13 @@ public class DLanguageCatchImpl extends DNamedStubbedPsiElementBase<DLanguageCat
     @Override
     public boolean processDeclarations(@NotNull final PsiScopeProcessor processor, @NotNull final ResolveState state, final PsiElement lastParent, @NotNull final PsiElement place) {
         return ScopeProcessorImpl.INSTANCE.processDeclarations(this,processor, state, lastParent, place);
+    }
+
+    @Override
+    public DType getTypeOf() {
+        if (getGreenStub() != null) {
+            return getGreenStub().getTypeOf();
+        }
+        return TypeUtilsKt.from(getType(), true);
     }
 }

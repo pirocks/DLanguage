@@ -11,6 +11,9 @@ import net.masterthought.dlanguage.psi.*;
 import net.masterthought.dlanguage.psi.impl.DNamedStubbedPsiElementBase;
 import net.masterthought.dlanguage.resolve.ScopeProcessorImpl;
 import net.masterthought.dlanguage.stubs.DLanguageFunctionDeclarationStub;
+import net.masterthought.dlanguage.types.DType;
+import net.masterthought.dlanguage.types.TypeUtilsKt;
+import org.apache.commons.lang.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -91,7 +94,24 @@ public class DLanguageFunctionDeclarationImpl extends DNamedStubbedPsiElementBas
         return ScopeProcessorImpl.INSTANCE.processDeclarations(this,processor, state, lastParent, place);
     }
 
-//    public Set<ExitPoint> getExitPoints(){
-//
-//    }
+    @Override
+    @NotNull
+    public DType getReturnType() {
+        if (getGreenStub() != null) {
+            return getGreenStub().getDType();
+        }
+        //todo resolve etc. Safe to assume psi loaded?
+        if (getType() != null) {
+            throw new NotImplementedException();
+            //handle auto etc
+        }
+        return TypeUtilsKt.from(getType(), false);
+    }
+
+    @Override
+    @NotNull
+    public DType getTypeOf() {
+        return null;
+//        return new DTypeFunction(getReturnType(),new ArrayList<Pair<String,DType>>((Pair<String,DType>)getParameters().getParameters().stream().map(param -> new Pair(param.getName(),TypeUtilsKt.from(param.getType(),false))).toArray()/*todo*/));
+    }
 }

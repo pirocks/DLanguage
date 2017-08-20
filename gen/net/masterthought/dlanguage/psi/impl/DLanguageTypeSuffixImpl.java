@@ -73,4 +73,8 @@ public class DLanguageTypeSuffixImpl extends ASTWrapperPsiElement implements DLa
         return findChildByType(OP_BRACKET_RIGHT);
     }
 
+    @Nullable
+    public DLanguageType getType() {
+        return PsiTreeUtil.getChildOfType(this, DLanguageType.class);
+    }
 }

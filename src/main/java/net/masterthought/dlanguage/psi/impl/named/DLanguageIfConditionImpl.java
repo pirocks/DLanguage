@@ -10,6 +10,9 @@ import net.masterthought.dlanguage.psi.DLanguageIfCondition;
 import net.masterthought.dlanguage.psi.DLanguageType;
 import net.masterthought.dlanguage.psi.impl.DNamedStubbedPsiElementBase;
 import net.masterthought.dlanguage.stubs.DLanguageIfConditionStub;
+import net.masterthought.dlanguage.types.DType;
+import net.masterthought.dlanguage.types.TypeUtilsKt;
+import org.apache.commons.lang.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,11 +23,11 @@ import static net.masterthought.dlanguage.psi.DLanguageTypes.OP_EQ;
  * Created by francis on 7/14/2017.
  */
 public class DLanguageIfConditionImpl extends DNamedStubbedPsiElementBase<DLanguageIfConditionStub> implements DLanguageIfCondition {
-    public DLanguageIfConditionImpl(@NotNull DLanguageIfConditionStub stub, IStubElementType nodeType) {
+    public DLanguageIfConditionImpl(@NotNull final DLanguageIfConditionStub stub, final IStubElementType nodeType) {
         super(stub, nodeType);
     }
 
-    public DLanguageIfConditionImpl(ASTNode node) {
+    public DLanguageIfConditionImpl(final ASTNode node) {
         super(node);
     }
 
@@ -62,5 +65,17 @@ public class DLanguageIfConditionImpl extends DNamedStubbedPsiElementBase<DLangu
     @Override
     public PsiElement getOP_EQ() {
         return findChildByType(OP_EQ);
+    }
+
+    @Override
+    @NotNull
+    public DType getTypeOf() {
+        if (getGreenStub() != null) {
+            return getGreenStub().getTypeOf();
+        }
+        if (getKW_AUTO() != null) {
+            throw new NotImplementedException();
+        }
+        return TypeUtilsKt.from(getType(), true);
     }
 }

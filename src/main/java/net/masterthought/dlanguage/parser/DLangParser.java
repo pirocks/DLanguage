@@ -3492,9 +3492,9 @@ class DLangParser {
      * ;)
      */
     boolean parseEponymousTemplateDeclaration() {
-        Marker m = enter_section_modified(builder);
+        final Marker m = enter_section_modified(builder);
         advance(); // enum
-        Token ident = expect(tok("identifier"));
+        final Token ident = expect(tok("identifier"));
         if (ident == null) {
             cleanup(m, EPONYMOUS_TEMPLATE_DECLARATION);
             return false;
@@ -3707,12 +3707,12 @@ class DLangParser {
             return false;
         }
         final Pair<Boolean, Integer> booleanLengthPair = parseForeachTypeList();
-        boolean feType = booleanLengthPair.first;
+        final boolean feType = booleanLengthPair.first;
         if (!feType) {
             cleanup(m, FOREACH_STATEMENT);
             return false;
         }
-        boolean canBeRange = booleanLengthPair.second == 1;
+        final boolean canBeRange = booleanLengthPair.second == 1;
         if (!tokenCheck(";")) {
             cleanup(m, FOREACH_STATEMENT);
             return false;
@@ -3760,7 +3760,7 @@ class DLangParser {
      * ;)
      */
     boolean parseForeachType() {
-        Marker m = enter_section_modified(builder);
+        final Marker m = enter_section_modified(builder);
         if (currentIs(tok("ref"))) {
             advance();
         }
@@ -3784,7 +3784,7 @@ class DLangParser {
             cleanup(m, FOREACH_TYPE);
             return false;
         }
-        Token ident = expect(tok("identifier"));
+        final Token ident = expect(tok("identifier"));
         if (ident == null) {
             cleanup(m, FOREACH_TYPE);
             return false;
@@ -3802,7 +3802,7 @@ class DLangParser {
      */
     Pair<Boolean, Integer> parseForeachTypeList() {
         final Marker marker = enter_section_modified(builder);
-        Ref.IntRef foreachTypeRefLength = new Ref.IntRef();
+        final Ref.IntRef foreachTypeRefLength = new Ref.IntRef();
         foreachTypeRefLength.element = 0;
         final boolean b = parseCommaSeparatedRule(foreachTypeRefLength, "ForeachTypeList", "ForeachType");
         exit_section_modified(builder, marker, FOREACH_TYPE_LIST, b);
@@ -3818,7 +3818,7 @@ class DLangParser {
      * | $(LITERAL '')
      * ;)
      */
-    boolean parseFunctionAttribute(boolean validate) {
+    boolean parseFunctionAttribute(final boolean validate) {
         Marker m = enter_section_modified(builder);
         Token.IdType i = current().type;
         if (i.equals(tok("@"))) {
@@ -3912,7 +3912,7 @@ class DLangParser {
      * | $(RULE type) $(RULE arguments)
      * ;)
      */
-    private Pair<Boolean, Marker> parseFunctionCallExpression(Marker unary)//(UnaryExpression unary = null)
+    private Pair<Boolean, Marker> parseFunctionCallExpression(final Marker unary)//(UnaryExpression unary = null)
     {
         Marker m;
         if (unary != null) {
@@ -3963,7 +3963,7 @@ class DLangParser {
      * | ($(RULE storageClass)+ | $(RULE _type)) $(LITERAL Identifier) $(RULE templateParameters) $(RULE parameters) $(RULE memberFunctionAttribute)* $(RULE raint)? ($(RULE functionBody) | $(LITERAL ';'))
      * ;)
      */
-    boolean parseFunctionDeclaration(Marker type, boolean isAuto)//(Type type = null,Attribute[] attributes = null)
+    boolean parseFunctionDeclaration(final Marker type, final boolean isAuto)//(Type type = null,Attribute[] attributes = null)
     {
         Marker m = null;
         if (type == null) {
@@ -7237,13 +7237,13 @@ class DLangParser {
      * ;)
      */
     Pair<Boolean, Marker> parseType() {
-        Marker m = enter_section_modified(builder);
+        final Marker m = enter_section_modified(builder);
         if (!moreTokens()) {
             error("type expected");
             exit_section_modified(builder, m, TYPE, true);
             return new Pair<>(false, m);
         }
-        Token.IdType i = current().type;
+        final Token.IdType i = current().type;
         if (i.equals(tok("const")) || i.equals(tok("immutable")) || i.equals(tok("inout")) || i.equals(tok("shared"))) {
             if (!peekIs(tok("(")))
                 if (parseTypeConstructors() == null) {
@@ -7256,9 +7256,9 @@ class DLangParser {
             return new Pair<>(false, m);
         }
         while (moreTokens()) {
-            Token.IdType i1 = current().type;
+            final Token.IdType i1 = current().type;
             if (i1.equals(tok("["))) {
-                Bookmark newBookmark = setBookmark();
+                final Bookmark newBookmark = setBookmark();
                 if (parseTypeSuffix())
                     abandonBookmark(newBookmark);
                 else {
@@ -7293,13 +7293,13 @@ class DLangParser {
      * ;)
      */
     boolean parseType2() {
-        Marker m = enter_section_modified(builder);
+        final Marker m = enter_section_modified(builder);
         if (!moreTokens()) {
             error("type2 expected instead of EOF");
             exit_section_modified(builder, m, TYPE_2, true);
             return false;
         }
-        Token.IdType i = current().type;
+        final Token.IdType i = current().type;
         if (i.equals(tok("identifier")) || i.equals(tok("."))) {
             if (!parseSymbol()) {
                 cleanup(m, TYPE_2);
@@ -7371,8 +7371,8 @@ class DLangParser {
      * | $(LITERAL 'shared')
      * ;)
      */
-    Token.IdType parseTypeConstructor(boolean validate) {
-        Token.IdType i = current().type;
+    Token.IdType parseTypeConstructor(final boolean validate) {
+        final Token.IdType i = current().type;
         if (i.equals(tok("const")) || i.equals(tok("immutable")) || i.equals(tok("inout")) || i.equals(tok("shared"))) {
             if (!peekIs(tok("(")))
                 return advance().type;
@@ -7396,15 +7396,15 @@ class DLangParser {
      * ;)
      */
     Token.IdType[] parseTypeConstructors() {
-        List<Token.IdType> r = new LinkedList<>();
+        final List<Token.IdType> r = new LinkedList<>();
         while (moreTokens()) {
-            Token.IdType type = parseTypeConstructor(false);
+            final Token.IdType type = parseTypeConstructor(false);
             if (type.equals(tok("")))
                 break;
             else
                 r.add(type);
         }
-        Token.IdType[] res = new Token.IdType[r.size()];
+        final Token.IdType[] res = new Token.IdType[r.size()];
         r.toArray(res);
         return res;
     }
@@ -7464,8 +7464,8 @@ class DLangParser {
      * ;)
      */
     boolean parseTypeSuffix() {
-        Marker m = enter_section_modified(builder);
-        Token.IdType i = current().type;
+        final Marker m = enter_section_modified(builder);
+        final Token.IdType i = current().type;
         if (i.equals(tok("*"))) {
             advance();
             exit_section_modified(builder, m, TYPE_SUFFIX, true);
@@ -7477,8 +7477,8 @@ class DLangParser {
                 exit_section_modified(builder, m, TYPE_SUFFIX, true);
                 return true;
             }
-            Bookmark bookmark = setBookmark();
-            boolean type = parseType().first;
+            final Bookmark bookmark = setBookmark();
+            final boolean type = parseType().first;
             if (type && currentIs(tok("]"))) {
                 abandonBookmark(bookmark);
             } else {

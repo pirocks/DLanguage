@@ -11,6 +11,7 @@ import net.masterthought.dlanguage.psi.DLanguageSingleImport;
 import net.masterthought.dlanguage.psi.impl.DNamedStubbedPsiElementBase;
 import net.masterthought.dlanguage.resolve.processors.parameters.DAttributesFinder;
 import net.masterthought.dlanguage.stubs.DLanguageSingleImportStub;
+import net.masterthought.dlanguage.types.DType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -85,5 +86,10 @@ public class DLanguageSingleImportImpl extends DNamedStubbedPsiElementBase<DLang
         final DAttributesFinder finder = new DAttributesFinder(getIdentifierChain().getIdentifiers().get(0));
         finder.recurseUp();
         return finder.isVisible() == DAttributesFinder.Visibility.PUBLIC;
+    }
+
+    @Override
+    public DType getForwardedType() {
+        return null;
     }
 }

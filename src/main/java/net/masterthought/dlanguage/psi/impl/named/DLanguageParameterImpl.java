@@ -8,6 +8,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import net.masterthought.dlanguage.psi.*;
 import net.masterthought.dlanguage.psi.impl.DNamedStubbedPsiElementBase;
 import net.masterthought.dlanguage.stubs.DLanguageParameterStub;
+import net.masterthought.dlanguage.types.DType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -77,12 +78,13 @@ public class DLanguageParameterImpl extends DNamedStubbedPsiElementBase<DLanguag
         return PsiTreeUtil.getChildOfType(this, DLanguageType.class);
     }
 
-//    public String getFullName() {
-//        return DPsiImplUtil.getFullName(this);
-//    }
-
     @Nullable
     public DLanguageIdentifier getNameIdentifier() {
         return getIdentifier();
+    }
+
+    @Override
+    public DType getTypeOf() {
+        return null;
     }
 }
