@@ -17,12 +17,12 @@ class TemplateParameterStubElementType(debugName: String) : DNamedStubElementTyp
     }
 
     override fun createStub(psi: DLanguageTemplateParameter, parentStub: StubElement<*>): DLanguageTemplateParameterStub {
-        return DLanguageTemplateParameterStub(parentStub, this, psi.name, psi.attributes)
+        return DLanguageTemplateParameterStub(parentStub, this, psi.name, psi.attributes, null)
     }
 
     @Throws(IOException::class)
     override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>): DLanguageTemplateParameterStub {
         val namedStubPair = deserializeNamedStub(dataStream, parentStub)
-        return DLanguageTemplateParameterStub(parentStub, this, namedStubPair.component1(), namedStubPair.component2())
+        return DLanguageTemplateParameterStub(parentStub, this, namedStubPair.component1(), namedStubPair.component2(), null)
     }
 }

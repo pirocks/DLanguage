@@ -11,6 +11,8 @@ import net.masterthought.dlanguage.psi.*;
 import net.masterthought.dlanguage.psi.impl.DNamedStubbedPsiElementBase;
 import net.masterthought.dlanguage.resolve.ScopeProcessorImpl;
 import net.masterthought.dlanguage.stubs.DLanguageAutoDeclarationPartStub;
+import net.masterthought.dlanguage.types.DType;
+import net.masterthought.dlanguage.types.DTypeKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,19 +20,19 @@ import static net.masterthought.dlanguage.psi.DLanguageTypes.OP_EQ;
 
 public class DLanguageAutoDeclarationPartImpl extends DNamedStubbedPsiElementBase<DLanguageAutoDeclarationPartStub> implements DLanguageAutoDeclarationPart {
 
-    public DLanguageAutoDeclarationPartImpl(DLanguageAutoDeclarationPartStub stub, IStubElementType type) {
+    public DLanguageAutoDeclarationPartImpl(final DLanguageAutoDeclarationPartStub stub, final IStubElementType type) {
         super(stub, type);
     }
 
-    public DLanguageAutoDeclarationPartImpl(ASTNode node) {
+    public DLanguageAutoDeclarationPartImpl(final ASTNode node) {
         super(node);
     }
 
-    public void accept(@NotNull DLanguageVisitor visitor) {
+    public void accept(@NotNull final DLanguageVisitor visitor) {
         visitor.visitAutoDeclarationPart(this);
     }
 
-    public void accept(@NotNull PsiElementVisitor visitor) {
+    public void accept(@NotNull final PsiElementVisitor visitor) {
         if (visitor instanceof DLanguageVisitor) accept((DLanguageVisitor) visitor);
         else super.accept(visitor);
     }
@@ -68,4 +70,26 @@ public class DLanguageAutoDeclarationPartImpl extends DNamedStubbedPsiElementBas
         return ScopeProcessorImpl.INSTANCE.processDeclarations(this, processor, state, lastParent, place);
     }
 
+    @Override
+    @NotNull
+    public DType getTypeOf() {
+        if (getGreenStub() != null) {
+            return getGreenStub().getTypeOf();
+        }
+        if (getInitializer().getKW_VOID() != null) {
+            return DTypeKt.getTvoid();
+        }
+        if (getInitializer().getNonVoidInitializer() != null) {
+//            if(getInitializer().getNonVoidInitializer().getArrayInitializer() != null)
+//                return TypeUtilsKt.from(/*todo add type*/,true);
+//            if(getInitializer().getNonVoidInitializer().getAssignExpression() != null)
+//                return TypeUtilsKt.from(/*todo add type*/,true);
+//            if(getInitializer().getNonVoidInitializer().getFunctionBody() != null)
+//                return TypeUtilsKt.from(/*todo add type*/,true);
+//            if(getInitializer().getNonVoidInitializer().getStructInitializer() != null)
+//                return TypeUtilsKt.from(/*todo add type*/,true);
+        }
+//        return TypeUtilsKt.from(,true);
+        return null;
+    }
 }

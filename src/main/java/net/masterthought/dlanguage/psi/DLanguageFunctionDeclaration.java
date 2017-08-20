@@ -7,21 +7,20 @@ import com.intellij.psi.scope.PsiScopeProcessor;
 import net.masterthought.dlanguage.psi.interfaces.DNamedElement;
 import net.masterthought.dlanguage.resolve.ScopeProcessorImpl;
 import net.masterthought.dlanguage.stubs.DLanguageFunctionDeclarationStub;
+import net.masterthought.dlanguage.types.DType;
+import net.masterthought.dlanguage.types.TypeOf;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 
-public interface DLanguageFunctionDeclaration extends PsiElement, DNamedElement, StubBasedPsiElement<DLanguageFunctionDeclarationStub> {
+public interface DLanguageFunctionDeclaration extends PsiElement, DNamedElement, StubBasedPsiElement<DLanguageFunctionDeclarationStub>, TypeOf {
     @Nullable
     DLanguageType getType();
 
     @Nullable
     DLanguageIdentifier getIdentifier();
-
-    @Nullable
-    List<DLanguageStorageClass> getStorageClasses();
 
     @Nullable
     DLanguageTemplateParameters getTemplateParameters();
@@ -35,11 +34,17 @@ public interface DLanguageFunctionDeclaration extends PsiElement, DNamedElement,
     @Nullable
     DLanguageFunctionBody getFunctionBody();
 
+    @NotNull
+    DType getReturnType();
+
+    @NotNull
+    List<DLanguageStorageClass> getStorageClasses();
+
     @Override
-    default boolean processDeclarations(@NotNull PsiScopeProcessor processor,
-                                        @NotNull ResolveState state,
-                                        PsiElement lastParent,
-                                        @NotNull PsiElement place) {
+    default boolean processDeclarations(@NotNull final PsiScopeProcessor processor,
+                                        @NotNull final ResolveState state,
+                                        final PsiElement lastParent,
+                                        @NotNull final PsiElement place) {
         return ScopeProcessorImpl.INSTANCE.processDeclarations(this, processor, state, lastParent, place);
     }
 }

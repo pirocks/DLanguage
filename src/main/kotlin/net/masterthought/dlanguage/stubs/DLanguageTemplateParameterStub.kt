@@ -9,7 +9,33 @@ import net.masterthought.dlanguage.psi.DLanguageTemplateParameter
 /**
  * Created by francis on 6/13/2017.
  */
-class DLanguageTemplateParameterStub : DNamedStubBase<DLanguageTemplateParameter> {
-    constructor(parent: StubElement<*>?, elementType: IStubElementType<out StubElement<*>, *>?, name: String?, attributes: DAttributes?) : super(parent, elementType, name, attributes)
-    constructor(parent: StubElement<*>?, elementType: IStubElementType<out StubElement<*>, *>?, name: StringRef?, attributes: DAttributes?) : super(parent, elementType, name, attributes)
+open class DLanguageTemplateParameterStub : DNamedStubBase<DLanguageTemplateParameter> {
+    enum class TemplateParameterType {
+        TYPE, THIS, VALUE, ALIAS, SEQUENCE
+    }
+
+    val type: TemplateParameterType?
+
+
+    /*protected*/ constructor(parent: StubElement<*>?, elementType: IStubElementType<out StubElement<*>, *>?, name: String?, attributes: DAttributes?, templateParameter: TemplateParameterType?) : super(parent, elementType, name, attributes) {
+        this.type = templateParameter
+    }
+
+    /*protected*/ constructor(parent: StubElement<*>?, elementType: IStubElementType<out StubElement<*>, *>?, name: StringRef?, attributes: DAttributes?, templateParameter: TemplateParameterType?) : super(parent, elementType, name, attributes) {
+        this.type = templateParameter
+    }
+
+//    ####TemplateTypeParameter
+//    ####Template This Parameters
+//    ####Template Value Parameters
+//    ####Template Alias Parameters
+//    ####Template Sequence Parameters
+}
+
+
+class DLanguageTemplateTypeParameterStub : DLanguageTemplateParameterStub {
+//    val bind : DTypeNext
+
+    constructor(parent: StubElement<*>?, elementType: IStubElementType<out StubElement<*>, *>?, name: String?, attributes: DAttributes?, templateParameter: TemplateParameterType) : super(parent, elementType, name, attributes, templateParameter)
+    constructor(parent: StubElement<*>?, elementType: IStubElementType<out StubElement<*>, *>?, name: StringRef?, attributes: DAttributes?, templateParameter: TemplateParameterType) : super(parent, elementType, name, attributes, templateParameter)
 }

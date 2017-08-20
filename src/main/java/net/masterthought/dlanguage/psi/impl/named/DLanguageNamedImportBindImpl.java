@@ -10,6 +10,8 @@ import net.masterthought.dlanguage.psi.DLanguageNamedImportBind;
 import net.masterthought.dlanguage.psi.DLanguageVisitor;
 import net.masterthought.dlanguage.psi.impl.DNamedStubbedPsiElementBase;
 import net.masterthought.dlanguage.stubs.DLanguageNamedImportBindStub;
+import net.masterthought.dlanguage.types.DType;
+import org.apache.commons.lang.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,7 +37,6 @@ public class DLanguageNamedImportBindImpl extends DNamedStubbedPsiElementBase<DL
         else super.accept(visitor);
     }
 
-
     @Nullable
     @Override
     public PsiElement getOP_EQ() {
@@ -54,4 +55,11 @@ public class DLanguageNamedImportBindImpl extends DNamedStubbedPsiElementBase<DL
         return getIdentifier();
     }
 
+    @Override
+    public DType getForwardedType() {
+        if (getGreenStub() != null) {
+            return getGreenStub().getForwardedType();
+        }
+        throw new NotImplementedException();
+    }
 }

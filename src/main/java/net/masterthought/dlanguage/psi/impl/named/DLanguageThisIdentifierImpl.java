@@ -13,6 +13,7 @@ import net.masterthought.dlanguage.psi.DLanguageThisIdentifier;
 import net.masterthought.dlanguage.psi.impl.DNamedStubbedPsiElementBase;
 import net.masterthought.dlanguage.psi.interfaces.DNamedElement;
 import net.masterthought.dlanguage.stubs.DLanguageThisIdentifierStub;
+import net.masterthought.dlanguage.types.DType;
 import net.masterthought.dlanguage.utils.DUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -86,5 +87,13 @@ public class DLanguageThisIdentifierImpl extends DNamedStubbedPsiElementBase<DLa
         public Object[] getVariants() {
             return new Object[0];
         }
+    }
+
+    DType getType() {
+        if (getGreenStub() != null) {
+            return getGreenStub().getDType();
+        }
+        //todo resolve etc. Safe to assume psi loaded?
+        return null;
     }
 }

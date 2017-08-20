@@ -4,19 +4,20 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.StubBasedPsiElement;
 import net.masterthought.dlanguage.psi.interfaces.DNamedElement;
 import net.masterthought.dlanguage.stubs.DLanguageAutoDeclarationPartStub;
+import net.masterthought.dlanguage.types.TypeOf;
 import org.jetbrains.annotations.Nullable;
 
 
-public interface DLanguageAutoDeclarationPart extends PsiElement, DNamedElement, StubBasedPsiElement<DLanguageAutoDeclarationPartStub> {
+public interface DLanguageAutoDeclarationPart extends PsiElement, DNamedElement, StubBasedPsiElement<DLanguageAutoDeclarationPartStub>, TypeOf {
     @Nullable
-    public DLanguageIdentifier getIdentifier();
+    DLanguageIdentifier getIdentifier();
 
     @Nullable
-    public DLanguageTemplateParameters getTemplateParameters();
+    DLanguageTemplateParameters getTemplateParameters();
 
     @Nullable
-    public PsiElement getOP_EQ();
+    PsiElement getOP_EQ();
 
     @Nullable
-    public DLanguageInitializer getInitializer();
+    DLanguageInitializer getInitializer();
 }

@@ -42,11 +42,7 @@ public class DFindUsagesProvider implements FindUsagesProvider {
     }
 
     @NotNull
-    @Override
-    public String getType(@NotNull final PsiElement element) {
-//        return ElementDescriptionUtil.getElementDescription(element, UsageViewTypeLocation.INSTANCE);
-//        return "woops";
-
+    private static String getStringFromElement(@NotNull final PsiElement element) {
         if (element instanceof DLanguageFunctionDeclaration) {
             return "Function";
         } else if (element instanceof DLanguageIdentifier) {
@@ -79,6 +75,15 @@ public class DFindUsagesProvider implements FindUsagesProvider {
         } else {
             return "";
         }
+    }
+
+    @NotNull
+    @Override
+    public String getType(@NotNull final PsiElement element) {
+//        return ElementDescriptionUtil.getElementDescription(element, UsageViewTypeLocation.INSTANCE);
+//        return "woops";
+
+        return getStringFromElement(element);
 
     }
 

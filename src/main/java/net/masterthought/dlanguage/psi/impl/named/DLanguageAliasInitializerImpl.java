@@ -11,6 +11,9 @@ import net.masterthought.dlanguage.psi.*;
 import net.masterthought.dlanguage.psi.impl.DNamedStubbedPsiElementBase;
 import net.masterthought.dlanguage.resolve.ScopeProcessorImpl;
 import net.masterthought.dlanguage.stubs.DLanguageAliasInitializerStub;
+import net.masterthought.dlanguage.types.DType;
+import net.masterthought.dlanguage.types.TypeUtilsKt;
+import org.apache.commons.lang.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,20 +22,19 @@ import java.util.List;
 import static net.masterthought.dlanguage.psi.DLanguageTypes.OP_COMMA;
 
 public class DLanguageAliasInitializerImpl extends DNamedStubbedPsiElementBase<DLanguageAliasInitializerStub> implements DLanguageAliasInitializer {
-//todo doesn't cover all alias declarations possible
-    public DLanguageAliasInitializerImpl(DLanguageAliasInitializerStub stub, IStubElementType type) {
+    public DLanguageAliasInitializerImpl(final DLanguageAliasInitializerStub stub, final IStubElementType type) {
         super(stub, type);
     }
 
-    public DLanguageAliasInitializerImpl(ASTNode node) {
+    public DLanguageAliasInitializerImpl(final ASTNode node) {
         super(node);
     }
 
-    public void accept(@NotNull DLanguageVisitor visitor) {
+    public void accept(@NotNull final DLanguageVisitor visitor) {
         visitor.visitAliasInitializer(this);
     }
 
-    public void accept(@NotNull PsiElementVisitor visitor) {
+    public void accept(@NotNull final PsiElementVisitor visitor) {
         if (visitor instanceof DLanguageVisitor) accept((DLanguageVisitor) visitor);
         else super.accept(visitor);
     }
@@ -72,8 +74,22 @@ public class DLanguageAliasInitializerImpl extends DNamedStubbedPsiElementBase<D
         return getIdentifier();
     }
 
-    public boolean processDeclarations(PsiScopeProcessor processor, ResolveState state, PsiElement lastParent, PsiElement place) {
+    public boolean processDeclarations(@NotNull final PsiScopeProcessor processor, @NotNull final ResolveState state, final PsiElement lastParent, @NotNull final PsiElement place) {
         return ScopeProcessorImpl.INSTANCE.processDeclarations(this, processor, state, lastParent, place);
     }
 
+
+    @Override
+    public DType getForwardedType() {
+        if (getGreenStub() != null) {
+            return getGreenStub().getForwardedType();
+        }
+        if (getType() != null) {
+            return TypeUtilsKt.from(getType(), false);
+        }
+        if (((DLanguageAliasDeclaration) getParent()).getType() != null) {
+            return TypeUtilsKt.from(((DLanguageAliasDeclaration) getParent()).getType(), false);
+        }
+        throw new NotImplementedException();
+    }
 }
