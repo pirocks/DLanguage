@@ -1,0 +1,12 @@
+[submodule "src/main/resources/native/D-Scanner"]
+	path = src/main/resources/native/D-Scanner
+	url = https://github.com/dlang-community/D-Scanner.git
+[submodule "src/main/resources/native/dfix"]
+	path = src/main/resources/native/dfix
+	url = https://github.com/dlang-community/dfix.git
+[submodule "src/main/resources/native/dfmt"]
+	path = src/main/resources/native/dfmt
+	url = https://github.com/dlang-community/dfmt.git
+[submodule "src/main/resources/native/DCD"]
+	path = src/main/resources/native/DCD
+	url = https://github.com/dlang-community/DCD.git
