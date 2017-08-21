@@ -6,9 +6,12 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.ui.TextAccessor;
 import com.intellij.ui.TextFieldWithHistory;
+import net.masterthought.dlanguage.compilation.NativeToolCompiler;
+import net.masterthought.dlanguage.settings.ToolKey;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
@@ -128,4 +131,16 @@ public class GuiUtil {
         button.addActionListener(createApplyPathAction(textField, executable));
     }
 
+    public static void addBuildAction(final JButton autoBuildButton, final ToolKey key) {
+        autoBuildButton.addActionListener(getCompileLambda(key));
+    }
+
+    private static ActionListener getCompileLambda(final ToolKey key) {
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                NativeToolCompiler.getInstance(key).build();
+            }
+        };
+    }
 }

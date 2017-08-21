@@ -10,3 +10,6 @@
 [submodule "src/main/resources/native/DCD"]
 	path = src/main/resources/native/DCD
 	url = https://github.com/dlang-community/DCD.git
+[submodule "src/main/resources/native/dub"]
+	path = src/main/resources/native/dub
+	url = https://github.com/dlang/dub.git
