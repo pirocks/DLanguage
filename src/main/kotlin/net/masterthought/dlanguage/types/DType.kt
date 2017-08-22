@@ -257,18 +257,20 @@ class DTypeClass : DType() {
 //
 class DTypeFunction(val returnType: DType, val parameters: List<Pair<DType, String>>) : DTypeNext(returnType) {
     override fun toText(): String {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return returnType.toText() + " function" + "(" + java.lang.String.join(",", parameters.map { it.first.toText() }) + ")"
     }
 
     override fun implicitlyConvertibleTo(to: DType): Match {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }
-//
-//
+
+/**
+ * in theory just a type function
+ */
 class DTypeDelegate(val returnType: DType, val parameters: List<Pair<DType, String>>) : DTypeNext(returnType) {
     override fun toText(): String {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return returnType.toText() + " delegate" + "(" + java.lang.String.join(",", parameters.map { it.first.toText() }) + ")"
     }
 
     override fun implicitlyConvertibleTo(to: DType): Match {
@@ -321,7 +323,7 @@ class DTypeDArray(val next__: DType) : DTypeArray(next__) {
 
 
 /**
- * note that it is impossible for us to tell the length of a static array in d, becuase it could be platform/compiler flag dependant. This means that all static arrays are effectively the same type.
+ * note that it is impossible for us to tell the length of a static array in d, because it could be platform/compiler flag dependant. This means that all static arrays are effectively the same type.
  */
 class DTypeSArray(val next__: DType) : DTypeArray(next__) {
     override fun toText(): String {
@@ -369,16 +371,16 @@ class DTypeAArray(val value: DType, val key: DType) : DTypeArray(value) {
 abstract class DTypeNext(val next: DType) : DType()
 //
 //
-////class TypeError : Type() {
-////    override fun implicitlyConvertibleTo(): Boolean {
-////        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-////    }
-////
-////}
+//class TypeError : Type() {
+//    override fun implicitlyConvertibleTo(): Boolean {
+//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+//    }
+//
+//}
 //
 //
 //class TypeInfoDeclaration {
-//////todo
+////todo
 //}
 //
 //
