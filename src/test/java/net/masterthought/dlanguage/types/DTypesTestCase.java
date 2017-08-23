@@ -3,9 +3,13 @@ package net.masterthought.dlanguage.types;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.util.PsiTreeUtil;
 import net.masterthought.dlanguage.DLightPlatformCodeInsightFixtureTestCase;
+import net.masterthought.dlanguage.psi.DLanguageType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
@@ -25,9 +29,21 @@ public abstract class DTypesTestCase extends DLightPlatformCodeInsightFixtureTes
         super(srcName, expectName);
     }
 
+    @Nullable
+    static DLanguageType getTypeFromOffset(final int offset, final PsiFile psiFile) {
+        final PsiElement element = psiFile.findElementAt(offset);
+        final DLanguageType type;
+        if (element instanceof DLanguageType) {
+            type = (DLanguageType) element;
+        } else {
+            type = PsiTreeUtil.getTopmostParentOfType(element, DLanguageType.class);
+        }
+        return type;
+    }
+
     @Override
     protected String getTestDataPath() {
-        return this.getClass().getClassLoader().getResource("gold/types/" + getTestDirectoryName()).getPath();
+        return this.getClass().getClassLoader().getResource(super.srcPath + getTestDirectoryName()).getPath();
     }
 
     @Override
