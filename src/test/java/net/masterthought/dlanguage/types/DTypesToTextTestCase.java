@@ -12,7 +12,7 @@ public abstract class DTypesToTextTestCase extends DTypesTestCase {
      * Sets the expected input and outputs and calls the constructor of the parent.
      */
     protected DTypesToTextTestCase() {
-        super("types", "types");
+        super("types/text/", "types/text/");
     }
 
     protected void doTest(final int offset, final String expectedTypeText) {
@@ -25,6 +25,8 @@ public abstract class DTypesToTextTestCase extends DTypesTestCase {
         }
         assertNotNull(type);
         assertEquals(expectedTypeText, TypeUtilsKt.from(type, false).toText());
-        assertEquals(expectedTypeText, TypeUtilsKt.from(type, true).toText());
+        final DType dType = TypeUtilsKt.from(type, true);
+        assertEquals(expectedTypeText, dType.toText());
+        //todo force stubs and see if things work.
     }
 }

@@ -118,6 +118,10 @@ abstract class DType {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
+    open fun implicitlyAssignableTo(to: DType): Match {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     open fun toBaseType(): DType {
         return this
     }

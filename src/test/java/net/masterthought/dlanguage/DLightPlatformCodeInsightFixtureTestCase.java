@@ -20,7 +20,7 @@ import java.net.URISyntaxException;
  * Lightweight test case base.
  */
 public abstract class DLightPlatformCodeInsightFixtureTestCase extends LightPlatformCodeInsightFixtureTestCase {
-    private final String srcPath;
+    protected final String srcPath;
     private final String expectPath;
 
     /**
@@ -90,4 +90,10 @@ public abstract class DLightPlatformCodeInsightFixtureTestCase extends LightPlat
         return new File(getTestDataPath()).listFiles();
     }
 
+    public void assertTrueWithSucceed(final String message, final boolean res, final boolean succeed) {
+        if (succeed)
+            assertTrue(message, res);
+        else
+            assertFalse("Should not have succeeded: " + message, res);
+    }
 }
