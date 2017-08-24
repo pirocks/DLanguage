@@ -7,4 +7,9 @@ public class DTypesImplicitlyConvertibleTest extends DTypesImplicitlyConvertible
     public void testIntAndInt() {
         doTest(0, 7, true);
     }
+
+    public void testTraits() {
+        doTest(170,176,true);
+        doTest(225,232,false);
+    }
 }

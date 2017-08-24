@@ -18,9 +18,9 @@ public abstract class DTypesImplicitlyAssignableTestCase extends DTypesTestCase 
         final DLanguageType typeb = getTypeFromOffset(offsetb, psiFile);
         assertNotNull(typea);
         assertNotNull(typeb);
-        assertTrueWithSucceed("Match failure", TypeUtilsKt.from(typea, false).implicitlyAssignableTo(TypeUtilsKt.from(typeb, false)) == Match.exact, succeed);
-        assertTrueWithSucceed("Match failure", TypeUtilsKt.from(typea, true).implicitlyAssignableTo(TypeUtilsKt.from(typeb, true)) == Match.exact, succeed);
-        assertTrueWithSucceed("Match failure", TypeUtilsKt.from(typea, false).implicitlyAssignableTo(TypeUtilsKt.from(typeb, true)) == Match.exact, succeed);
-        assertTrueWithSucceed("Match failure", TypeUtilsKt.from(typea, true).implicitlyAssignableTo(TypeUtilsKt.from(typeb, false)) == Match.exact, succeed);
+        assertTrueWithSucceed("Match failure", TypeUtilsKt.from(typea, false).isAssignable(TypeUtilsKt.from(typeb, false)) , succeed);
+        assertTrueWithSucceed("Match failure", TypeUtilsKt.from(typea, true).isAssignable(TypeUtilsKt.from(typeb, true)) , succeed);
+        assertTrueWithSucceed("Match failure", TypeUtilsKt.from(typea, false).isAssignable(TypeUtilsKt.from(typeb, true)) , succeed);
+        assertTrueWithSucceed("Match failure", TypeUtilsKt.from(typea, true).isAssignable(TypeUtilsKt.from(typeb, false)) , succeed);
     }
 }
