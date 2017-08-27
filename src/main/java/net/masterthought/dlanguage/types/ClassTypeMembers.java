@@ -1,8 +1,8 @@
 package net.masterthought.dlanguage.types;
 
 import net.masterthought.dlanguage.psi.DLanguageBaseClass;
+import net.masterthought.dlanguage.psi.DLanguageInterfaceOrClass;
 import net.masterthought.dlanguage.psi.interfaces.DNamedElement;
-import net.masterthought.dlanguage.stubs.DLanguageInterfaceOrClassStub;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -12,10 +12,10 @@ import java.util.stream.Collectors;
  * Created by francis on 8/24/2017.
  */
 public class ClassTypeMembers implements TypeMembers {
-    private final DLanguageInterfaceOrClassStub stub;
+    private final DLanguageInterfaceOrClass psi;
 
-    public ClassTypeMembers(final DLanguageInterfaceOrClassStub stub) {
-        this.stub = stub;
+    public ClassTypeMembers(final DLanguageInterfaceOrClass psi) {
+        this.psi = psi;
     }
 
     /**
@@ -24,8 +24,8 @@ public class ClassTypeMembers implements TypeMembers {
     @Override
     public Set<DNamedElement> getMemberDeclarations() {
         final Set<DNamedElement> res = new HashSet<>();
-        res.addAll(stub.getMembersPsi());
-        for (final DLanguageBaseClass baseClass : stub.getPsi().getBaseClassList().getBaseClasss()) {
+        res.addAll(psi.getMembers());
+        for (final DLanguageBaseClass baseClass : psi.getBaseClassList().getBaseClasss()) {
             //todo obviously this is not fast.
             res.addAll(DTypeUtilsKt.from(baseClass.getType(), true).getTypeMembersProvider().getMemberDeclarations());
         }

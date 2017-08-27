@@ -5,6 +5,7 @@ import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.ResolveResult;
+import net.masterthought.dlanguage.psi.interfaces.DNamedElement;
 import net.masterthought.dlanguage.psi.references.DReference;
 import net.masterthought.dlanguage.resolve.processors.parameters.DAttributesFinder;
 import org.jetbrains.annotations.Nullable;
@@ -52,7 +53,7 @@ public class DDocumentationProvider extends AbstractDocumentationProvider implem
                 final Set<DAttributesFinder> attributesFinders = new HashSet<>(resolveResults.length);
                 if (resolveResults.length > 1) {
                     for (final ResolveResult resolveResult : resolveResults) {
-                        final DAttributesFinder dAttributesFinder = new DAttributesFinder(resolveResult.getElement());
+                        final DAttributesFinder dAttributesFinder = new DAttributesFinder(((DNamedElement) resolveResult.getElement()).getNameIdentifier());
                         dAttributesFinder.recurseUp();
                         attributesFinders.add(dAttributesFinder);
                     }

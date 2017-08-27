@@ -4,9 +4,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
 import com.intellij.psi.ResolveState
-import com.intellij.psi.stubs.NamedStubBase
 import net.masterthought.dlanguage.psi.interfaces.DNamedElement
-import net.masterthought.dlanguage.psi.interfaces.HasMembers
 import net.masterthought.dlanguage.stubs.index.DMembersIndex
 import net.masterthought.dlanguage.stubs.index.DPublicImportIndex
 import net.masterthought.dlanguage.stubs.index.DTopLevelDeclarationIndex
@@ -86,14 +84,6 @@ class DNameScopeProcessor(var start: Identifier, val profile: Boolean = false) :
         }
         state.put(importsDoneKey, currentlyAlreadyDone)
         return result.size == startSize
-    }
-
-    private fun getMembersOfBind(resolveResult: DNamedElement) {
-        for (member: NamedStubBase<*> in (resolveResult as HasMembers<*>).members) {
-            if (member.name == start.name) {
-                result.add((member.psi as DNamedElement))
-            }
-        }
     }
 
 }

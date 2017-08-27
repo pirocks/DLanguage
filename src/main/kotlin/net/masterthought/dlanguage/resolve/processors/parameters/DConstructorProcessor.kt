@@ -11,6 +11,7 @@ import net.masterthought.dlanguage.utils.NewExpression
 /**
  * Created by francis on 7/22/2017.
  */
+@Deprecated("This is part of parameter counting resolve and will be removed")
 class DConstructorProcessor(val e: PsiNamedElement, val newExpression: NewExpression) : DResolveProcessor<NewExpression, Constructor> {
     override fun matches(call: NewExpression, decl: Constructor): Boolean {
         if (decl.name == e.name) {

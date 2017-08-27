@@ -14,7 +14,7 @@ public class DTypeMembersTestCase extends DTypesTestCase {
      * Sets the expected input and outputs and calls the constructor of the parent.
      */
     protected DTypeMembersTestCase() {
-        super("members", "members");
+        super("types/members/", "types/members/");
     }
 
     protected void doTest(final int offest, final String[] members, final String[] resolvableMembers) {

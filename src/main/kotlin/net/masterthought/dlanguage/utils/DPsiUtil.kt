@@ -69,6 +69,7 @@ object DPsiUtil {
 
     }
 
+    @Deprecated("This will be deleted and be rewplaced with type deduction")
     fun getNumParameters(parameters: DLanguageParameters, parameterContainer: PsiElement): ParameterCountRange {
         var min = 0
         var max = 0
@@ -86,7 +87,7 @@ object DPsiUtil {
             val param = parameter.type?.type_2?.symbol?.identifierOrTemplateChain?.identifierOrTemplateInstances?.last()?.identifier
             if (param is Identifier) {
                 val resolve = param.reference?.resolve()
-                if (resolve is TemplateParameter) {//todo make this identifier resolving proof
+                if (resolve is TemplateParameter) {
                     if (resolve.templateTupleParameter != null) {
                         //then the paramater in question is actually a var arg
                         max = Integer.MAX_VALUE

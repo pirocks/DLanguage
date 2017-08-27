@@ -1,8 +1,5 @@
 package net.masterthought.dlanguage.types
 
-import com.intellij.psi.util.PsiTreeUtil
-import net.masterthought.dlanguage.psi.DLanguageIdentifier
-import net.masterthought.dlanguage.stubs.DLanguageInterfaceOrClassStub
 import net.masterthought.dlanguage.utils.InterfaceOrClass
 
 enum class ENUMTY
@@ -353,30 +350,18 @@ abstract class DType(open val ty: TY) {
 //}
 //
 //
-class DTypeClass : DType {
+class DTypeClass(val interfaceOrClass: InterfaceOrClass) : DType(ENUMTY.Tclass) {
 
-    val stub: DLanguageInterfaceOrClassStub
+
 
     override val typeMembersProvider: TypeMembers
         get() {
-            return ClassTypeMembers(stub)
+            return ClassTypeMembers(interfaceOrClass)
         }
 
-
-    constructor(identifier: DLanguageIdentifier) : super(ENUMTY.Tclass) {
-        val resolvedClass = identifier.reference?.resolve()
-        if (resolvedClass == null) {
-            throw UnableToDeduceTypeException()
-        }
-        val parent = PsiTreeUtil.getStubOrPsiParent(resolvedClass)
-        if (parent == null) {
-            throw UnableToDeduceTypeException()
-        }
-        stub = (parent as InterfaceOrClass).stub
-    }
 
     override fun toText(): String {
-        return stub.name
+        return interfaceOrClass.name
     }
 
     override fun implicitlyConvertibleTo(to: DType): Match {
@@ -408,11 +393,18 @@ class DTypeClass : DType {
 //}
 //
 //
-//class TypeStruct : Type() {
-//    override fun implicitlyConvertibleTo(to: Type): Match {
-//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-//    }
-//}
+class DTypeStruct : DType(ENUMTY.Tstruct) {
+    override fun toText(): String {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override val typeMembersProvider: TypeMembers
+        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+
+    override fun implicitlyConvertibleTo(to: DType): Match {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+}
 //
 //
 //class TypeReturn : TypeQualified() {

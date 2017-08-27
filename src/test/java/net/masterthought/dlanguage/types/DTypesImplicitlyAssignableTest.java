@@ -1,8 +1,11 @@
 package net.masterthought.dlanguage.types;
 
+import org.junit.Ignore;
+
 /**
  * Created by francis on 8/22/2017.
  */
+@Ignore
 public class DTypesImplicitlyAssignableTest extends DTypesImplicitlyAssignableTestCase {
     public void testIntAndInt() {
         doTest(0, 7, true);

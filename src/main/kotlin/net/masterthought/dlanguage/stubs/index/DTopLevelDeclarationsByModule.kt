@@ -42,7 +42,7 @@ class DTopLevelDeclarationsByModule : StringStubIndexExtension<DNamedElement>() 
                 for (resolvedBind in getTopLevelSymbols(bind, import.importedModuleName, import.project)) {
                     symbols.add(resolvedBind)
                     if (resolvedBind is HasMembers<*>) {
-                        symbols.addAll(resolvedBind.members.map { it.psi as DNamedElement })
+                        symbols.addAll(resolvedBind.members)
                     }
                 }
             }

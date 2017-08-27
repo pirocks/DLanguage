@@ -13,8 +13,6 @@ import net.masterthought.dlanguage.psi.DLanguageIdentifier
 import net.masterthought.dlanguage.psi.interfaces.DNamedElement
 import net.masterthought.dlanguage.resolve.DResolveUtil
 import net.masterthought.dlanguage.stubs.index.DTopLevelDeclarationsByModule
-import net.masterthought.dlanguage.utils.ModuleDeclaration
-import net.masterthought.dlanguage.utils.SingleImport
 import java.util.*
 
 
@@ -48,12 +46,11 @@ class DReference(element: PsiNamedElement, textRange: TextRange) : PsiReferenceB
 
 
         val project = myElement.project
-        val namedElements = DResolveUtil.getInstance(project).findDefinitionNode(myElement, true).map { if (it is PsiNameIdentifierOwner && it !is ModuleDeclaration && it !is SingleImport) if (it.nameIdentifier != null) it.nameIdentifier!! else it else it }
+        val namedElements = DResolveUtil.getInstance(project).findDefinitionNode(myElement, true)
         val results = mutableListOf<PsiElementResolveResult>()
         for (property in namedElements) {
             results.add(PsiElementResolveResult(property))
         }
-//        DirectoryIndex.getInstance(project).getDirectoriesByPackageName()
         return results.toTypedArray()
     }
 
@@ -246,7 +243,9 @@ class DReference(element: PsiNamedElement, textRange: TextRange) : PsiReferenceB
 
     override fun isReferenceTo(element: PsiElement?): Boolean {
         for (result in multiResolve(false)) {
-            if (getElement().manager.areElementsEquivalent(result.element, element))
+            if (result.element is DLanguageFile)
+                continue
+            if (getElement().manager.areElementsEquivalent((result.element as DNamedElement).nameIdentifier, (element as DNamedElement).nameIdentifier))
                 return true
         }
         return false

@@ -1,9 +1,8 @@
 package net.masterthought.dlanguage.types
 
 import com.intellij.psi.util.PsiTreeUtil
-import net.masterthought.dlanguage.utils.Type
-import net.masterthought.dlanguage.utils.TypeSuffix
-import net.masterthought.dlanguage.utils.Type_2
+import net.masterthought.dlanguage.psi.references.DReference
+import net.masterthought.dlanguage.utils.*
 
 
 /**
@@ -62,6 +61,33 @@ fun from(type_2: Type_2, resolveAvailable: Boolean = false): DType {
         if (type_2.builtinType?.text == null || basicTypeIndex.get(type_2.builtinType?.text!!) == null)
             TODO()
         return basicTypeIndex.get(type_2.builtinType?.text!!)!!
+    }
+    if (isSymbol) {
+        if (type_2.symbol?.identifierOrTemplateChain?.identifierOrTemplateInstances?.lastOrNull()?.identifier == null)
+            TODO()
+        else {
+            val resolve = (type_2.symbol!!.identifierOrTemplateChain!!.identifierOrTemplateInstances.lastOrNull()!!.identifier!!.reference as DReference).resolve()//todo make identifier/template lists a reference because this is ridiculous
+            if (resolve === null)
+                throw UnableToDeduceTypeException()
+            val resolveWrapper = resolve.parent
+            if (resolve is InterfaceOrClass) {
+                return DTypeClass(resolve)
+            }
+            if (resolve is StructDeclaration) {
+                return DTypeStruct()
+            }
+            if (resolve is ForwardingType) {
+                return resolve.forwardedType
+            }
+            if (resolve is TypeOf) {
+                return resolve.typeOf
+            }
+            TODO()
+        }
+
+    }
+    if (isTypeOfSymbol) {
+        TODO()
     }
     return from(type_2.type!!, resolveAvailable)
 
