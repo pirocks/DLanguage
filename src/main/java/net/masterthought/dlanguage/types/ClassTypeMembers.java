@@ -1,9 +1,13 @@
 package net.masterthought.dlanguage.types;
 
+import com.google.common.collect.Sets;
 import net.masterthought.dlanguage.psi.DLanguageBaseClass;
+import net.masterthought.dlanguage.psi.DLanguageClassDeclaration;
 import net.masterthought.dlanguage.psi.DLanguageInterfaceOrClass;
 import net.masterthought.dlanguage.psi.interfaces.DNamedElement;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -18,29 +22,63 @@ public class ClassTypeMembers implements TypeMembers {
         this.psi = psi;
     }
 
+    private final Set<String> builtinMembers = Sets.newHashSet("sizeof", "alignof", "mangleof", "tupleof", "this", "super", "classinfo", "vptr", "monitor", "outer");
+
     /**
      * @return all member decls, in theory without psi loading beyond stub backed psi
      */
     @Override
     public Set<DNamedElement> getMemberDeclarations() {
-        final Set<DNamedElement> res = new HashSet<>();
-        res.addAll(psi.getMembers());
-        for (final DLanguageBaseClass baseClass : psi.getBaseClassList().getBaseClasss()) {
-            //todo obviously this is not fast.
-            res.addAll(DTypeUtilsKt.from(baseClass.getType(), true).getTypeMembersProvider().getMemberDeclarations());
+        final HashMap<String, DNamedElement> res = new HashMap<>();
+        for (final DNamedElement element : psi.getMembers()) {
+            res.putIfAbsent(element.getName(), element);
+        }
+
+        if (psi.getBaseClassList() != null) {
+            for (final DLanguageBaseClass baseClass : psi.getBaseClassList().getBaseClasss()) {
+                //todo obviously this is not fast.
+                for (final DNamedElement element : DTypeUtilsKt.from(baseClass.getType(), true).getTypeMembersProvider().getMemberDeclarations()) {
+                    res.putIfAbsent(element.getName(), element);//todo don't recursively include super
+                }
+
+            }
         }
         //todo mixins, alias this
-        return res;
+        final HashSet<DNamedElement> elements = Sets.newHashSet(res.values());
+        elements.add(this.psi);
+        return elements;
 
     }
 
     @Override
     public Set<DNamedElement> searchMemberDeclarations(final String name) {
+        if (name.equals("this")) {
+            return Sets.newHashSet(this.psi);
+        }
+        if (name.equals("super")) {
+            return getSuper();
+        }
         return getMemberDeclarations().stream().filter(dNamedElement -> dNamedElement.getName().equals(name)).collect(Collectors.toSet());
+    }
+
+    @NotNull
+    public Set<DNamedElement> getSuper() {
+        if (this.psi.getBaseClassList() != null) {
+            final DType type = DTypeUtilsKt.from(this.psi.getBaseClassList().getBaseClasss().get(0).getType(), true);
+            if (type instanceof DTypeClass) {
+                final DLanguageInterfaceOrClass class_ = ((DTypeClass) type).getInterfaceOrClass();
+                if (class_.getParent() instanceof DLanguageClassDeclaration) {
+                    return Sets.newHashSet(class_);
+                }
+            }
+        }
+        return Sets.newHashSet();
     }
 
     @Override
     public boolean hasMemberDeclarationOfName(final String name) {
+        if (builtinMembers.contains(name))
+            return true;
         return getMemberDeclarations().stream().anyMatch(dNamedElement -> dNamedElement.getName().equals(name));
     }
 

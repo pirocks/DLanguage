@@ -21,7 +21,7 @@ public interface HasMembersStub {
 
     default Set<DNamedStubBase> getMembers() {
         final Set<DNamedStubBase> res = new HashSet<>();
-        getMembersImpl(((StubBasedPsiElementBase) this).getGreenStub(), res);
+        getMembersImpl((Stub) this, res);
         return res;
     }
 

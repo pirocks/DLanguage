@@ -28,9 +28,12 @@ public class DTypeMembersTestCase extends DTypesTestCase {
         for (final String resolvableMember : resolvableMembers) {
             assertTrue(dType.getTypeMembersProvider().hasMemberDeclarationOfName(resolvableMember));
             final Set<DNamedElement> elements = dType.getTypeMembersProvider().searchMemberDeclarations(resolvableMember);
-            assertTrue("multiple elements found", elements.size() == 1);
-            assertTrue("wrong name", Objects.equals(((DNamedElement) elements.toArray()[0]).getName(), resolvableMember));
-            assertTrue("no members had the correct name", dType.getTypeMembersProvider().getMemberDeclarations().stream().anyMatch(dNamedElement -> dNamedElement.getName().equals(resolvableMember)));
+            assertFalse("multiple elements found", elements.size() > 1);
+            assertTrue("no elements found", elements.size() != 0);
+            if (!(resolvableMember.equals("super") || resolvableMember.equals("this"))) {
+                assertTrue("wrong name", Objects.equals(((DNamedElement) elements.toArray()[0]).getName(), resolvableMember));
+                assertTrue("no members had the correct name", dType.getTypeMembersProvider().getMemberDeclarations().stream().anyMatch(dNamedElement -> dNamedElement.getName().equals(resolvableMember)));
+            }
         }
 
 

@@ -69,7 +69,7 @@ object DPsiUtil {
 
     }
 
-    @Deprecated("This will be deleted and be rewplaced with type deduction")
+    @kotlin.Deprecated("This will be deleted and be rewplaced with type deduction")
     fun getNumParameters(parameters: DLanguageParameters, parameterContainer: PsiElement): ParameterCountRange {
         var min = 0
         var max = 0
