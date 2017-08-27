@@ -53,4 +53,8 @@ public class DTypesToTextTest extends DTypesToTextTestCase {
     public void testDelegate() {
         doTest(0, "int function(char,char) delegate(char[],int function())");
     }
+
+    public void testArray() {
+        doTest(0, "class_[]");
+    }
 }

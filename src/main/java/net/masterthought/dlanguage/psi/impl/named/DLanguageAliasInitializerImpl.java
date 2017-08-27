@@ -12,7 +12,7 @@ import net.masterthought.dlanguage.psi.impl.DNamedStubbedPsiElementBase;
 import net.masterthought.dlanguage.resolve.ScopeProcessorImpl;
 import net.masterthought.dlanguage.stubs.DLanguageAliasInitializerStub;
 import net.masterthought.dlanguage.types.DType;
-import net.masterthought.dlanguage.types.TypeUtilsKt;
+import net.masterthought.dlanguage.types.DTypeUtilsKt;
 import org.apache.commons.lang.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -85,10 +85,10 @@ public class DLanguageAliasInitializerImpl extends DNamedStubbedPsiElementBase<D
             return getGreenStub().getForwardedType();
         }
         if (getType() != null) {
-            return TypeUtilsKt.from(getType(), false);
+            return DTypeUtilsKt.from(getType(), false);
         }
         if (((DLanguageAliasDeclaration) getParent()).getType() != null) {
-            return TypeUtilsKt.from(((DLanguageAliasDeclaration) getParent()).getType(), false);
+            return DTypeUtilsKt.from(((DLanguageAliasDeclaration) getParent()).getType(), false);
         }
         throw new NotImplementedException();
     }

@@ -12,7 +12,7 @@ import net.masterthought.dlanguage.psi.impl.DNamedStubbedPsiElementBase;
 import net.masterthought.dlanguage.resolve.ScopeProcessorImpl;
 import net.masterthought.dlanguage.stubs.DLanguageDeclaratorStub;
 import net.masterthought.dlanguage.types.DType;
-import net.masterthought.dlanguage.types.TypeUtilsKt;
+import net.masterthought.dlanguage.types.DTypeUtilsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -73,6 +73,6 @@ public class DLanguageDeclaratorImpl extends DNamedStubbedPsiElementBase<DLangua
         if (getGreenStub() != null) {
             return getGreenStub().getTypeOf();
         }
-        return TypeUtilsKt.from(((DLanguageVariableDeclaration) getParent()).getType(), true);
+        return DTypeUtilsKt.from(((DLanguageVariableDeclaration) getParent()).getType(), true);
     }
 }

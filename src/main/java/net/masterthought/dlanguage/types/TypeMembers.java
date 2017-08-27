@@ -15,17 +15,17 @@ public interface TypeMembers {
     Set<DNamedElement> getMemberDeclarations();
 
     /**
-     * @return stub backed types
+     * providing the name of the member could speed things up, because stub indexes can be used.
+     * @param name
+     * @return
      */
-    Set<DType> getMemberTypes();
-
     Set<DNamedElement> searchMemberDeclarations(String name);
 
-    Set<DType> searchMemberTypes(String name);
-
-    Set<DNamedElement> getMemberDeclarations(String name);
-
-    Set<DType> getMemberTypes(String name);
-
-    boolean hasMemberDeclarations(String name);
+    /**
+     * returns true if member declaration exists. can return true for things like .front() or .dup(), where the declaration does not necessarily exist but the property does.
+     *
+     * @param name
+     * @return
+     */
+    boolean hasMemberDeclarationOfName(String name);
 }

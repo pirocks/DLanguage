@@ -11,7 +11,7 @@ import net.masterthought.dlanguage.psi.DLanguageType;
 import net.masterthought.dlanguage.psi.impl.DNamedStubbedPsiElementBase;
 import net.masterthought.dlanguage.stubs.DLanguageIfConditionStub;
 import net.masterthought.dlanguage.types.DType;
-import net.masterthought.dlanguage.types.TypeUtilsKt;
+import net.masterthought.dlanguage.types.DTypeUtilsKt;
 import org.apache.commons.lang.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -76,6 +76,6 @@ public class DLanguageIfConditionImpl extends DNamedStubbedPsiElementBase<DLangu
         if (getKW_AUTO() != null) {
             throw new NotImplementedException();
         }
-        return TypeUtilsKt.from(getType(), true);
+        return DTypeUtilsKt.from(getType(), true);
     }
 }

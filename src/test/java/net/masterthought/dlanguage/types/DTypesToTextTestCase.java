@@ -24,8 +24,8 @@ public abstract class DTypesToTextTestCase extends DTypesTestCase {
             type = PsiTreeUtil.getTopmostParentOfType(element, DLanguageType.class);
         }
         assertNotNull(type);
-        assertEquals(expectedTypeText, TypeUtilsKt.from(type, false).toText());
-        final DType dType = TypeUtilsKt.from(type, true);
+        assertEquals(expectedTypeText, DTypeUtilsKt.from(type, false).toText());
+        final DType dType = DTypeUtilsKt.from(type, true);
         assertEquals(expectedTypeText, dType.toText());
         //todo force stubs and see if things work.
     }

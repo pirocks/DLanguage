@@ -1917,10 +1917,12 @@ class DLangParser {
             warn("Use of base class protection == deprecated.");
             advance();
         }
+        final Marker type_marker = enter_section_modified(builder);
         if (!parseType2()) {
             cleanup(m, BASE_CLASS);
             return false;
         }
+        exit_section_modified(builder, type_marker, TYPE, true);
         exit_section_modified(builder, m, BASE_CLASS, true);
         return true;
     }

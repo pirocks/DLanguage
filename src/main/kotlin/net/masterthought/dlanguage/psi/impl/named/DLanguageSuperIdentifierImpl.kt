@@ -59,7 +59,7 @@ class DLanguageSuperIdentifierImpl : DNamedStubbedPsiElementBase<DLanguageSuperI
         override fun resolve(): PsiElement? {
             val parentClass = DUtil.getParentClassOrStructOrTemplateOrInterfaceOrUnion(element)
             if (parentClass is DLanguageInterfaceOrClass && parentClass.getParent() is DLanguageClassDeclaration) {
-                return parentClass.baseClassList!!.baseClasss.first().type_2?.symbol?.identifierOrTemplateChain?.identifierOrTemplateInstances?.last()?.identifier?.reference?.resolve()
+                return parentClass.baseClassList!!.baseClasss.first()?.type?.type_2?.symbol?.identifierOrTemplateChain?.identifierOrTemplateInstances?.last()?.identifier?.reference?.resolve()
             }
             return null
         }

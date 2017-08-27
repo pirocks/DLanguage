@@ -1,23 +1,35 @@
-package net.masterthought.dlanguage.psi;
 
-import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.Nullable;
+    package net.masterthought.dlanguage.psi;
+
+    import com.intellij.psi.PsiElement;
+    import org.jetbrains.annotations.NotNull;
+    import static net.masterthought.dlanguage.psi.DLanguageTypes.*;
+    import org.jetbrains.annotations.Nullable;
+    import com.intellij.psi.util.PsiTreeUtil;
+    import java.util.List;
+    import net.masterthought.dlanguage.psi.interfaces.DNamedElement;
+    import net.masterthought.dlanguage.psi.interfaces.DCompositeElement;
+    import com.intellij.psi.StubBasedPsiElement;
+    import net.masterthought.dlanguage.stubs.interfaces.*;
+    import net.masterthought.dlanguage.stubs.*;
+    import com.intellij.psi.ResolveState;
+    import com.intellij.psi.scope.PsiScopeProcessor;
+    import net.masterthought.dlanguage.resolve.ScopeProcessorImpl;
 
 
-public interface DLanguageAsmBrExp extends PsiElement {
-    @Nullable
-    public DLanguageAsmExp getAsmExp();
 
-    @Nullable
-    public DLanguageAsmUnaExp getAsmUnaExp();
 
-    @Nullable
-    public DLanguageAsmBrExp getAsmBrExp();
-
-    @Nullable
-    public PsiElement getOP_BRACKET_RIGHT();
-
-    @Nullable
-    public PsiElement getOP_BRACKET_LEFT();
-
+    public interface DLanguageAsmBrExp extends PsiElement {
+            @Nullable
+            public DLanguageAsmExp getAsmExp();
+            @Nullable
+            public DLanguageAsmUnaExp getAsmUnaExp();
+            @Nullable
+            public DLanguageAsmBrExp getAsmBrExp();
+            @Nullable
+            public PsiElement getOP_BRACKET_RIGHT();
+        
+            @Nullable
+            public PsiElement getOP_BRACKET_LEFT();
+        
 }

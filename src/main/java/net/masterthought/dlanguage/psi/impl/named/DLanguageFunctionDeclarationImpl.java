@@ -12,7 +12,7 @@ import net.masterthought.dlanguage.psi.impl.DNamedStubbedPsiElementBase;
 import net.masterthought.dlanguage.resolve.ScopeProcessorImpl;
 import net.masterthought.dlanguage.stubs.DLanguageFunctionDeclarationStub;
 import net.masterthought.dlanguage.types.DType;
-import net.masterthought.dlanguage.types.TypeUtilsKt;
+import net.masterthought.dlanguage.types.DTypeUtilsKt;
 import org.apache.commons.lang.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -105,7 +105,7 @@ public class DLanguageFunctionDeclarationImpl extends DNamedStubbedPsiElementBas
             throw new NotImplementedException();
             //handle auto etc
         }
-        return TypeUtilsKt.from(getType(), false);
+        return DTypeUtilsKt.from(getType(), false);
     }
 
     @Override

@@ -18,10 +18,10 @@ public abstract class DTypesImplicitlyConvertibleTestCase extends DTypesTestCase
         final DLanguageType typeb = getTypeFromOffset(offsetb, psiFile);
         assertNotNull(typea);
         assertNotNull(typeb);
-        assertTrueWithSucceed("Match failure", TypeUtilsKt.from(typea, false).implicitlyConvertibleTo(TypeUtilsKt.from(typeb, false)) == Match.exact, succeed);
-        assertTrueWithSucceed("Match failure", TypeUtilsKt.from(typea, true).implicitlyConvertibleTo(TypeUtilsKt.from(typeb, true)) == Match.exact, succeed);
-        assertTrueWithSucceed("Match failure", TypeUtilsKt.from(typea, false).implicitlyConvertibleTo(TypeUtilsKt.from(typeb, true)) == Match.exact, succeed);
-        assertTrueWithSucceed("Match failure", TypeUtilsKt.from(typea, true).implicitlyConvertibleTo(TypeUtilsKt.from(typeb, false)) == Match.exact, succeed);
+        assertTrueWithSucceed("Match failure", DTypeUtilsKt.from(typea, false).implicitlyConvertibleTo(DTypeUtilsKt.from(typeb, false)) == Match.exact, succeed);
+        assertTrueWithSucceed("Match failure", DTypeUtilsKt.from(typea, true).implicitlyConvertibleTo(DTypeUtilsKt.from(typeb, true)) == Match.exact, succeed);
+        assertTrueWithSucceed("Match failure", DTypeUtilsKt.from(typea, false).implicitlyConvertibleTo(DTypeUtilsKt.from(typeb, true)) == Match.exact, succeed);
+        assertTrueWithSucceed("Match failure", DTypeUtilsKt.from(typea, true).implicitlyConvertibleTo(DTypeUtilsKt.from(typeb, false)) == Match.exact, succeed);
     }
 
 }

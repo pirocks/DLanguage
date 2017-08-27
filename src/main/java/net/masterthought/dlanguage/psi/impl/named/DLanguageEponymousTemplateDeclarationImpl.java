@@ -12,7 +12,7 @@ import net.masterthought.dlanguage.psi.impl.DNamedStubbedPsiElementBase;
 import net.masterthought.dlanguage.resolve.ScopeProcessorImpl;
 import net.masterthought.dlanguage.stubs.DLanguageEponymousTemplateDeclarationStub;
 import net.masterthought.dlanguage.types.DType;
-import net.masterthought.dlanguage.types.TypeUtilsKt;
+import net.masterthought.dlanguage.types.DTypeUtilsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -95,6 +95,6 @@ public class DLanguageEponymousTemplateDeclarationImpl extends DNamedStubbedPsiE
         if (getGreenStub() != null) {
             return getGreenStub().getTypeOf();
         }
-        return TypeUtilsKt.from(getType(), true);//todo this resolve available isn't always the case//todo this type probably isn't what I want
+        return DTypeUtilsKt.from(getType(), true);//todo this resolve available isn't always the case//todo this type probably isn't what I want
     }
 }

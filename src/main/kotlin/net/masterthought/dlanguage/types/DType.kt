@@ -1,5 +1,10 @@
 package net.masterthought.dlanguage.types
 
+import com.intellij.psi.util.PsiTreeUtil
+import net.masterthought.dlanguage.psi.DLanguageIdentifier
+import net.masterthought.dlanguage.stubs.DLanguageInterfaceOrClassStub
+import net.masterthought.dlanguage.utils.InterfaceOrClass
+
 enum class ENUMTY
 {
     Tarray,     // slice array, aka T[]
@@ -54,13 +59,15 @@ enum class ENUMTY
 }
 
 //these make copy pasting from compiler easier. when done these should be inlined.
-typealias TY = ENUMTY;
-typealias TypeBasic = BasicDType;
-typealias TypeVector = DTypeVector;
+typealias TY = ENUMTY
+typealias TypeBasic = BasicDType
+typealias TypeVector = DTypeVector
 
 val basicTypeIndex = mutableMapOf<String, BasicDType>()
 
 class BasicDType : DType {
+    override val typeMembersProvider: TypeMembers
+        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
     val compilerName: String
     val size: Int
     val actualName: String
@@ -79,11 +86,11 @@ class BasicDType : DType {
 
     override fun implicitlyConvertibleTo(to: DType): Match {
         if (this == to)
-            return Match.exact;
+            return Match.exact
 
         if (ty == to.ty)
         {
-            return Match.exact;
+            return Match.exact
             /*if (mod == to.mod)
                 return MATCHexact;
             else if (MODimplicitConv(mod, to.mod))
@@ -95,15 +102,15 @@ class BasicDType : DType {
         }
 
         if (ty == ENUMTY.Tvoid || to.ty == ENUMTY.Tvoid)
-            return Match.nomatch;
+            return Match.nomatch
         if (to.ty == ENUMTY.Tbool)
-            return Match.nomatch;
+            return Match.nomatch
 
-        val tob: TypeBasic;
-        if (to.ty == ENUMTY.Tvector && to.deco)
+        val tob: TypeBasic
+        if (to.ty == ENUMTY.Tvector/* && to.deco*/)
         {
-            val tv : TypeVector = to as TypeVector;
-            tob = tv.elementType();
+            val tv: TypeVector = to as TypeVector
+            tob = tv.elementType()
         }
         else {
             if(to !is TypeBasic)
@@ -161,6 +168,7 @@ class BasicDType : DType {
 //            return MATCHnomatch;
 //        }
 //        return MATCHconvert;
+        TODO()
     }
 
 //    override fun implicitlyConvertibleTo(to: DType): Match {
@@ -173,17 +181,17 @@ class BasicDType : DType {
 }
 
 
-val tvoid: BasicDType = BasicDType("void", 1, "void")
-val tbyte: BasicDType = BasicDType("int8", 1, "byte")
-val tubyte: BasicDType = BasicDType("uns8", 1, "ubtye")
-val tshort: BasicDType = BasicDType("int16", 2, "short")
-val tushort: BasicDType = BasicDType("uns16", 2, "ushort")
-val tint: BasicDType = BasicDType("int32", 4, "int")
-val tunit: BasicDType = BasicDType("uns32", 4, "uint")
-val tlong: BasicDType = BasicDType("int64", 8, "long")
-val tulong: BasicDType = BasicDType("uns64", 8, "ulong")
-val tcent: BasicDType = BasicDType("int128", 16, "cent")
-val tucent: BasicDType = BasicDType("uns128", 16, "ucent")
+val tvoid: BasicDType = BasicDType(ENUMTY.Tvoid, "void", 1, "void")
+val tbyte: BasicDType = BasicDType(ENUMTY.Tint8, "int8", 1, "byte")
+val tubyte: BasicDType = BasicDType(ENUMTY.Tuns8, "uns8", 1, "ubtye")
+val tshort: BasicDType = BasicDType(ENUMTY.Tint16, "int16", 2, "short")
+val tushort: BasicDType = BasicDType(ENUMTY.Tuns16, "uns16", 2, "ushort")
+val tint: BasicDType = BasicDType(ENUMTY.Tint32, "int32", 4, "int")
+val tunit: BasicDType = BasicDType(ENUMTY.Tuns32, "uns32", 4, "uint")
+val tlong: BasicDType = BasicDType(ENUMTY.Tint64, "int64", 8, "long")
+val tulong: BasicDType = BasicDType(ENUMTY.Tuns64, "uns64", 8, "ulong")
+val tcent: BasicDType = BasicDType(ENUMTY.Tint128, "int128", 16, "cent")
+val tucent: BasicDType = BasicDType(ENUMTY.Tuns128, "uns128", 16, "ucent")
 //public val tfloat32: BasicDType = BasicDType("float32",4)
 //public val tfloat64: BasicDType = BasicDType("float64",8)
 //public val tfloat80: BasicDType = BasicDType("float80",10)
@@ -194,9 +202,9 @@ val tucent: BasicDType = BasicDType("uns128", 16, "ucent")
 //public val tcomplex64: BasicDType = BasicDType("complex64",16)
 //public val tcomplex80: BasicDType = BasicDType("complex80",20)
 //public val tbool: BasicDType = BasicDType("bool",1)
-val tchar: BasicDType = BasicDType("char", 1, "char")
-val twchar: BasicDType = BasicDType("wchar", 2, "wchar")
-val tdchar: BasicDType = BasicDType("dchar", 4, "dchar")
+val tchar: BasicDType = BasicDType(ENUMTY.Tchar, "char", 1, "char")
+val twchar: BasicDType = BasicDType(ENUMTY.Twchar, "wchar", 2, "wchar")
+val tdchar: BasicDType = BasicDType(ENUMTY.Tdchar, "dchar", 4, "dchar")
 //
 //
 //// Some special types
@@ -253,7 +261,7 @@ enum class Match {
 //    //todo
 //}
 //
-abstract class DType(val ty : TY) {
+abstract class DType(open val ty: TY) {
     //shared immutable should not be allowed
 //    var MODconst: Boolean;
 //    var MODimmutable: Boolean;
@@ -286,8 +294,10 @@ abstract class DType(val ty : TY) {
 
     abstract fun toText(): String
     open fun isTypeBasic(): TypeBasic? {
-        return null;
+        return null
     }
+
+    abstract val typeMembersProvider: TypeMembers
 
     /************************************
      * Apply modifiers to existing type.
@@ -343,15 +353,38 @@ abstract class DType(val ty : TY) {
 //}
 //
 //
-class DTypeClass : DType() {
+class DTypeClass : DType {
+
+    val stub: DLanguageInterfaceOrClassStub
+
+    override val typeMembersProvider: TypeMembers
+        get() {
+            return ClassTypeMembers(stub)
+        }
+
+
+    constructor(identifier: DLanguageIdentifier) : super(ENUMTY.Tclass) {
+        val resolvedClass = identifier.reference?.resolve()
+        if (resolvedClass == null) {
+            throw UnableToDeduceTypeException()
+        }
+        val parent = PsiTreeUtil.getStubOrPsiParent(resolvedClass)
+        if (parent == null) {
+            throw UnableToDeduceTypeException()
+        }
+        stub = (parent as InterfaceOrClass).stub
+    }
+
     override fun toText(): String {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return stub.name
     }
 
     override fun implicitlyConvertibleTo(to: DType): Match {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }
+
+
 //
 //
 //class TypeEnum : Type() {
@@ -412,7 +445,10 @@ class DTypeClass : DType() {
 //
 //abstract class TypeQualified : Type()
 //
-class DTypeFunction(val returnType: DType, val parameters: List<Pair<DType, String>>) : DTypeNext(returnType) {
+open class DTypeFunction(open val returnType: DType, open val parameters: List<Pair<DType, String>>, override val ty: TY) : DTypeNext(returnType, ty) {
+    override val typeMembersProvider: TypeMembers
+        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+
     override fun toText(): String {
         return returnType.toText() + " function" + "(" + java.lang.String.join(",", parameters.map { it.first.toText() }) + ")"
     }
@@ -425,18 +461,18 @@ class DTypeFunction(val returnType: DType, val parameters: List<Pair<DType, Stri
 /**
  * in theory just a type function
  */
-class DTypeDelegate(val returnType: DType, val parameters: List<Pair<DType, String>>) : DTypeNext(returnType) {
+class DTypeDelegate(override val returnType: DType, override val parameters: List<Pair<DType, String>>) : DTypeFunction(returnType, parameters, ENUMTY.Tdelegate) {
     override fun toText(): String {
         return returnType.toText() + " delegate" + "(" + java.lang.String.join(",", parameters.map { it.first.toText() }) + ")"
     }
 
-    override fun implicitlyConvertibleTo(to: DType): Match {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
 }
 
 
-class DTypeReference(val next_: DType) : DTypeNext(next_) {
+class DTypeReference(val next_: DType, override val ty: TY) : DTypeNext(next_, ty) {
+    override val typeMembersProvider: TypeMembers
+        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+
     override fun toText(): String {
         return "ref " + next.toText()
     }
@@ -450,7 +486,10 @@ class DTypeReference(val next_: DType) : DTypeNext(next_) {
 }
 
 
-class DTypePointer(val next_: DType) : DTypeNext(next_) {
+class DTypePointer(val next_: DType) : DTypeNext(next_, ENUMTY.Tpointer) {
+    override val typeMembersProvider: TypeMembers
+        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+
     override fun toText(): String {
         return next_.toText() + "*"
     }
@@ -537,7 +576,7 @@ class DTypePointer(val next_: DType) : DTypeNext(next_) {
 }
 
 
-abstract class DTypeArray(val next_: DType) : DTypeNext(next_) {
+abstract class DTypeArray(val next_: DType, override val ty: TY) : DTypeNext(next_, ty) {
 
 
     override fun implicitlyConvertibleTo(to: DType): Match {
@@ -546,7 +585,10 @@ abstract class DTypeArray(val next_: DType) : DTypeNext(next_) {
 }
 
 
-class DTypeDArray(val next__: DType) : DTypeArray(next__) {
+class DTypeDArray(val next__: DType) : DTypeArray(next__, ENUMTY.Tarray) {
+    override val typeMembersProvider: TypeMembers
+        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+
     override fun toText(): String {
         return next.toText() + "[]"
     }
@@ -560,7 +602,10 @@ class DTypeDArray(val next__: DType) : DTypeArray(next__) {
 /**
  * note that it is impossible for us to tell the length of a static array in d, because it could be platform/compiler flag dependant. This means that all static arrays are effectively the same type.
  */
-class DTypeSArray(val next__: DType) : DTypeArray(next__) {
+class DTypeSArray(val next__: DType) : DTypeArray(next__, ENUMTY.Tsarray) {
+    override val typeMembersProvider: TypeMembers
+        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+
     override fun toText(): String {
         return next__.toText() + "[" + "<len>" + "]"
     }
@@ -621,7 +666,10 @@ class DTypeSArray(val next__: DType) : DTypeArray(next__) {
     }
 }
 
-class DTypeAArray(val value: DType, val key: DType) : DTypeArray(value) {
+class DTypeAArray(val value: DType, val key: DType) : DTypeArray(value, ENUMTY.Taarray) {
+    override val typeMembersProvider: TypeMembers
+        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+
     override fun toText(): String {
         return value.toText() + "[" + key.toText() + "]"
     }
@@ -661,6 +709,9 @@ class DTypeAArray(val value: DType, val key: DType) : DTypeArray(value) {
 }
 //
 class DTypeVector(val ty_: TY) : DType(ty_) {
+    override val typeMembersProvider: TypeMembers
+        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+
     override fun toText(): String {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
@@ -691,7 +742,7 @@ class DTypeVector(val ty_: TY) : DType(ty_) {
 ///**
 // * represents types with some kind of type modifier. Not modifiers like const,immutable etc. Modifiers like int *, int[], int function(), ref int
 // */
-abstract class DTypeNext(val next: DType) : DType()
+abstract class DTypeNext(val next: DType, override val ty: TY) : DType(ty)
 //
 //
 //class TypeError : Type() {

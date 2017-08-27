@@ -1,27 +1,35 @@
-package net.masterthought.dlanguage.psi;
 
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.StubBasedPsiElement;
-import net.masterthought.dlanguage.psi.interfaces.DNamedElement;
-import net.masterthought.dlanguage.stubs.DLanguageIfConditionStub;
-import net.masterthought.dlanguage.types.TypeOf;
-import org.jetbrains.annotations.Nullable;
+    package net.masterthought.dlanguage.psi;
+
+    import com.intellij.psi.PsiElement;
+    import org.jetbrains.annotations.NotNull;
+    import static net.masterthought.dlanguage.psi.DLanguageTypes.*;
+    import org.jetbrains.annotations.Nullable;
+    import com.intellij.psi.util.PsiTreeUtil;
+    import java.util.List;
+    import net.masterthought.dlanguage.psi.interfaces.DNamedElement;
+    import net.masterthought.dlanguage.psi.interfaces.DCompositeElement;
+    import com.intellij.psi.StubBasedPsiElement;
+    import net.masterthought.dlanguage.stubs.interfaces.*;
+    import net.masterthought.dlanguage.stubs.*;
+    import com.intellij.psi.ResolveState;
+    import com.intellij.psi.scope.PsiScopeProcessor;
+    import net.masterthought.dlanguage.resolve.ScopeProcessorImpl;
 
 
-public interface DLanguageIfCondition extends PsiElement, DNamedElement, StubBasedPsiElement<DLanguageIfConditionStub>, TypeOf {
-    @Nullable
-    DLanguageIdentifier getIdentifier();
 
-    @Nullable
-    DLanguageExpression getExpression();
 
-    @Nullable
-    PsiElement getKW_AUTO();
-
-    @Nullable
-    DLanguageType getType();
-
-    @Nullable
-    PsiElement getOP_EQ();
-
+    public interface DLanguageIfCondition extends PsiElement , DNamedElement, StubBasedPsiElement<DLanguageIfConditionStub>{
+            @Nullable
+            public DLanguageIdentifier getIdentifier();
+            @Nullable
+            public DLanguageExpression getExpression();
+            @Nullable
+            public PsiElement getKW_AUTO();
+        
+            @Nullable
+            public DLanguageType getType();
+            @Nullable
+            public PsiElement getOP_EQ();
+        
 }

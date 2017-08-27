@@ -9,7 +9,7 @@ import net.masterthought.dlanguage.psi.*;
 import net.masterthought.dlanguage.psi.impl.DNamedStubbedPsiElementBase;
 import net.masterthought.dlanguage.stubs.DLanguageParameterStub;
 import net.masterthought.dlanguage.types.DType;
-import net.masterthought.dlanguage.types.TypeUtilsKt;
+import net.masterthought.dlanguage.types.DTypeUtilsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -86,6 +86,6 @@ public class DLanguageParameterImpl extends DNamedStubbedPsiElementBase<DLanguag
 
     @Override
     public DType getTypeOf() {
-        return TypeUtilsKt.from(getType(), false);//todo auto, todo stubs
+        return DTypeUtilsKt.from(getType(), false);//todo auto, todo stubs
     }
 }

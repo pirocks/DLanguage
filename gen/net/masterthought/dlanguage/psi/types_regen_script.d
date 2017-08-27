@@ -60,7 +60,7 @@ static this() {
     types_children["BlockStatement"] = ["DeclarationsAndStatements","OP_BRACES_RIGHT","OP_BRACES_LEFT"];
     types_children["BodyStatement"] = ["KW_BODY",  "BlockStatement"];
     types_children["BreakStatement"] = ["KW_BREAK","Identifier","OP_SCOLON"];
-    types_children["BaseClass"] = ["Type_2"];
+    types_children["BaseClass"] = ["Type"];
     types_children["BaseClassList"] = ["BaseClass*","OP_COMMA*"];
     types_children["BuiltinType"] = [/*todo add the types*/];
     types_children["CaseRangeStatement"] = ["KW_CASE*","OP_TRIPLEDOT","OP_COLON*","AssignExpression", "DeclarationsAndStatements"];
