@@ -1,32 +1,19 @@
+package net.masterthought.dlanguage.psi;
 
-    package net.masterthought.dlanguage.psi;
-
-    import com.intellij.psi.PsiElement;
-    import org.jetbrains.annotations.NotNull;
-    import static net.masterthought.dlanguage.psi.DLanguageTypes.*;
-    import org.jetbrains.annotations.Nullable;
-    import com.intellij.psi.util.PsiTreeUtil;
-    import java.util.List;
-    import net.masterthought.dlanguage.psi.interfaces.DNamedElement;
-    import net.masterthought.dlanguage.psi.interfaces.DCompositeElement;
-    import com.intellij.psi.StubBasedPsiElement;
-    import net.masterthought.dlanguage.stubs.interfaces.*;
-    import net.masterthought.dlanguage.stubs.*;
-    import com.intellij.psi.ResolveState;
-    import com.intellij.psi.scope.PsiScopeProcessor;
-    import net.masterthought.dlanguage.resolve.ScopeProcessorImpl;
+import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.Nullable;
 
 
+public interface DLanguageTryStatement extends PsiElement {
+    @Nullable
+    public PsiElement getKW_TRY();
 
+    @Nullable
+    public DLanguageDeclarationOrStatement getDeclarationOrStatement();
 
-    public interface DLanguageTryStatement extends PsiElement {
-            @Nullable
-            public PsiElement getKW_TRY();
-        
-            @Nullable
-            public DLanguageDeclarationOrStatement getDeclarationOrStatement();
-            @Nullable
-            public DLanguageCatches getCatches();
-            @Nullable
-            public DLanguageFinally getFinally();
+    @Nullable
+    public DLanguageCatches getCatches();
+
+    @Nullable
+    public DLanguageFinally getFinally();
 }
