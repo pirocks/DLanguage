@@ -17,25 +17,35 @@ public class DTypeMembersTestCase extends DTypesTestCase {
         super("types/members/", "types/members/");
     }
 
-    protected void doTest(final int offest, final String[] members, final String[] resolvableMembers) {
-        final DLanguageType type = getTypeFromOffset(offest, psiFile);
-        assertNotNull(type);
-        final DType dType = DTypeUtilsKt.from(type, true);
-        assertNotNull(dType);
-        for (final String member : members) {
-            assertTrue(dType.getTypeMembersProvider().hasMemberDeclarationOfName(member));
-        }
-        for (final String resolvableMember : resolvableMembers) {
-            assertTrue(dType.getTypeMembersProvider().hasMemberDeclarationOfName(resolvableMember));
-            final Set<DNamedElement> elements = dType.getTypeMembersProvider().searchMemberDeclarations(resolvableMember);
-            assertFalse("multiple elements found", elements.size() > 1);
-            assertTrue("no elements found", elements.size() != 0);
-            if (!(resolvableMember.equals("super") || resolvableMember.equals("this"))) {
-                assertTrue("wrong name", Objects.equals(((DNamedElement) elements.toArray()[0]).getName(), resolvableMember));
-                assertTrue("no members had the correct name", dType.getTypeMembersProvider().getMemberDeclarations().stream().anyMatch(dNamedElement -> dNamedElement.getName().equals(resolvableMember)));
+    protected void doTest(final int offest, final String[] members, final String[] resolvableMembers, final boolean succeed) {
+        boolean threw = false;
+        try {
+            final DLanguageType type = getTypeFromOffset(offest, psiFile);
+            assertNotNull(type);
+            final DType dType = DTypeUtilsKt.from(type, true);
+            assertNotNull(dType);
+            for (final String member : members) {
+                assertTrue(dType.getTypeMembersProvider().hasMemberDeclarationOfName(member));
             }
+            for (final String resolvableMember : resolvableMembers) {
+                assertTrue("member does not exist", dType.getTypeMembersProvider().hasMemberDeclarationOfName(resolvableMember));
+                final Set<DNamedElement> elements = dType.getTypeMembersProvider().searchMemberDeclarations(resolvableMember);
+                assertTrue("multiple or noelements found", elements.size() == 1);
+                if (!(resolvableMember.equals("super") || resolvableMember.equals("this"))) {
+                    assertTrue("wrong name", Objects.equals(((DNamedElement) elements.toArray()[0]).getName(), resolvableMember));
+                    assertTrue("no members had the correct name", dType.getTypeMembersProvider().getMemberDeclarations().stream().anyMatch(dNamedElement -> dNamedElement.getName().equals(resolvableMember)));
+                }
+            }
+        } catch (final Throwable e) {
+            if (succeed) {
+                throw e;
+            } else
+                threw = true;
         }
+        if (!succeed) {
+            if (!threw)
+                assertTrue("should have failed, but didn't", false);
 
-
+        }
     }
 }

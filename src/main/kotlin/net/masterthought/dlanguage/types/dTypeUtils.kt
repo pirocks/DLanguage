@@ -46,7 +46,7 @@ fun from(type_2: Type_2, typeSuffixs: List<TypeSuffix>, resolveAvailable: Boolea
         return DTypeDelegate(from(type_2, shorter, resolveAvailable), typeSuffixs.last().parameters?.parameters?.map { Pair(it.typeOf, it.name) }!!)
     }
     if (inFunction) {
-        return DTypeFunction(from(type_2, shorter, resolveAvailable), typeSuffixs.last().parameters?.parameters?.map { Pair(it.typeOf, it.name) }!!,ENUMTY.Tfunction)
+        return DTypeFunction(from(type_2, shorter, resolveAvailable), typeSuffixs.last().parameters?.parameters?.map { Pair(it.typeOf, it.name) }!!, ENUMTY.Tfunction)
     }
     if (typeSuffixs.isEmpty())
         return from(type_2, shorter, resolveAvailable)

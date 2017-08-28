@@ -5,6 +5,7 @@ package net.masterthought.dlanguage.types;
  */
 public class DTypeMembersTest extends DTypeMembersTestCase {
     public void testClassDeclaration() {
-        doTest(0, new String[]{"sizeof", "alignof", "mangleof", "tupleof", "classinfo", "vptr", "monitor", "outer"}, new String[]{"toHash", "toString", "this", "super", "foo", "bar", "opCmp", "opEquals"});
+        doTest(0, new String[]{"sizeof", "alignof", "mangleof", "tupleof", "classinfo", "vptr", "monitor", "outer"}, new String[]{"toHash", "toString", "this", "super", "foo", "bar", "opCmp", "opEquals"}, true);
+        doTest(0, new String[]{}, new String[]{"factory"}, false);
     }
 }

@@ -31,7 +31,9 @@ public class ClassTypeMembers implements TypeMembers {
     public Set<DNamedElement> getMemberDeclarations() {
         final HashMap<String, DNamedElement> res = new HashMap<>();
         for (final DNamedElement element : psi.getMembers()) {
-            res.putIfAbsent(element.getName(), element);
+            if (!element.getAttributes().isStatic()) {
+                res.putIfAbsent(element.getName(), element);
+            }
         }
 
         if (psi.getBaseClassList() != null) {

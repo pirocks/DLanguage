@@ -1,7 +1,5 @@
 package net.masterthought.dlanguage.types
 
-import net.masterthought.dlanguage.utils.InterfaceOrClass
-
 enum class ENUMTY
 {
     Tarray,     // slice array, aka T[]
@@ -61,121 +59,6 @@ typealias TypeBasic = BasicDType
 typealias TypeVector = DTypeVector
 
 val basicTypeIndex = mutableMapOf<String, BasicDType>()
-
-class BasicDType : DType {
-    override val typeMembersProvider: TypeMembers
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-    val compilerName: String
-    val size: Int
-    val actualName: String
-
-    constructor(ty : TY, compilerName: String, size: Int, actualName: String) : super(ty) {
-        this.compilerName = compilerName
-        this.size = size
-        this.actualName = actualName
-        basicTypeIndex.put(actualName, this)
-    }
-
-    override fun toText(): String {
-        return actualName
-    }
-
-
-    override fun implicitlyConvertibleTo(to: DType): Match {
-        if (this == to)
-            return Match.exact
-
-        if (ty == to.ty)
-        {
-            return Match.exact
-            /*if (mod == to.mod)
-                return MATCHexact;
-            else if (MODimplicitConv(mod, to.mod))
-                return MATCHconst;
-            else if (!((mod ^ to.mod) & MODshared)) // for wild matching
-            return MATCHconst;
-            else
-            return MATCHconvert;*/
-        }
-
-        if (ty == ENUMTY.Tvoid || to.ty == ENUMTY.Tvoid)
-            return Match.nomatch
-        if (to.ty == ENUMTY.Tbool)
-            return Match.nomatch
-
-        val tob: TypeBasic
-        if (to.ty == ENUMTY.Tvector/* && to.deco*/)
-        {
-            val tv: TypeVector = to as TypeVector
-            tob = tv.elementType()
-        }
-        else {
-            if(to !is TypeBasic)
-                return Match.nomatch
-            tob = to
-        }
-        /**
-         * tl'dr version of this is:
-         * integers can't be converted to imaginary or complex
-         * can't convert to a smaller size type
-         * floats can't be implicitly converted to integers
-         * complex can't be converted to non-complex
-         * real con't be converted to imaginary and vice versa
-         */
-        //        if (flags & TFLAGSintegral)
-//        {
-////             Disallow implicit conversion of integers to imaginary or complex
-//            if (tob.flags & (TFLAGSimaginary | TFLAGScomplex))
-//            return MATCHnomatch;
-//
-////             If converting from integral to integral
-//            if (tob.flags & TFLAGSintegral)
-//            {
-//                d_uns64 sz = size(Loc());
-//                d_uns64 tosz = tob.size(Loc());
-//
-//                /* Can't convert to smaller size
-//                 */
-//                if (sz > tosz)
-//                    return MATCHnomatch;
-//                /* Can't change sign if same size
-//                 */
-//                if (sz == tosz && (flags ^ tob->flags) & TFLAGSunsigned)
-//                    return MATCHnomatch;
-//            }
-//        }
-//        else if (flags & TFLAGSfloating)
-//        {
-////             Disallow implicit conversion of floating point to integer
-//            if (tob.flags & TFLAGSintegral)
-//            return MATCHnomatch;
-//
-//            assert(tob.flags & TFLAGSfloating || to.ty == Tvector);
-//
-////             Disallow implicit conversion from complex to non-complex
-//            if (flags & TFLAGScomplex && !(tob.flags & TFLAGScomplex))
-//            return MATCHnomatch;
-//
-////             Disallow implicit conversion of real or imaginary to complex
-//            if (flags & (TFLAGSreal | TFLAGSimaginary) && tob.flags & TFLAGScomplex)
-//            return MATCHnomatch;
-//
-////             Disallow implicit conversion to-from real and imaginary
-//            if ((flags & (TFLAGSreal | TFLAGSimaginary)) != (tob.flags & (TFLAGSreal | TFLAGSimaginary)))
-//            return MATCHnomatch;
-//        }
-//        return MATCHconvert;
-        TODO()
-    }
-
-//    override fun implicitlyConvertibleTo(to: DType): Match {
-//        if(to == this)
-//            return Match.exact
-//        return Match.nomatch
-//    }
-
-
-}
 
 
 val tvoid: BasicDType = BasicDType(ENUMTY.Tvoid, "void", 1, "void")
@@ -250,6 +133,35 @@ enum class Match {
     exact      // exact match
 
 }
+
+
+//
+//abstract class TypeBasic : Type() {
+//    enum class TypeOf {
+//        UINT, INT, CHAR//...todo
+//    }
+//}
+//
+///**
+// * represents types with some kind of type modifier. Not modifiers like const,immutable etc. Modifiers like int *, int[], int function(), ref int
+// */
+abstract class DTypeNext(val next: DType, override val ty: TY) : DType(ty)
+
+//
+//
+//class TypeError : Type() {
+//    override fun implicitlyConvertibleTo(): Boolean {
+//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+//    }
+//
+//}
+//
+//
+//class TypeInfoDeclaration {
+////todo
+//}
+//
+//
 //
 //
 //abstract class ResolvableType {
@@ -260,13 +172,29 @@ enum class Match {
 //
 abstract class DType(open val ty: TY) {
     //shared immutable should not be allowed
-//    var MODconst: Boolean;
-//    var MODimmutable: Boolean;
-//    var MODshared: Boolean;
-//    var MODwild: Boolean;
-//    var MODwildconst: Boolean;
-//    var MODmutable: Boolean;
+    var MODconst: Boolean = false
+    var MODimmutable: Boolean = false
+    var MODshared: Boolean = false
+    var MODwild: Boolean = false
+    var MODmutable: Boolean = false//not really used
+    var MODwildconst: Boolean = false
 //    var vtinfo: TypeInfoDeclaration? = null     // TypeInfo object for this Type
+
+    /**
+     * cached values
+     */
+    var cto: DType? = null       // MODconst                 ? naked version of this type : const version
+    var ito: DType? = null       // MODimmutable             ? naked version of this type : immutable version
+    var sto: DType? = null       // MODshared                ? naked version of this type : shared mutable version
+    var scto: DType? = null      // MODshared | MODconst     ? naked version of this type : shared const version
+    var wto: DType? = null       // MODwild                  ? naked version of this type : wild version
+    var wcto: DType? = null      // MODwildconst             ? naked version of this type : wild const version
+    var swto: DType? = null      // MODshared | MODwild      ? naked version of this type : shared wild version
+    var swcto: DType? = null     // MODshared | MODwildconst ? naked version of this type : shared wild const version
+
+    var pto: DType? = null       // merged pointer to this type
+    var rto: DType? = null       // reference to this type
+    var arrayof: DType? = null   // array of this type
 
 
     open fun implicitlyConvertibleTo(to: DType): Match {
@@ -320,433 +248,75 @@ abstract class DType(open val ty: TY) {
 //    abstract fun sharedWildConstOf(): Type
 //    abstract fun immutableOf(): Type
     //initial type handling will  not handle const/mutable etc.
-}
-//
-//class TypeNull : Type() {
-//    override fun implicitlyConvertibleTo(to: Type): Match {
-//        val match = super.implicitlyConvertibleTo(to)
-//        if (match != Match.nomatch)
-//            return match
-//
-//        val tb: Type = to.toBaseType()
-//        if (tb is TypeNull || tb is TypePointer || tb is TypeArray /*|| tb is TypeAarray todo*/ || tb is TypeClass || tb is TypeDelegate)
-//            return Match.constant
-//        return Match.nomatch
-//    }
-//}
-//
-//
-//class DTypeSlice : DTypeNext(null) {
-//    override fun implicitlyConvertibleTo(to: DType): Match {
-//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-//    }
-//}
-//
-//
-//class TypeTuple : Type() {
-//    override fun implicitlyConvertibleTo(to: Type): Match {
-//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-//    }
-//}
-//
-//
-class DTypeClass(val interfaceOrClass: InterfaceOrClass) : DType(ENUMTY.Tclass) {
-
-
-
-    override val typeMembersProvider: TypeMembers
-        get() {
-            return ClassTypeMembers(interfaceOrClass)
-        }
-
-
-    override fun toText(): String {
-        return interfaceOrClass.name
+    open fun isintegral(): Boolean {
+        return false
     }
 
-    override fun implicitlyConvertibleTo(to: DType): Match {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-}
-
-
-//
-//
-//class TypeEnum : Type() {
-//    val sym: EnumDeclaration
-//
-//    constructor(sym: EnumDeclaration) : super() {
-//        this.sym = sym
-//    }
-//
-//
-//    override fun implicitlyConvertibleTo(to: Type): Match {
-//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-//    }
-//
-//    override fun toBaseType(): Type {
-//        if (sym.enumBody?.enumMembers != null && !sym.enumBody!!.enumMembers.isEmpty() && sym.memtype != null)
-//            return this
-//        val tb = sym.getMemtype().toBaseType()
-//        return tb.castMod(mod)         // retain modifier bits from 'this'
-//    }
-//}
-//
-//
-class DTypeStruct : DType(ENUMTY.Tstruct) {
-    override fun toText(): String {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    open fun isfloating(): Boolean {
+        return false
     }
 
-    override val typeMembersProvider: TypeMembers
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+    open fun isreal(): Boolean {
+        return false
+    }
 
-    override fun implicitlyConvertibleTo(to: DType): Match {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    open fun isImaginary(): Boolean {
+        return false
+    }
+
+    open fun isComplex(): Boolean {
+        return false
+    }
+
+    open fun isScalar(): Boolean {
+        return false
+    }
+
+    open fun isUnsigned(): Boolean {
+        return false
+    }
+
+    open fun isScope(): Boolean {
+        return false
+    }
+
+    open fun isString(): Boolean {
+        return false
+    }
+
+    fun isConst(): Boolean {
+        return MODconst
+    }
+
+    fun isImmutable(): Boolean {
+        return MODimmutable
+    }
+
+    fun isMutable(): Boolean {
+        return MODmutable
+    }
+
+    fun isShared(): Boolean {
+        return MODshared
+    }
+
+    fun isSharedConst(): Boolean {
+        return (MODshared || MODconst) && (!MODwild) && (!MODimmutable) && (!MODmutable) && (!MODwildconst)
+    }
+
+    fun isWild(): Boolean {
+        return MODwild
+    }
+
+    fun isWildConst(): Boolean {
+        return MODwildconst
+    }
+
+    fun isSharedWild(): Boolean {
+        return (MODshared || MODwild) && (!MODconst) && (!MODimmutable) && (!MODmutable) && (!MODwildconst)
+    }
+
+    fun isNaked(): Boolean {
+        return MODconst || MODimmutable || MODmutable || MODshared || MODwild || MODwildconst
     }
 }
-//
-//
-//class TypeReturn : TypeQualified() {
-//    override fun implicitlyConvertibleTo(to: Type): Match {
-//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-//    }
-//
-//}
-//
-//
-//class TypeTypeof : TypeQualified() {
-//    override fun implicitlyConvertibleTo(to: Type): Match {
-//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-//    }
-//
-//}
-//
-//
-//class TypeInstance : TypeQualified() {
-//    override fun implicitlyConvertibleTo(to: Type): Match {
-//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-//    }
-//}
-//
-//class TypeIdentifier : TypeQualified() {
-//    override fun implicitlyConvertibleTo(to: Type): Match {
-//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-//    }
-//}
-//
-//abstract class TypeQualified : Type()
-//
-open class DTypeFunction(open val returnType: DType, open val parameters: List<Pair<DType, String>>, override val ty: TY) : DTypeNext(returnType, ty) {
-    override val typeMembersProvider: TypeMembers
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-
-    override fun toText(): String {
-        return returnType.toText() + " function" + "(" + java.lang.String.join(",", parameters.map { it.first.toText() }) + ")"
-    }
-
-    override fun implicitlyConvertibleTo(to: DType): Match {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-}
-
-/**
- * in theory just a type function
- */
-class DTypeDelegate(override val returnType: DType, override val parameters: List<Pair<DType, String>>) : DTypeFunction(returnType, parameters, ENUMTY.Tdelegate) {
-    override fun toText(): String {
-        return returnType.toText() + " delegate" + "(" + java.lang.String.join(",", parameters.map { it.first.toText() }) + ")"
-    }
-
-}
-
-
-class DTypeReference(val next_: DType, override val ty: TY) : DTypeNext(next_, ty) {
-    override val typeMembersProvider: TypeMembers
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-
-    override fun toText(): String {
-        return "ref " + next.toText()
-    }
-
-    override fun implicitlyConvertibleTo(to: DType): Match {
-
-
-
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-}
-
-
-class DTypePointer(val next_: DType) : DTypeNext(next_, ENUMTY.Tpointer) {
-    override val typeMembersProvider: TypeMembers
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-
-    override fun toText(): String {
-        return next_.toText() + "*"
-    }
-
-
-    override fun implicitlyConvertibleTo(to: DType): Match {
-         /**
-         * tl;dr
-         * if equals match duh
-          * functions can be converted to void* pointers(convert)
-          * functions can be converted to function pointers(match const)
-          * covariant stuff I don;t understand
-          * uses an extra function in comparing pointer to pointer
-         */
-        /**
-        *
-         if (equals(to))
-            return MATCHexact;
-
-        if (next.ty == Tfunction)
-        {
-            if (to.ty == Tpointer)
-            {
-                TypePointer tp = cast(TypePointer)to;
-                if (tp.next.ty == Tfunction)
-                {
-                    if (next.equals(tp.next))
-                        return MATCHconst;
-
-                    if (next.covariant(tp.next) == 1)
-                    {
-                        Type tret = this.next.nextOf();
-                        Type toret = tp.next.nextOf();
-                        if (tret.ty == Tclass && toret.ty == Tclass)
-                        {
-                            /* Bugzilla 10219: Check covariant interface return with offset tweaking.
-                             * interface I {}
-                             * class C : Object, I {}
-                             * I function() dg = function C() {}    // should be error
-                             */
-                            int offset = 0;
-                            if (toret.isBaseOf(tret, &offset) && offset != 0)
-                                return MATCHnomatch;
-                        }
-                        return MATCHconvert;
-                    }
-                }
-                else if (tp.next.ty == Tvoid)
-                {
-                    // Allow conversions to void*
-                    return MATCHconvert;
-                }
-            }
-            return MATCHnomatch;
-        }
-        else if (to.ty == Tpointer)
-        {
-            TypePointer tp = cast(TypePointer)to;
-            assert(tp.next);
-
-            if (!MODimplicitConv(next.mod, tp.next.mod))
-                return MATCHnomatch; // not const-compatible
-
-            /* Alloc conversion to void*
-             */
-            if (next.ty != Tvoid && tp.next.ty == Tvoid)
-            {
-                return MATCHconvert;
-            }
-
-            MATCH m = next.constConv(tp.next);
-            if (m > MATCHnomatch)
-            {
-                if (m == MATCHexact && mod != to.mod)
-                    m = MATCHconst;
-                return m;
-            }
-        }
-        return MATCHnomatch;
-         */
-
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-}
-
-
-abstract class DTypeArray(val next_: DType, override val ty: TY) : DTypeNext(next_, ty) {
-
-
-    override fun implicitlyConvertibleTo(to: DType): Match {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-}
-
-
-class DTypeDArray(val next__: DType) : DTypeArray(next__, ENUMTY.Tarray) {
-    override val typeMembersProvider: TypeMembers
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-
-    override fun toText(): String {
-        return next.toText() + "[]"
-    }
-
-    override fun implicitlyConvertibleTo(to: DType): Match {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-}
-
-
-/**
- * note that it is impossible for us to tell the length of a static array in d, because it could be platform/compiler flag dependant. This means that all static arrays are effectively the same type.
- */
-class DTypeSArray(val next__: DType) : DTypeArray(next__, ENUMTY.Tsarray) {
-    override val typeMembersProvider: TypeMembers
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-
-    override fun toText(): String {
-        return next__.toText() + "[" + "<len>" + "]"
-    }
-
-    override fun implicitlyConvertibleTo(to: DType): Match {
-        /**
-         * tl:dr
-         * if converting to a dynamic aarry always allow for converdsion if void
-         */
-
-        /**
-         //printf("TypeSArray::implicitConvTo(to = %s) this = %s\n", to->toChars(), toChars());
-        if (to.ty == Tarray)
-        {
-            TypeDArray ta = cast(TypeDArray)to;
-            if (!MODimplicitConv(next.mod, ta.next.mod))
-                return MATCHnomatch;
-
-            /* Allow conversion to void[]
-             */
-            if (ta.next.ty == Tvoid)
-            {
-                return MATCHconvert;
-            }
-
-            MATCH m = next.constConv(ta.next);
-            if (m > MATCHnomatch)
-            {
-                return MATCHconvert;
-            }
-            return MATCHnomatch;
-        }
-        if (to.ty == Tsarray)
-        {
-            if (this == to)
-                return MATCHexact;
-
-            TypeSArray tsa = cast(TypeSArray)to;
-            if (dim.equals(tsa.dim))
-            {
-                /* Since static arrays are value types, allow
-                 * conversions from const elements to non-const
-                 * ones, just like we allow conversion from const int
-                 * to int.
-                 */
-                MATCH m = next.implicitConvTo(tsa.next);
-                if (m >= MATCHconst)
-                {
-                    if (mod != to.mod)
-                        m = MATCHconst;
-                    return m;
-                }
-            }
-        }
-        return MATCHnomatch;
-         */
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-}
-
-class DTypeAArray(val value: DType, val key: DType) : DTypeArray(value, ENUMTY.Taarray) {
-    override val typeMembersProvider: TypeMembers
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-
-    override fun toText(): String {
-        return value.toText() + "[" + key.toText() + "]"
-    }
-
-    override fun implicitlyConvertibleTo(to: DType): Match {
-        /**
-         * equals return ...
-         * use super of Type, not TypeNext, and do a bunch of constConv
-         */
-
-        /**
-         * //printf("TypeAArray::implicitConvTo(to = %s) this = %s\n", to->toChars(), toChars());
-        if (equals(to))
-            return MATCHexact;
-
-        if (to.ty == Taarray)
-        {
-            TypeAArray ta = cast(TypeAArray)to;
-
-            if (!MODimplicitConv(next.mod, ta.next.mod))
-                return MATCHnomatch; // not const-compatible
-
-            if (!MODimplicitConv(index.mod, ta.index.mod))
-                return MATCHnomatch; // not const-compatible
-
-            MATCH m = next.constConv(ta.next);
-            MATCH mi = index.constConv(ta.index);
-            if (m > MATCHnomatch && mi > MATCHnomatch)
-            {
-                return MODimplicitConv(mod, to.mod) ? MATCHconst : MATCHnomatch;
-            }
-        }
-        return Type.implicitConvTo(to);
-         */
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-}
-//
-class DTypeVector(val ty_: TY) : DType(ty_) {
-    override val typeMembersProvider: TypeMembers
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-
-    override fun toText(): String {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    val baseType: DType? = null
-
-    override fun implicitlyConvertibleTo(to: DType): Match {
-        if (this == to) {//todo override .equals
-            return Match.exact
-        }
-        if (to is TypeVector) {
-            return Match.convert
-        }
-        return Match.nomatch
-    }
-
-    fun elementType(): TypeBasic {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-}
-//
-//abstract class TypeBasic : Type() {
-//    enum class TypeOf {
-//        UINT, INT, CHAR//...todo
-//    }
-//}
-//
-///**
-// * represents types with some kind of type modifier. Not modifiers like const,immutable etc. Modifiers like int *, int[], int function(), ref int
-// */
-abstract class DTypeNext(val next: DType, override val ty: TY) : DType(ty)
-//
-//
-//class TypeError : Type() {
-//    override fun implicitlyConvertibleTo(): Boolean {
-//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-//    }
-//
-//}
-//
-//
-//class TypeInfoDeclaration {
-////todo
-//}
-//
-//

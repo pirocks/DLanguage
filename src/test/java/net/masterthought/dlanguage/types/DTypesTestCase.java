@@ -55,5 +55,4 @@ public abstract class DTypesTestCase extends DLightPlatformCodeInsightFixtureTes
             psiFile = myFixture.configureByText(file.getName(), text);
         }
     }
-
 }
