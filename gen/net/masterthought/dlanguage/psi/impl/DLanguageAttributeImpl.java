@@ -150,4 +150,20 @@ public class DLanguageAttributeImpl extends ASTWrapperPsiElement implements DLan
     public DLanguageLinkageAttribute getLinkageAttribute() {
         return PsiTreeUtil.getChildOfType(this, DLanguageLinkageAttribute.class);
     }
+
+    @Nullable
+    public PsiElement getKW_CONST() {
+        return findChildByType(KW_CONST);
+    }
+
+    @Nullable
+    public PsiElement getKW_IMMUTABLE() {
+        return findChildByType(KW_IMMUTABLE);
+    }
+
+    @Nullable
+    public PsiElement getKW_SHARED() {
+        return findChildByType(KW_SHARED);
+    }
+
 }

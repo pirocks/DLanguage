@@ -22,7 +22,7 @@ public class DTypeMembersTestCase extends DTypesTestCase {
         try {
             final DLanguageType type = getTypeFromOffset(offest, psiFile);
             assertNotNull(type);
-            final DType dType = DTypeUtilsKt.from(type, true);
+            final DType dType = DTypeUtilsKt.from(type, true, (Mods) null);
             assertNotNull(dType);
             for (final String member : members) {
                 assertTrue(dType.getTypeMembersProvider().hasMemberDeclarationOfName(member));

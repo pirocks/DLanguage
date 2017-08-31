@@ -94,9 +94,9 @@ public abstract class DResolveTestCase extends DLightPlatformCodeInsightFixtureT
             if(resolvedElement instanceof DLanguageConstructor)
                 assertEquals("Could not resolve expected reference.", resolvedElement, referencedElement.resolve());
             else if(super.getTestName(true).equals("scopedImportsMembers"))
-                assertEquals("Could not resolve expected reference.", "struct_member", ((DLanguageFunctionDeclaration)referencedElement.resolve().getParent()).getName());
+                assertEquals("Could not resolve expected reference.", "struct_member", ((DLanguageFunctionDeclaration) referencedElement.resolve()).getName());
             else
-                assertEquals("Could not resolve expected reference.", resolvedElement, referencedElement.resolve().getParent());
+                assertEquals("Could not resolve expected reference.", resolvedElement, referencedElement.resolve());
         } else {
             assertFalse("Resolved unexpected reference.", resolvedElement.equals(referencedElement.resolve()));
         }

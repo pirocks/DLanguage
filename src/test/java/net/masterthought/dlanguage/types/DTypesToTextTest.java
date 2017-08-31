@@ -5,56 +5,64 @@ package net.masterthought.dlanguage.types;
  */
 public class DTypesToTextTest extends DTypesToTextTestCase {
     public void testInt() {
-        doTest(0, "int");
+        doTestVariable(0, "int");
+        doTestVariable(17, "immutable(int)");
     }
 
     public void testIntPointer() {
-        doTest(0, "int*");
+        doTestVariable(0, "int*");
+        doTestVariable(20, "immutable(int*)");
+        doTestVariable(36, "const(const(int)*)");
+        doTestVariable(47, "const(int)*");
+        doTestVariable(63, "const(const(int)*)");
+        doTestVariable(80, "const(const(int)*)");
     }
 
     public void testIntArray() {
-        doTest(0, "int[]");
+        doTestVariable(0, "int[]");
     }
 
     public void testIntPointerArray() {
-        doTest(0, "int*[]");
+        doTestVariable(0, "int*[]");
     }
 
     public void testComplexIntPointerArray() {
-        doTest(0, "int*[][]*");
+        doTestVariable(0, "const(const(const(immutable const(int)*)[])[])*");
     }
 
     public void testAssocArray() {
-        doTest(0, "int[char*]");
+        doTestVariable(0, "int[char*]");
     }
 
     public void testObjectDotD() {
 //        doTest(0,"TypeInfo_Class");
-        doTest(25, "void*");
-        doTest(37, "void*[]");
-        doTest(54, "uint");
-        doTest(74, "int");
-        doTest(97, "ulong");
-        doTest(117, "char[]");
-        doTest(150, "wchar[]");
-        doTest(184, "dchar[]");
+        doTestBasic(25, "void*");
+        doTestBasic(37, "void*[]");
+        doTestBasic(54, "uint");
+        doTestBasic(74, "int");
+        doTestBasic(97, "ulong");
+        doTestBasic(117, "immutable(char)[]");
+        doTestBasic(150, "immutable(wchar)[]");
+        doTestBasic(184, "immutable(dchar)[]");
 //        doTest(219,"Object");
-        doTest(233, "void[]");
-        doTest(250, "char[<len>]");
+        doTestBasic(233, "const(void)[]");
+        doTestBasic(250, "char[<len>]");
 //        doTest(270,"void");
 //        doTest(295,);
     }
 
     public void testFunction() {
-        doTest(0, "int function(char,char)");
-        doTest(31, "int function(char,char[])");
+        doTestVariable(0, "int function(char,char)");
+        doTestVariable(31, "int function(char,char[])");
+        doTestVariable(70, "immutable(int function(char,char[]))");
+        doTestVariable(115, "const(int function(char,char[]))");
     }
 
     public void testDelegate() {
-        doTest(0, "int function(char,char) delegate(char[],int function())");
+        doTestBasic(0, "int function(char,char) delegate(char[],immutable(int) function())");
     }
 
     public void testClassArray() {
-        doTest(0, "class_[]");
+        doTestVariable(0, "class_[]");
     }
 }

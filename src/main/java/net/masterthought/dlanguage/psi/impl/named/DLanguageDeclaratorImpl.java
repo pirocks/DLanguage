@@ -73,6 +73,8 @@ public class DLanguageDeclaratorImpl extends DNamedStubbedPsiElementBase<DLangua
         if (getGreenStub() != null) {
             return getGreenStub().getTypeOf();
         }
-        return DTypeUtilsKt.from(((DLanguageVariableDeclaration) getParent()).getType(), true);
+        final DLanguageType type = ((DLanguageVariableDeclaration) getParent()).getType();
+        assert type != null;
+        return DTypeUtilsKt.from(type, true, getAttributes());
     }
 }

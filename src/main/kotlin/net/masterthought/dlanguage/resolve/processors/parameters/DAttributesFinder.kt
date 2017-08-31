@@ -45,6 +45,7 @@ class DAttributesFinder {
     private var isNothrow: Boolean? = null
     private var isConst: Boolean? = null
     private var isImmutable: Boolean? = null
+    private var isShared: Boolean? = null
 
     var defaultsToStatic: Boolean = true
     var defaultVisibility: Visibility = Visibility.PUBLIC
@@ -56,14 +57,15 @@ class DAttributesFinder {
     var defaultsToNothrow: Boolean = false
     var defaultsToConst: Boolean = false
     var defaultsToImmutable: Boolean = false
+    var defaultsToShared: Boolean = false
 
 
     fun recurseUp() {
         if (startingPoint is DNamedElement) {
             if (startingPoint is Constructor) {
-                recurseUpImpl(startingPoint.kW_THIS!!)
+                return recurseUpImpl(startingPoint.kW_THIS!!)
             } else if (startingPoint.nameIdentifier != null) {
-                recurseUpImpl(startingPoint.nameIdentifier!!)
+                return recurseUpImpl(startingPoint.nameIdentifier!!)
             }
         }
         recurseUpImpl(startingPoint)
@@ -166,9 +168,21 @@ class DAttributesFinder {
                 if (isPure == null) {
                     isPure = true
                 }
+            } else if (attribute.kW_CONST != null) {
+                if (isConst == null) {
+                    isConst = true
+                }
             } else if (attribute.kW_REF != null) {
             } else if (attribute.kW___GSHARED != null) {
             } else if (attribute.kW_SCOPE != null) {
+            } else if (attribute.kW_SHARED != null) {
+                if (isShared == null) {
+                    isShared = true
+                }
+            } else if (attribute.kW_IMMUTABLE != null) {
+                if (isImmutable == null) {
+                    isImmutable = true
+                }
             } else if (attribute.kW_STATIC != null) {
                 if (isStatic == null) {
                     isStatic = true
@@ -183,8 +197,7 @@ class DAttributesFinder {
                     }
                 }
             } else if (attribute.linkageAttribute != null) {
-            } //else if (attribute.typeConstructor != null) {
-//            }
+            }
         }
     }
 
@@ -231,9 +244,13 @@ class DAttributesFinder {
         return isImmutable ?: defaultsToImmutable
     }
 
+    fun isShared(): Boolean {
+        return isShared ?: defaultsToShared
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other?.javaClass != javaClass) return false
+        if (javaClass != other?.javaClass) return false
 
         other as DAttributesFinder
 
@@ -247,6 +264,7 @@ class DAttributesFinder {
         if (isNothrow != other.isNothrow) return false
         if (isConst != other.isConst) return false
         if (isImmutable != other.isImmutable) return false
+        if (isShared != other.isShared) return false
         if (defaultsToStatic != other.defaultsToStatic) return false
         if (defaultVisibility != other.defaultVisibility) return false
         if (defaultsToProperty != other.defaultsToProperty) return false
@@ -257,6 +275,7 @@ class DAttributesFinder {
         if (defaultsToNothrow != other.defaultsToNothrow) return false
         if (defaultsToConst != other.defaultsToConst) return false
         if (defaultsToImmutable != other.defaultsToImmutable) return false
+        if (defaultsToShared != other.defaultsToShared) return false
 
         return true
     }
@@ -272,6 +291,7 @@ class DAttributesFinder {
         result = 31 * result + (isNothrow?.hashCode() ?: 0)
         result = 31 * result + (isConst?.hashCode() ?: 0)
         result = 31 * result + (isImmutable?.hashCode() ?: 0)
+        result = 31 * result + (isShared?.hashCode() ?: 0)
         result = 31 * result + defaultsToStatic.hashCode()
         result = 31 * result + defaultVisibility.hashCode()
         result = 31 * result + defaultsToProperty.hashCode()
@@ -282,6 +302,7 @@ class DAttributesFinder {
         result = 31 * result + defaultsToNothrow.hashCode()
         result = 31 * result + defaultsToConst.hashCode()
         result = 31 * result + defaultsToImmutable.hashCode()
+        result = 31 * result + defaultsToShared.hashCode()
         return result
     }
 

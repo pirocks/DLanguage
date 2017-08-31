@@ -2,14 +2,19 @@ package net.masterthought.dlanguage.psi.impl;
 
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.util.PsiTreeUtil;
-import net.masterthought.dlanguage.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import net.masterthought.dlanguage.psi.*;
 
+import java.util.List;
 import static net.masterthought.dlanguage.psi.DLanguageTypes.*;
+
+import com.intellij.psi.ResolveState;
+import com.intellij.psi.scope.PsiScopeProcessor;
+import net.masterthought.dlanguage.resolve.ScopeProcessorImpl;
 
 
 public class DLanguageType_2Impl extends ASTWrapperPsiElement implements DLanguageType_2 {
@@ -75,4 +80,25 @@ public class DLanguageType_2Impl extends ASTWrapperPsiElement implements DLangua
     public DLanguageBuiltinType getBuiltinType() {
         return PsiTreeUtil.getChildOfType(this, DLanguageBuiltinType.class);
     }
+
+    @Nullable
+    public PsiElement getKW_SHARED() {
+        return findChildByType(KW_SHARED);
+    }
+
+    @Nullable
+    public PsiElement getKW_INOUT() {
+        return findChildByType(KW_INOUT);
+    }
+
+    @Nullable
+    public PsiElement getKW_IMMUTABLE() {
+        return findChildByType(KW_IMMUTABLE);
+    }
+
+    @Nullable
+    public PsiElement getKW_CONST() {
+        return findChildByType(KW_CONST);
+    }
+
 }

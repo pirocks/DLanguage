@@ -23,7 +23,7 @@ package net.masterthought.dlanguage.types
 //}
 //
 //
-class DTypeStruct : DType(ENUMTY.Tstruct) {
+class DTypeStruct : DType(ENUMTY.Tstruct, Flags()) {
     override fun toText(): String {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }

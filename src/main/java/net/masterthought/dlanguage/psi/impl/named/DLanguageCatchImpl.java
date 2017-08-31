@@ -13,6 +13,7 @@ import net.masterthought.dlanguage.resolve.ScopeProcessorImpl;
 import net.masterthought.dlanguage.stubs.DLanguageCatchStub;
 import net.masterthought.dlanguage.types.DType;
 import net.masterthought.dlanguage.types.DTypeUtilsKt;
+import net.masterthought.dlanguage.types.Mods;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -88,6 +89,6 @@ public class DLanguageCatchImpl extends DNamedStubbedPsiElementBase<DLanguageCat
         if (getGreenStub() != null) {
             return getGreenStub().getTypeOf();
         }
-        return DTypeUtilsKt.from(getType(), true);
+        return DTypeUtilsKt.from(getType(), true, (Mods) null);
     }
 }

@@ -20,7 +20,7 @@ bool[string] has_processDeclaration;
 static this() {
     types_children["AddExpression"] = ["AddExpression", "MulExpression","OP_TILDA", "OP_PLUS" , "OP_MINUS"];//todo insert from MulExpression
     types_children["AliasDeclaration"] = ["IdentifierList","OP_COMMA","StorageClass*","KW_ALIAS", "Type", "OP_SCOLON", "AliasInitializer*"];
-    named_children["AliasInitializer"] = ["Identifier","OP_EQ","StorageClass*","TemplateParameters", "Type"];
+//    named_children["AliasInitializer"] = ["Identifier","OP_EQ","StorageClass*","TemplateParameters", "Type"];
     types_children["AliasThisDeclaration"] = ["KW_ALIAS", "Identifier", "KW_THIS", "OP_SCOLON"];
     types_children["AlignAttribute"] = ["KW_ALIGN", "AssignExpression", "OP_PAR_RIGHT", "OP_PAR_LEFT"];
     types_children["AndAndExpression"] = ["AndAndExpression", "OrExpression", "OP_BOOL_AND"];
@@ -53,7 +53,7 @@ static this() {
     types_children["AssignExpression"] = ["TernaryExpression","AssignExpression","OP_AND_EQ","OP_DIV_EQ","OP_EQ","OP_EQ_EQ","OP_GT_EQ","OP_LESS_EQ","OP_LESS_GR_EQ","OP_MINUS_EQ","OP_MOD_EQ","OP_MUL_EQ","OP_NOT_EQ","OP_NOT_GR_EQ","OP_NOT_LESS_EQ","OP_OR_EQ","OP_PLUS_EQ","OP_POW_EQ","OP_SH_LEFT_EQ","OP_SH_RIGHT_EQ","OP_TILDA_EQ","OP_UNORD_EQ","OP_USH_RIGHT_EQ","OP_XOR_EQ"];
     types_children["AssocArrayLiteral"] = ["KeyValuePairs","OP_BRACKET_RIGHT","OP_BRACKET_LEFT"];
     types_children["AtAttribute"] = ["OP_AT","OP_PAR_LEFT","OP_PAR_RIGHT","Identifier", "ArgumentList","FunctionCallExpression"];
-    types_children["Attribute"] = [   "PragmaExpression", "KW_SYNCHRONIZED","KW_ABSTRACT","KW_AUTO","KW_ENUM","KW_EXTERN","KW_FINAL","KW_INOUT","KW_NOTHROW","KW_OVERRIDE","KW_PURE","KW_REF","KW___GSHARED","KW_SCOPE","KW_STATIC","KW_EXPORT", "KW_PRIVATE","KW_PROTECTED","KW_PUBLIC","AlignAttribute","Deprecated","AtAttribute","KW_PACKAGE","IdentifierChain","LinkageAttribute"];
+    types_children["Attribute"] = [   "PragmaExpression", "KW_SYNCHRONIZED","KW_ABSTRACT","KW_AUTO","KW_ENUM","KW_EXTERN","KW_FINAL","KW_INOUT","KW_NOTHROW","KW_OVERRIDE","KW_PURE","KW_REF","KW___GSHARED","KW_SCOPE","KW_STATIC","KW_EXPORT", "KW_PRIVATE","KW_PROTECTED","KW_PUBLIC","AlignAttribute","Deprecated","AtAttribute","KW_PACKAGE","IdentifierChain","LinkageAttribute","KW_CONST", "KW_IMMUTABLE","KW_SHARED"];
     types_children["AttributeDeclaration"] = ["OP_COLON","Attribute"];
     types_children["AutoDeclaration"] = ["StorageClass","OP_COMMA*","OP_SCOLON","AutoDeclarationPart*"];
 //    named_children["AutoDeclarationPart"] = ["Identifier","TemplateParameters","OP_EQ","Initializer"];
@@ -114,7 +114,7 @@ static this() {
     types_children["IdentifierOrTemplateInstance"] = ["Identifier","TemplateInstance"];
     types_children["IdentityExpression"] = ["ShiftExpression*","KW_IS","OP_NOT"];
     types_children["IfStatement"] = [/*"Identifier","Expression",*/"DeclarationOrStatement*","KW_ELSE","KW_IF","OP_PAR_LEFT","OP_PAR_RIGHT"/*,"KW_AUTO","Type","OP_EQ"*/,"IfCondition"];
-    named_children["IfCondition"] = ["Identifier","Expression","KW_AUTO","Type","OP_EQ"];
+//    named_children["IfCondition"] = ["Identifier","Expression","KW_AUTO","Type","OP_EQ"];
     types_children["ImportBind"] = ["Identifier","NamedImportBind"];
     types_children["ImportBindings"] = ["OP_COMMA*","ImportBind*","SingleImport","OP_COLON"];
     types_children["ImportDeclaration"] = ["KW_IMPORT","SingleImport*","ImportBindings","OP_COMMA*","OP_SCOLON"];
@@ -142,7 +142,7 @@ static this() {
     types_children["MixinTemplateName"] = ["TypeofExpression", "IdentifierOrTemplateChain", "Symbol","OP_DOT"];
     named_children["ModuleDeclaration"] = ["KW_MODULE", "IdentifierChain","OP_SCOLON"];
     types_children["MulExpression"] = ["MulExpression","PowExpression","OP_MOD","OP_DIV","OP_ASTERISK"];
-    named_children["NamedImportBind"] = ["Identifier", "OP_EQ"];
+//    named_children["NamedImportBind"] = ["Identifier", "OP_EQ"];
     types_children["NewAnonClassExpression"] = ["KW_NEW","KW_CLASS","Arguments*","BaseClassList", "StructBody"];
     types_children["NewExpression"] = ["KW_NEW","NewAnonClassExpression","Type", "AssignExpression", "Arguments","OP_BRACKET_LEFT","OP_BRACKET_RIGHT"];
     types_children["NonVoidInitializer"] = ["AssignExpression","ArrayInitializer","StructInitializer","FunctionBody"];
@@ -208,7 +208,7 @@ static this() {
     types_children["TraitsExpression"] = ["KW___TRAITS","TemplateArgumentList","Identifier","OP_PAR_RIGHT","OP_PAR_LEFT"];
     types_children["TryStatement"] = ["KW_TRY","DeclarationOrStatement","Catches","Finally"];
     types_children["Type"] = ["Attribute","Type_2","TypeSuffix*"];
-    types_children["Type_2"] = ["Symbol","TypeofExpression","TypeConstructor","Vector","Type","IdentifierOrTemplateChain","OP_DOT","OP_PAR_RIGHT","OP_PAR_LEFT","BuiltinType"];
+    types_children["Type_2"] = ["Symbol","TypeofExpression","TypeConstructor","Vector","Type","IdentifierOrTemplateChain","OP_DOT","OP_PAR_RIGHT","OP_PAR_LEFT","BuiltinType","KW_SHARED","KW_INOUT","KW_IMMUTABLE","KW_CONST"];
     types_children["BuiltinType"] = ["KW_BOOL","KW_BYTE","KW_UBYTE","KW_SHORT","KW_USHORT","KW_INT","KW_UINT","KW_LONG","KW_ULONG","KW_CHAR","KW_WCHAR","KW_DCHAR","KW_FLOAT","KW_DOUBLE","KW_REAL","KW_IFLOAT","KW_IDOUBLE","KW_IREAL","KW_CFLOAT","KW_CDOUBLE","KW_CREAL","KW_VOID"];
     types_children["TypeConstructor"] = ["KW_CONST","KW_IMMUTABLE","KW_INOUT","KW_SHARED","KW_SCOPE"];
     types_children["TypeConstructors"] = ["TypeConstructor*"];
@@ -231,7 +231,7 @@ static this() {
 
     has_processDeclaration["AddExpression"] = false;
     has_processDeclaration["AliasDeclaration"] = false;
-    has_processDeclaration["AliasInitializer"] = false;
+//    has_processDeclaration["AliasInitializer"] = false;
     has_processDeclaration["AliasThisDeclaration"] = false;
     has_processDeclaration["AlignAttribute"] = false;
     has_processDeclaration["AndAndExpression"] = false;
@@ -325,7 +325,7 @@ static this() {
     has_processDeclaration["IdentifierOrTemplateInstance"] = false;
     has_processDeclaration["IdentityExpression"] = false;
     has_processDeclaration["IfStatement"] = true;
-    has_processDeclaration["IfCondition"] = false;
+//    has_processDeclaration["IfCondition"] = false;
     has_processDeclaration["ImportBind"] = false;
     has_processDeclaration["ImportBindings"] = false;
     has_processDeclaration["ImportDeclaration"] = true;
@@ -353,7 +353,7 @@ static this() {
     has_processDeclaration["MixinTemplateName"] = false;
     has_processDeclaration["ModuleDeclaration"] = false;
     has_processDeclaration["MulExpression"] = false;
-    has_processDeclaration["NamedImportBind"] = false;
+//    has_processDeclaration["NamedImportBind"] = false;
     has_processDeclaration["NewAnonClassExpression"] = false;
     has_processDeclaration["NewExpression"] = false;
     has_processDeclaration["NonVoidInitializer"] = false;

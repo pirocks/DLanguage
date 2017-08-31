@@ -39,7 +39,7 @@ public class ClassTypeMembers implements TypeMembers {
         if (psi.getBaseClassList() != null) {
             for (final DLanguageBaseClass baseClass : psi.getBaseClassList().getBaseClasss()) {
                 //todo obviously this is not fast.
-                for (final DNamedElement element : DTypeUtilsKt.from(baseClass.getType(), true).getTypeMembersProvider().getMemberDeclarations()) {
+                for (final DNamedElement element : DTypeUtilsKt.from(baseClass.getType(), true, (Mods) null).getTypeMembersProvider().getMemberDeclarations()) {
                     res.putIfAbsent(element.getName(), element);//todo don't recursively include super
                 }
 
@@ -66,7 +66,7 @@ public class ClassTypeMembers implements TypeMembers {
     @NotNull
     public Set<DNamedElement> getSuper() {
         if (this.psi.getBaseClassList() != null) {
-            final DType type = DTypeUtilsKt.from(this.psi.getBaseClassList().getBaseClasss().get(0).getType(), true);
+            final DType type = DTypeUtilsKt.from(this.psi.getBaseClassList().getBaseClasss().get(0).getType(), true, (Mods) null);
             if (type instanceof DTypeClass) {
                 final DLanguageInterfaceOrClass class_ = ((DTypeClass) type).getInterfaceOrClass();
                 if (class_.getParent() instanceof DLanguageClassDeclaration) {

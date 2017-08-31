@@ -55,8 +55,8 @@ public class DLanguageFile extends PsiFileBase {
      */
     @NotNull
     public String getModuleOrFileName() {
-        if (getGreenStub() != null)
-            return ((DLanguageFileStub) getGreenStub()).getModuleName();
+        if (getStub() != null)
+            return (getStub()).getModuleName();
         final String moduleName = getModuleName();
         return moduleName == null ? getName() : moduleName;
     }

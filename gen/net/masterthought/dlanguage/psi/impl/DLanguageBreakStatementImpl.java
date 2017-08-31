@@ -2,17 +2,20 @@ package net.masterthought.dlanguage.psi.impl;
 
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.util.PsiTreeUtil;
-import net.masterthought.dlanguage.psi.DLanguageBreakStatement;
-import net.masterthought.dlanguage.psi.DLanguageIdentifier;
-import net.masterthought.dlanguage.psi.DLanguageVisitor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import net.masterthought.dlanguage.psi.*;
 
-import static net.masterthought.dlanguage.psi.DLanguageTypes.KW_BREAK;
-import static net.masterthought.dlanguage.psi.DLanguageTypes.OP_SCOLON;
+import java.util.List;
+
+import static net.masterthought.dlanguage.psi.DLanguageTypes.*;
+
+import com.intellij.psi.ResolveState;
+import com.intellij.psi.scope.PsiScopeProcessor;
+import net.masterthought.dlanguage.resolve.ScopeProcessorImpl;
 
 
 public class DLanguageBreakStatementImpl extends ASTWrapperPsiElement implements DLanguageBreakStatement {

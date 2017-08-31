@@ -34,4 +34,17 @@ public interface DLanguageType_2 extends PsiElement {
 
     @Nullable
     public DLanguageBuiltinType getBuiltinType();
+
+    @Nullable
+    public PsiElement getKW_SHARED();
+
+    @Nullable
+    public PsiElement getKW_INOUT();
+
+    @Nullable
+    public PsiElement getKW_IMMUTABLE();
+
+    @Nullable
+    public PsiElement getKW_CONST();
+
 }

@@ -79,4 +79,14 @@ public interface DLanguageAttribute extends PsiElement {
 
     @Nullable
     public DLanguageLinkageAttribute getLinkageAttribute();
+
+    @Nullable
+    public PsiElement getKW_CONST();
+
+    @Nullable
+    public PsiElement getKW_IMMUTABLE();
+
+    @Nullable
+    public PsiElement getKW_SHARED();
+
 }

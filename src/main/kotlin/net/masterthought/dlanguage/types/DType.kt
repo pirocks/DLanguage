@@ -58,33 +58,45 @@ typealias TY = ENUMTY
 typealias TypeBasic = BasicDType
 typealias TypeVector = DTypeVector
 
-val basicTypeIndex = mutableMapOf<String, BasicDType>()
+val basicTypeIndex: BasicTypeIndex = BasicTypeIndex()
+
+class BasicTypeIndex {
+    private val basicTypeIndex = mutableMapOf<String, BasicDType>()
+
+    fun getFromIndex(name: String): BasicDType? {
+        return basicTypeIndex.get(name)?.createCopy()
+    }
+
+    fun register(name: String, type: BasicDType) {
+        basicTypeIndex.putIfAbsent(name, type)
+    }
+}
 
 
-val tvoid: BasicDType = BasicDType(ENUMTY.Tvoid, "void", 1, "void")
-val tbyte: BasicDType = BasicDType(ENUMTY.Tint8, "int8", 1, "byte")
-val tubyte: BasicDType = BasicDType(ENUMTY.Tuns8, "uns8", 1, "ubtye")
-val tshort: BasicDType = BasicDType(ENUMTY.Tint16, "int16", 2, "short")
-val tushort: BasicDType = BasicDType(ENUMTY.Tuns16, "uns16", 2, "ushort")
-val tint: BasicDType = BasicDType(ENUMTY.Tint32, "int32", 4, "int")
-val tunit: BasicDType = BasicDType(ENUMTY.Tuns32, "uns32", 4, "uint")
-val tlong: BasicDType = BasicDType(ENUMTY.Tint64, "int64", 8, "long")
-val tulong: BasicDType = BasicDType(ENUMTY.Tuns64, "uns64", 8, "ulong")
-val tcent: BasicDType = BasicDType(ENUMTY.Tint128, "int128", 16, "cent")
-val tucent: BasicDType = BasicDType(ENUMTY.Tuns128, "uns128", 16, "ucent")
-//public val tfloat32: BasicDType = BasicDType("float32",4)
-//public val tfloat64: BasicDType = BasicDType("float64",8)
-//public val tfloat80: BasicDType = BasicDType("float80",10)
-//public val timaginary32: BasicDType = BasicDType("imaginary32",4)
-//public val timaginary64: BasicDType = BasicDType("imaginary64",8)
-//public val timaginary80: BasicDType = BasicDType("imaginary80",10)
-//public val tcomplex32: BasicDType = BasicDType("complex32",8)
-//public val tcomplex64: BasicDType = BasicDType("complex64",16)
-//public val tcomplex80: BasicDType = BasicDType("complex80",20)
-//public val tbool: BasicDType = BasicDType("bool",1)
-val tchar: BasicDType = BasicDType(ENUMTY.Tchar, "char", 1, "char")
-val twchar: BasicDType = BasicDType(ENUMTY.Twchar, "wchar", 2, "wchar")
-val tdchar: BasicDType = BasicDType(ENUMTY.Tdchar, "dchar", 4, "dchar")
+val tvoid: BasicDType = BasicDType(ENUMTY.Tvoid, "void", 1, "void", DType.Flags())
+val tbyte: BasicDType = BasicDType(ENUMTY.Tint8, "int8", 1, "byte", DType.Flags(TFLAGSintegral = true))
+val tubyte: BasicDType = BasicDType(ENUMTY.Tuns8, "uns8", 1, "ubtye", DType.Flags(TFLAGSintegral = true, TFLAGSunsigned = true))
+val tshort: BasicDType = BasicDType(ENUMTY.Tint16, "int16", 2, "short", DType.Flags(TFLAGSintegral = true))
+val tushort: BasicDType = BasicDType(ENUMTY.Tuns16, "uns16", 2, "ushort", DType.Flags(TFLAGSintegral = true, TFLAGSunsigned = true))
+val tint: BasicDType = BasicDType(ENUMTY.Tint32, "int32", 4, "int", DType.Flags(TFLAGSintegral = true))
+val tunit: BasicDType = BasicDType(ENUMTY.Tuns32, "uns32", 4, "uint", DType.Flags(TFLAGSintegral = true, TFLAGSunsigned = true))
+val tlong: BasicDType = BasicDType(ENUMTY.Tint64, "int64", 8, "long", DType.Flags(TFLAGSintegral = true))
+val tulong: BasicDType = BasicDType(ENUMTY.Tuns64, "uns64", 8, "ulong", DType.Flags(TFLAGSintegral = true, TFLAGSunsigned = true))
+val tcent: BasicDType = BasicDType(ENUMTY.Tint128, "int128", 16, "cent", DType.Flags(TFLAGSintegral = true))
+val tucent: BasicDType = BasicDType(ENUMTY.Tuns128, "uns128", 16, "ucent", DType.Flags(TFLAGSintegral = true, TFLAGSunsigned = true))
+val tfloat32: BasicDType = BasicDType(ENUMTY.Tfloat32, "float32", 4, "float", DType.Flags(TFLAGSfloating = true, TFLAGSreal = true))
+val tfloat64: BasicDType = BasicDType(ENUMTY.Tfloat64, "float64", 8, "double", DType.Flags(TFLAGSfloating = true, TFLAGSreal = true))
+val tfloat80: BasicDType = BasicDType(ENUMTY.Tfloat80, "float80", 16, "real", DType.Flags(TFLAGSfloating = true, TFLAGSreal = true))
+val timaginary32: BasicDType = BasicDType(ENUMTY.Timaginary32, "imaginary32", 4, "ifloat", DType.Flags(TFLAGSfloating = true, TFLAGSimaginary = true))
+val timaginary64: BasicDType = BasicDType(ENUMTY.Timaginary64, "imaginary64", 8, "idouble", DType.Flags(TFLAGSfloating = true, TFLAGSimaginary = true))
+val timaginary80: BasicDType = BasicDType(ENUMTY.Timaginary80, "imaginary80", 16, "ireal", DType.Flags(TFLAGSfloating = true, TFLAGSimaginary = true))
+val tcomplex32: BasicDType = BasicDType(ENUMTY.Tcomplex32, "complex32", 8, "cfloat", DType.Flags(TFLAGSfloating = true, TFLAGScomplex = true))
+val tcomplex64: BasicDType = BasicDType(ENUMTY.Tcomplex64, "complex64", 16, "cdouble", DType.Flags(TFLAGSfloating = true, TFLAGScomplex = true))
+val tcomplex80: BasicDType = BasicDType(ENUMTY.Tcomplex80, "complex80", 32, "creal", DType.Flags(TFLAGSfloating = true, TFLAGScomplex = true))
+val tbool: BasicDType = BasicDType(ENUMTY.Tbool, "bool", 1, "bool", DType.Flags(true))
+val tchar: BasicDType = BasicDType(ENUMTY.Tchar, "char", 1, "char", DType.Flags(TFLAGSintegral = true, TFLAGSunsigned = true))
+val twchar: BasicDType = BasicDType(ENUMTY.Twchar, "wchar", 2, "wchar", DType.Flags(TFLAGSintegral = true, TFLAGSunsigned = true))
+val tdchar: BasicDType = BasicDType(ENUMTY.Tdchar, "dchar", 4, "dchar", DType.Flags(TFLAGSintegral = true, TFLAGSunsigned = true))
 //
 //
 //// Some special types
@@ -124,7 +136,7 @@ val tdchar: BasicDType = BasicDType(ENUMTY.Tdchar, "dchar", 4, "dchar")
 //
 ////Type[TMAX] basic;
 ////StringTable stringtable;
-////todo check transative const
+//todo check transative const
 //
 enum class Match {
     nomatch, // no match
@@ -145,7 +157,35 @@ enum class Match {
 ///**
 // * represents types with some kind of type modifier. Not modifiers like const,immutable etc. Modifiers like int *, int[], int function(), ref int
 // */
-abstract class DTypeNext(val next: DType, override val ty: TY) : DType(ty)
+open class NextMods : Mods {
+    override var MODconst: Boolean
+    override var MODimmutable: Boolean
+    override var MODshared: Boolean
+    override var MODwild: Boolean
+    val typeNext: DTypeNext
+
+    constructor(typeNext: DTypeNext, MODconst: Boolean = false, MODimmutable: Boolean = false, MODshared: Boolean = false, MODwild: Boolean = false) : super() {
+        this.MODconst = MODconst
+        if (MODconst) {
+            typeNext.next.mods.applyTransitiveConst()
+        }
+        this.MODimmutable = MODimmutable
+        this.MODshared = MODshared
+        this.MODwild = MODwild
+        this.typeNext = typeNext
+    }
+
+    override fun applyTransitiveConst() {
+        typeNext.next.mods.applyTransitiveConst()
+        MODconst = true
+    }
+
+}
+
+abstract class DTypeNext(val next: DType, override val ty: TY) : DType(ty, Flags()) {
+    override val mods: NextMods = NextMods(this)
+
+}
 
 //
 //
@@ -170,14 +210,44 @@ abstract class DTypeNext(val next: DType, override val ty: TY) : DType(ty)
 //    //todo
 //}
 //
-abstract class DType(open val ty: TY) {
+abstract class DType(open val ty: TY, val flags: Flags) {
+
+    class Flags(val TFLAGSintegral: Boolean = false,
+                val TFLAGSfloating: Boolean = false,
+                val TFLAGSunsigned: Boolean = false,
+                val TFLAGSreal: Boolean = false,
+                val TFLAGSimaginary: Boolean = false,
+                val TFLAGScomplex: Boolean = false) {
+
+        fun isIntegral(): Boolean {
+            return TFLAGSintegral
+        }
+
+        fun isFloating(): Boolean {
+            return TFLAGSfloating
+        }
+
+        fun isUnsigned(): Boolean {
+            return TFLAGSunsigned
+        }
+
+        fun isReal(): Boolean {
+            return TFLAGSreal
+        }
+
+        fun isImaginary(): Boolean {
+            return TFLAGSimaginary
+        }
+
+        fun isComplex(): Boolean {
+            return TFLAGScomplex
+        }
+
+    }
+
+
+    open val mods: Mods = Mods()
     //shared immutable should not be allowed
-    var MODconst: Boolean = false
-    var MODimmutable: Boolean = false
-    var MODshared: Boolean = false
-    var MODwild: Boolean = false
-    var MODmutable: Boolean = false//not really used
-    var MODwildconst: Boolean = false
 //    var vtinfo: TypeInfoDeclaration? = null     // TypeInfo object for this Type
 
     /**
@@ -236,87 +306,15 @@ abstract class DType(open val ty: TY) {
 //    /**
 //     * this family of functions change the type, and do not create a copy
 //     */
-//    abstract fun constOf(): Type
-//
-//    abstract fun unSharedOf(): Type
-//    abstract fun mutableOf(): Type
-//    abstract fun wildOf(): Type
-//    abstract fun wildConstOf(): Type
-//    abstract fun sharedOf(): Type
-//    abstract fun sharedConstOf(): Type
-//    abstract fun sharedWildOf(): Type
-//    abstract fun sharedWildConstOf(): Type
-//    abstract fun immutableOf(): Type
+//    abstract fun constOf(): DType
+//    abstract fun unSharedOf(): DType
+//    abstract fun mutableOf(): DType
+//    abstract fun wildOf(): DType
+//    abstract fun wildConstOf(): DType
+//    abstract fun sharedOf(): DType
+//    abstract fun sharedConstOf(): DType
+//    abstract fun sharedWildOf(): DType
+//    abstract fun sharedWildConstOf(): DType
+//    abstract fun immutableOf(): DType
     //initial type handling will  not handle const/mutable etc.
-    open fun isintegral(): Boolean {
-        return false
-    }
-
-    open fun isfloating(): Boolean {
-        return false
-    }
-
-    open fun isreal(): Boolean {
-        return false
-    }
-
-    open fun isImaginary(): Boolean {
-        return false
-    }
-
-    open fun isComplex(): Boolean {
-        return false
-    }
-
-    open fun isScalar(): Boolean {
-        return false
-    }
-
-    open fun isUnsigned(): Boolean {
-        return false
-    }
-
-    open fun isScope(): Boolean {
-        return false
-    }
-
-    open fun isString(): Boolean {
-        return false
-    }
-
-    fun isConst(): Boolean {
-        return MODconst
-    }
-
-    fun isImmutable(): Boolean {
-        return MODimmutable
-    }
-
-    fun isMutable(): Boolean {
-        return MODmutable
-    }
-
-    fun isShared(): Boolean {
-        return MODshared
-    }
-
-    fun isSharedConst(): Boolean {
-        return (MODshared || MODconst) && (!MODwild) && (!MODimmutable) && (!MODmutable) && (!MODwildconst)
-    }
-
-    fun isWild(): Boolean {
-        return MODwild
-    }
-
-    fun isWildConst(): Boolean {
-        return MODwildconst
-    }
-
-    fun isSharedWild(): Boolean {
-        return (MODshared || MODwild) && (!MODconst) && (!MODimmutable) && (!MODmutable) && (!MODwildconst)
-    }
-
-    fun isNaked(): Boolean {
-        return MODconst || MODimmutable || MODmutable || MODshared || MODwild || MODwildconst
-    }
 }

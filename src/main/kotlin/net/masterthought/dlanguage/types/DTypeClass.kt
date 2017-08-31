@@ -31,7 +31,7 @@ import net.masterthought.dlanguage.utils.InterfaceOrClass
 //}
 //
 //
-class DTypeClass(val interfaceOrClass: InterfaceOrClass) : DType(ENUMTY.Tclass) {
+class DTypeClass(val interfaceOrClass: InterfaceOrClass) : DType(ENUMTY.Tclass, Flags()) {
 
 
     override val typeMembersProvider: TypeMembers

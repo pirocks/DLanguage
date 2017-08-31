@@ -18,10 +18,14 @@ public abstract class DTypesImplicitlyConvertibleTestCase extends DTypesTestCase
         final DLanguageType typeb = getTypeFromOffset(offsetb, psiFile);
         assertNotNull(typea);
         assertNotNull(typeb);
-        assertTrueWithSucceed("Match failure", DTypeUtilsKt.from(typea, false).implicitlyConvertibleTo(DTypeUtilsKt.from(typeb, false)) == Match.exact, succeed);
-        assertTrueWithSucceed("Match failure", DTypeUtilsKt.from(typea, true).implicitlyConvertibleTo(DTypeUtilsKt.from(typeb, true)) == Match.exact, succeed);
-        assertTrueWithSucceed("Match failure", DTypeUtilsKt.from(typea, false).implicitlyConvertibleTo(DTypeUtilsKt.from(typeb, true)) == Match.exact, succeed);
-        assertTrueWithSucceed("Match failure", DTypeUtilsKt.from(typea, true).implicitlyConvertibleTo(DTypeUtilsKt.from(typeb, false)) == Match.exact, succeed);
+        final Match resNoResolve = DTypeUtilsKt.from(typea, false, (Mods) null).implicitlyConvertibleTo(DTypeUtilsKt.from(typeb, false, (Mods) null));
+        assertTrueWithSucceed("Match failure", resNoResolve == Match.exact || resNoResolve == Match.convert || resNoResolve == Match.constant, succeed);
+        final Match resWithResolve = DTypeUtilsKt.from(typea, true, (Mods) null).implicitlyConvertibleTo(DTypeUtilsKt.from(typeb, true, (Mods) null));
+        assertTrueWithSucceed("Match failure", resWithResolve == Match.exact || resWithResolve == Match.convert || resWithResolve == Match.constant, succeed);
+        final Match resSomeResolve = DTypeUtilsKt.from(typea, false, (Mods) null).implicitlyConvertibleTo(DTypeUtilsKt.from(typeb, true, (Mods) null));
+        assertTrueWithSucceed("Match failure", resSomeResolve == Match.exact || resSomeResolve == Match.convert || resSomeResolve == Match.constant, succeed);
+        final Match resSomeResolve2 = DTypeUtilsKt.from(typea, true, (Mods) null).implicitlyConvertibleTo(DTypeUtilsKt.from(typeb, false, (Mods) null));
+        assertTrueWithSucceed("Match failure", resSomeResolve2 == Match.exact || resSomeResolve2 == Match.convert || resSomeResolve2 == Match.constant, succeed);
     }
 
 }

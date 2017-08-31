@@ -22,8 +22,9 @@ public class DAttributes {
     private final Boolean isNothrow;
     private final Boolean isConst;
     private final Boolean isImmutable;
+    private final Boolean isShared;
 
-    public DAttributes(final DAttributesFinder.Visibility visibility, final Boolean isStatic, final Boolean isProperty, final Boolean isNoGC, final Boolean isExtern, final Boolean isPure, final Boolean isNothrow, final Boolean isConst, final Boolean isImmutable) {
+    public DAttributes(final DAttributesFinder.Visibility visibility, final Boolean isStatic, final Boolean isProperty, final Boolean isNoGC, final Boolean isExtern, final Boolean isPure, final Boolean isNothrow, final Boolean isConst, final Boolean isImmutable, final Boolean isShared) {
         this.visibility = visibility;
         this.isStatic = isStatic;
         this.isProperty = isProperty;
@@ -33,6 +34,7 @@ public class DAttributes {
         this.isNothrow = isNothrow;
         this.isConst = isConst;
         this.isImmutable = isImmutable;
+        this.isShared = isShared;
     }
 
     public DAttributes(final PsiElement start) {
@@ -47,6 +49,7 @@ public class DAttributes {
         this.isNothrow = finder.isNothrow();
         this.isConst = finder.isConst();
         this.isImmutable = finder.isImmutable();
+        this.isShared = finder.isShared();
     }
 
     public static DAttributes read(final StubInputStream stream) throws IOException {
@@ -59,7 +62,8 @@ public class DAttributes {
         final Boolean isNothrow = stream.readBoolean();
         final Boolean isConst = stream.readBoolean();
         final Boolean isImmutable = stream.readBoolean();
-        return new DAttributes(visibility, isStatic, isProperty, isNoGC, isExtern, isPure, isNothrow, isConst, isImmutable);
+        final Boolean isShared = stream.readBoolean();
+        return new DAttributes(visibility, isStatic, isProperty, isNoGC, isExtern, isPure, isNothrow, isConst, isImmutable, isShared);
     }
 
     public DAttributesFinder.Visibility isVisible() {
@@ -98,6 +102,10 @@ public class DAttributes {
         return isImmutable;
     }
 
+    public Boolean isShared() {
+        return isShared;
+    }
+
     public void write(final StubOutputStream stream) throws IOException {
         visibility.write(stream);
         stream.writeBoolean(isStatic);
@@ -108,5 +116,6 @@ public class DAttributes {
         stream.writeBoolean(isNothrow);
         stream.writeBoolean(isConst);
         stream.writeBoolean(isImmutable);
+        stream.writeBoolean(isShared);
     }
 }

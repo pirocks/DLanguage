@@ -1,7 +1,8 @@
 package net.masterthought.dlanguage.types
 
 //
-class DTypeVector(val ty_: TY) : DType(ty_) {
+class DTypeVector(val ty_: TY) : DType(ty_, Flags()) {
+    //todo check that all these flags are correct for vectors,pointers etc.
     override val typeMembersProvider: TypeMembers
         get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
 

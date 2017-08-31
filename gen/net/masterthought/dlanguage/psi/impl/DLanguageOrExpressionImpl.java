@@ -2,16 +2,20 @@ package net.masterthought.dlanguage.psi.impl;
 
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.util.PsiTreeUtil;
-import net.masterthought.dlanguage.psi.DLanguageOrExpression;
-import net.masterthought.dlanguage.psi.DLanguageVisitor;
-import net.masterthought.dlanguage.psi.DLanguageXorExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import net.masterthought.dlanguage.psi.*;
 
-import static net.masterthought.dlanguage.psi.DLanguageTypes.OP_OR;
+import java.util.List;
+
+import static net.masterthought.dlanguage.psi.DLanguageTypes.*;
+
+import com.intellij.psi.ResolveState;
+import com.intellij.psi.scope.PsiScopeProcessor;
+import net.masterthought.dlanguage.resolve.ScopeProcessorImpl;
 
 
 public class DLanguageOrExpressionImpl extends ASTWrapperPsiElement implements DLanguageOrExpression {

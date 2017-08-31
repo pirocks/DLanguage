@@ -2,17 +2,20 @@ package net.masterthought.dlanguage.psi.impl;
 
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.util.PsiTreeUtil;
-import net.masterthought.dlanguage.psi.DLanguageArgumentList;
-import net.masterthought.dlanguage.psi.DLanguageArguments;
-import net.masterthought.dlanguage.psi.DLanguageVisitor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import net.masterthought.dlanguage.psi.*;
 
-import static net.masterthought.dlanguage.psi.DLanguageTypes.OP_PAR_LEFT;
-import static net.masterthought.dlanguage.psi.DLanguageTypes.OP_PAR_RIGHT;
+import java.util.List;
+
+import static net.masterthought.dlanguage.psi.DLanguageTypes.*;
+
+import com.intellij.psi.ResolveState;
+import com.intellij.psi.scope.PsiScopeProcessor;
+import net.masterthought.dlanguage.resolve.ScopeProcessorImpl;
 
 
 public class DLanguageArgumentsImpl extends ASTWrapperPsiElement implements DLanguageArguments {

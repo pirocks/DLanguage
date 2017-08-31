@@ -81,13 +81,13 @@ public class DLanguageAutoDeclarationPartImpl extends DNamedStubbedPsiElementBas
         }
         if (getInitializer().getNonVoidInitializer() != null) {
 //            if(getInitializer().getNonVoidInitializer().getArrayInitializer() != null)
-//                return TypeUtilsKt.from(/*todo add type*/,true);
+//                return TypeUtilsKt.from(/*todo add type*/,true,getAttributes());
 //            if(getInitializer().getNonVoidInitializer().getAssignExpression() != null)
-//                return TypeUtilsKt.from(/*todo add type*/,true);
+//                return TypeUtilsKt.from(/*todo add type*/,true,getAttributes());
 //            if(getInitializer().getNonVoidInitializer().getFunctionBody() != null)
-//                return TypeUtilsKt.from(/*todo add type*/,true);
+//                return TypeUtilsKt.from(/*todo add type*/,true,getAttributes());
 //            if(getInitializer().getNonVoidInitializer().getStructInitializer() != null)
-//                return TypeUtilsKt.from(/*todo add type*/,true);
+//                return TypeUtilsKt.from(/*todo add type*/,true,getAttributes());
         }
 //        return TypeUtilsKt.from(,true);
         return null;

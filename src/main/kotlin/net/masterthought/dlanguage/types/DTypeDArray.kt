@@ -5,6 +5,10 @@ class DTypeDArray(val next__: DType) : DTypeArray(next__, ENUMTY.Tarray) {
         get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
 
     override fun toText(): String {
+        val modsString: String = mods.toText()
+        if (!modsString.equals("")) {
+            return modsString + "(" + next_.toText() + "[]" + ")"
+        }
         return next.toText() + "[]"
     }
 
