@@ -143,7 +143,6 @@ enum class Match {
     convert, // match with conversions
     constant, // match with conversion to const
     exact      // exact match
-
 }
 
 
@@ -187,29 +186,6 @@ abstract class DTypeNext(val next: DType, override val ty: TY) : DType(ty, Flags
 
 }
 
-//
-//
-//class TypeError : Type() {
-//    override fun implicitlyConvertibleTo(): Boolean {
-//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-//    }
-//
-//}
-//
-//
-//class TypeInfoDeclaration {
-////todo
-//}
-//
-//
-//
-//
-//abstract class ResolvableType {
-//    abstract fun resolve(): Type
-//    abstract fun actuallyIsType(): Boolean
-//    //todo
-//}
-//
 abstract class DType(open val ty: TY, val flags: Flags) {
 
     class Flags(val TFLAGSintegral: Boolean = false,
@@ -317,4 +293,160 @@ abstract class DType(open val ty: TY, val flags: Flags) {
 //    abstract fun sharedWildConstOf(): DType
 //    abstract fun immutableOf(): DType
     //initial type handling will  not handle const/mutable etc.
+
+    class DTypeStorageClass(
+        val STCundefined: Boolean = false, val STCstatic: Boolean = false, val STCextern: Boolean = false, val STCconst: Boolean = false, val STCfinal: Boolean = false, val STCabstract: Boolean = false, val STCparameter: Boolean = false, val STCfield: Boolean = false, val STCoverride: Boolean = false, val STCauto: Boolean = false, val STCsynchronized: Boolean = false, val STCdeprecated: Boolean = false, val STCin: Boolean = false, val STCout: Boolean = false, val STClazy: Boolean = false, val STCforeach: Boolean = false, val STCvariadic: Boolean = false, val STCctorinit: Boolean = false, val STCtemplateparameter: Boolean = false, val STCscope: Boolean = false, val STCimmutable: Boolean = false, val STCref: Boolean = false, val STCinit: Boolean = false, val STCmanifest: Boolean = false, val STCnodtor: Boolean = false, val STCnothrow: Boolean = false, val STCpure: Boolean = false, val STCtls: Boolean = false, val STCalias: Boolean = false, val STCshared: Boolean = false, val STCgshared: Boolean = false, val STCwild: Boolean = false, val STCproperty: Boolean = false, val STCsafe: Boolean = false, val STCtrusted: Boolean = false, val STCsystem: Boolean = false, val STCctfe: Boolean = false, val STCdisable: Boolean = false, val STCresult: Boolean = false, val STCnodefaultctor: Boolean = false, val STCtemp: Boolean = false, val STCrvalue: Boolean = false, val STCnogc: Boolean = false, val STCvolatile: Boolean = false, val STCreturn: Boolean = false, val STCautoref: Boolean = false, val STCinference: Boolean = false, val STCexptemp: Boolean = false
+    ) {
+        val STC_TYPECTOR
+        get() = STCconst || STCimmutable || STCshared || STCwild
+        val STC_FUNCATTR
+        get() = STCref || STCnothrow || STCnogc || STCpure || STCproperty || STCsafe || STCtrusted || STCsystem
+
+    }
+
+    /*******************************
+     * Covariant means that 'this' can substitute for 't',
+     * i.e. a pure function is a match for an impure type.
+     * Returns:
+     *      0       types are distinct
+     *      1       this is covariant with t
+     *      2       arguments match as far as overloading goes,
+     *              but types are not covariant
+     *      3       cannot determine covariance because of forward references
+     *      *pstc   STCxxxx which would make it covariant todo not implmented
+     */
+    fun covariant(t: DType/*, pstc_in: DTypeStorageClass? = null*/): Int {
+        val stc: DTypeStorageClass = 0;
+
+        val inoutmismatch = 0;
+
+        val t1: DTypeFunction;
+        val t2: DTypeFunction;
+
+        if (equals(t))
+            return 1; // covariant
+
+        if (ty != ENUMTY.Tfunction || t.ty != ENUMTY.Tfunction)
+            return 0;
+
+        t1 = this as DTypeFunction;
+        t2 = t as DTypeFunction;
+
+        if (t1.varargs != t2.varargs)
+            return 0;
+
+        if (t1.parameters && t2.parameters) {
+            val dim = DTypeParameter.dim(t1.parameters);
+            if (dim != DTypeParameter.dim(t2.parameters))
+                return 0;
+
+            for (i in 0..dim) {
+                val fparam1: DTypeParameter = DTypeParameter.getNth(t1.parameters, i);
+                val fparam2: DTypeParameter = DTypeParameter.getNth(t2.parameters, i);
+
+                if (!fparam1.type.equals(fparam2.type)) {
+                    return 0;
+                }
+                val sc = STCref | STCin | STCout | STClazy;
+                if ((fparam1.storageClass & sc) != (fparam2.storageClass & sc))
+                inoutmismatch = 1;
+                // We can add scope, but not subtract it
+                if (!(fparam1.storageClass & STCscope) && (fparam2.storageClass & STCscope))
+                inoutmismatch = 1;
+                // We can subtract return, but not add it
+                if ((fparam1.storageClass & STCreturn) && !(fparam2.storageClass & STCreturn))
+                inoutmismatch = 1;
+            }
+        } else if (t1.parameters != t2.parameters) {
+            val dim1 = !t1.parameters ? 0 : t1.parameters.dim;
+            val dim2 = !t2.parameters ? 0 : t2.parameters.dim;
+            if (dim1 || dim2)
+                return 0;
+        }
+
+        // The argument lists match
+        if (inoutmismatch)
+            return 2
+        if (t1.linkage != t2.linkage)
+            return 2
+
+//        {
+        // Return types
+        val t1n: DType = t1.next;
+        val t2n: DType = t2.next;
+
+        if (!t1n || !t2n) // happens with return type inference
+            return 2
+
+        if (t1n.equals(t2n))
+            return Lcovariant(t1, t2);
+        if (t1n.ty == ENUMTY.Tclass && t2n.ty == ENUMTY.Tclass) {
+            /* If same class type, but t2n is const, then it's
+             * covariant. Do this test first because it can work on
+             * forward references.
+             */
+            if ((t1n as DTypeClass).interfaceOrClass == (t2n as DTypeClass).interfaceOrClass && MODimplicitConv(t1n.mods, t2n.mods))//todo no way this is correcy
+                return Lcovariant(t1, t2);
+
+            // If t1n is forward referenced:
+            val cd = (t1n as DTypeClass).interfaceOrClass;
+            if (cd._scope)
+                cd.semantic(null);
+            if (!cd.isBaseInfoComplete()) {
+                return 3; // forward references
+            }
+        }
+        if (t1n.ty == ENUMTY.Tstruct && t2n.ty == ENUMTY.Tstruct) {
+            if ((t1n as DTypeStruct).struct == (t2n as DTypeStruct).struct && MODimplicitConv(t1n.mods, t2n.mods))//this can't be correct either
+                return Lcovariant(t1, t2);
+        } else if (t1n.ty == t2n.ty && t1n.implicitConvTo(t2n))
+            return Lcovariant(t1, t2);
+        else if (t1n.ty == ENUMTY.Tnull && t1n.implicitConvTo(t2n) && t1n.size() == t2n.size())
+            return Lcovariant(t1, t2);
+//        }
+        return 2
+    }
+
+    fun Lcovariant(t1: DTypeFunction, t2: DTypeFunction): Int {
+        if (t1.isref != t2.isref)
+            return 2
+
+        // We can subtract 'return' from 'this', but cannot add it
+        if (t1.isreturn && !t2.isreturn)
+            return 2
+
+        /* Can convert mutable to const
+     */
+        if (!MODimplicitConv(t2.mods, t1.mods)) {
+            return 0;
+        }
+
+        /* Can convert pure to impure, nothrow to throw, and nogc to gc
+     */
+        if (!t1.purity && t2.purity)
+            stc | = STCpure;
+
+        if (!t1.isnothrow && t2.isnothrow)
+            stc | = STCnothrow;
+
+        if (!t1.isnogc && t2.isnogc)
+            stc | = STCnogc;
+
+        /* Can convert safe/trusted to system
+     */
+        if (t1.trust <= TRUSTsystem && t2.trust >= TRUSTtrusted) {
+            // Should we infer trusted or safe? Go with safe.
+            stc | = STCsafe;
+        }
+
+        if (stc) {
+            return 2
+        }
+        return 1;
+    }
+
+    open fun toBasetype(): DType {
+        return this;
+    }
+
 }

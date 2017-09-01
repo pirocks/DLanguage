@@ -1,5 +1,7 @@
 package net.masterthought.dlanguage.types
 
+import net.masterthought.dlanguage.psi.DLanguageStructDeclaration
+
 //
 //
 //class TypeEnum : Type() {
@@ -24,6 +26,8 @@ package net.masterthought.dlanguage.types
 //
 //
 class DTypeStruct : DType(ENUMTY.Tstruct, Flags()) {
+    val struct: DLanguageStructDeclaration
+
     override fun toText(): String {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }

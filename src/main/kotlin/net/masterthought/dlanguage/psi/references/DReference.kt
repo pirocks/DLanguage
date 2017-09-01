@@ -245,6 +245,8 @@ class DReference(element: PsiNamedElement, textRange: TextRange) : PsiReferenceB
         for (result in multiResolve(false)) {
             if (result.element is DLanguageFile)
                 continue
+            if(result.element is PsiDirectory)
+                continue
             if (getElement().manager.areElementsEquivalent((result.element as DNamedElement).nameIdentifier, (element as DNamedElement).nameIdentifier))
                 return true
         }
