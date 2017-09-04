@@ -84,9 +84,20 @@ fun from(type_2: Type_2, typeSuffixs: List<TypeSuffix>, resolveAvailable: Boolea
             } else
                 res = DTypeSArray(from(type_2, shorter, resolveAvailable))
         } else if (inDelegate) {
-            res = DTypeDelegate(from(type_2, shorter, resolveAvailable), typeSuffixs.last().parameters?.parameters?.map { Pair(it.typeOf, it.name) }!!)
+            res = DTypeDelegate(from(type_2, shorter, resolveAvailable), typeSuffixs.last().parameters?.parameters?.map { DTypeParameter(DTypeStorageClass(it.parameterAttributes), it.oP_EQ != null, it.identifier?.name, from(it.type!!)) }!!)
         } else if (inFunction) {
-            res = DTypeFunction(from(type_2, shorter, resolveAvailable), typeSuffixs.last().parameters?.parameters?.map { Pair(it.typeOf, it.name) }!!, ENUMTY.Tfunction)
+            val parameters = typeSuffixs.last().parameters?.parameters ?: mutableListOf()
+            val hasVarArgs: Int
+            if (parameters.any { it.oP_TRIPLEDOT != null }) {
+                hasVarArgs = 2
+            } else if (typeSuffixs.last().oP_TRIPLEDOT != null) {
+                hasVarArgs = 1
+            } else {
+                hasVarArgs = 0
+            }
+            val stc = DAttributes(typeSuffixs.last()).stc
+            val link = DAttributes(typeSuffixs.last()).link
+            res = DTypeFunction(from(type_2, shorter, resolveAvailable), parameters.map { DTypeParameter(DTypeStorageClass(it.parameterAttributes), it.oP_EQ != null, it.identifier?.name, from(it.type!!)) }, hasVarArgs, stc, link)
         } else if (typeSuffixs.isEmpty())
             res = from(type_2, shorter, resolveAvailable)
         else
@@ -131,7 +142,7 @@ fun from(type_2: Type_2, resolveAvailable: Boolean = false): DType {
                 return DTypeClass(resolve)
             }
             if (resolve is StructDeclaration) {
-                return DTypeStruct()
+                return DTypeStruct(resolve)
             }
             if (resolve is ForwardingType) {
                 return resolve.forwardedType

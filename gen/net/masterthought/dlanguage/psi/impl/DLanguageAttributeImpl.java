@@ -166,4 +166,14 @@ public class DLanguageAttributeImpl extends ASTWrapperPsiElement implements DLan
         return findChildByType(KW_SHARED);
     }
 
+    @Nullable
+    public DLanguageIdentifier getIdentifier() {
+        return PsiTreeUtil.getChildOfType(this, DLanguageIdentifier.class);
+    }
+
+    @Nullable
+    public PsiElement getOP_PLUS_PLUS() {
+        return findChildByType(OP_PLUS_PLUS);
+    }
+
 }

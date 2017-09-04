@@ -8,6 +8,7 @@ import net.masterthought.dlanguage.psi.DLanguageFile
 import net.masterthought.dlanguage.psi.DLanguageSingleImport
 import net.masterthought.dlanguage.psi.DLanguageUnittest
 import net.masterthought.dlanguage.psi.interfaces.DNamedElement
+import net.masterthought.dlanguage.types.LINK
 import net.masterthought.dlanguage.utils.*
 
 /**
@@ -41,6 +42,7 @@ class DAttributesFinder {
     private var isProperty: Boolean? = null
     private var isNoGC: Boolean? = null
     private var isExtern: Boolean? = null
+    private var link: LINK? = null
     private var isPure: Boolean? = null
     private var isNothrow: Boolean? = null
     private var isConst: Boolean? = null
@@ -52,6 +54,7 @@ class DAttributesFinder {
     var defaultsToProperty: Boolean = false
     var defaultsToNoGC: Boolean = false
     var defaultsToExtern: Boolean = false
+    var defualtLink: LINK = LINK.def
     var defaultsToLocal: Boolean = false
     var defaultsToPure: Boolean = false
     var defaultsToNothrow: Boolean = false
@@ -157,6 +160,7 @@ class DAttributesFinder {
             } else if (attribute.kW_AUTO != null) {
             } else if (attribute.kW_ENUM != null) {
             } else if (attribute.kW_EXTERN != null) {
+                updateLinkage(attribute)
             } else if (attribute.kW_FINAL != null) {
             } else if (attribute.kW_INOUT != null) {
             } else if (attribute.kW_NOTHROW != null) {
@@ -198,6 +202,39 @@ class DAttributesFinder {
                 }
             } else if (attribute.linkageAttribute != null) {
             }
+        }
+    }
+
+    private fun updateLinkage(attribute: DLanguageAttribute) {
+        if (isExtern == null) {
+            if (attribute.identifier?.text == null) {
+                throw IllegalStateException()
+            }
+            val externType = attribute.identifier?.text!!
+            when (externType) {
+                "C" -> {
+                    if (attribute.oP_PLUS_PLUS != null) {
+                        link = LINK.cpp
+                    } else
+                        link = LINK.c
+                }
+                "D" -> {
+                    link = LINK.d
+                }
+                "Windows" -> {
+                    link = LINK.windows
+                }
+                "Pascal" -> {
+                    link = LINK.pascal
+                }
+                "System" -> {
+                    link = LINK.def
+                }
+                "Objective-C" -> {
+                    link = LINK.objc
+                }
+            }
+            isExtern = true
         }
     }
 
@@ -246,6 +283,10 @@ class DAttributesFinder {
 
     fun isShared(): Boolean {
         return isShared ?: defaultsToShared
+    }
+
+    fun getLink(): LINK {
+        return link ?: defualtLink
     }
 
     override fun equals(other: Any?): Boolean {

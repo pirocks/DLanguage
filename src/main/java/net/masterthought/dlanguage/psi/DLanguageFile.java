@@ -69,7 +69,7 @@ public class DLanguageFile extends PsiFileBase {
     public DLanguageFileStub getStub() {
         final StubElement stub = super.getStub();
         if (stub == null) return null;
-        return (DLanguageFileStub) stub;
+        return new DLanguageFileStub(this, getModuleName());
     }
 
     @Override

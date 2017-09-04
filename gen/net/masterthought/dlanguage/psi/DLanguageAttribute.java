@@ -89,4 +89,10 @@ public interface DLanguageAttribute extends PsiElement {
     @Nullable
     public PsiElement getKW_SHARED();
 
+    @Nullable
+    public DLanguageIdentifier getIdentifier();
+
+    @Nullable
+    public PsiElement getOP_PLUS_PLUS();
+
 }

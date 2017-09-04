@@ -131,6 +131,67 @@ class BasicDType : DType {
 //            return Match.exact
 //        return Match.nomatch
 //    }
+override fun size(): Int {
+    val size: Int
+    //printf("TypeBasic::size()\n");
+    when (ty) {
+        ENUMTY.Tint8, ENUMTY.Tuns8 ->
+            size = 1
 
+        ENUMTY.Tint16, ENUMTY.Tuns16 -> size = 2
+
+        ENUMTY.Tint32,
+        ENUMTY.Tuns32,
+        ENUMTY.Tfloat32,
+        ENUMTY.Timaginary32 ->
+            size = 4
+
+        ENUMTY.Tint64,
+        ENUMTY.Tuns64,
+        ENUMTY.Tfloat64,
+        ENUMTY.Timaginary64 ->
+            size = 8
+
+        ENUMTY.Tfloat80,
+        ENUMTY.Timaginary80 -> {
+            TODO()
+//                size = Target.realsize
+        }
+
+        ENUMTY.Tcomplex32 ->
+            size = 8
+
+        ENUMTY.Tcomplex64,
+        ENUMTY.Tint128,
+        ENUMTY.Tuns128 ->
+            size = 16
+
+        ENUMTY.Tcomplex80 -> {
+            TODO()
+//                size = Target.realsize * 2
+        }
+
+        ENUMTY.Tvoid ->
+            size = 1
+
+        ENUMTY.Tbool ->
+            size = 1
+
+        ENUMTY.Tchar ->
+            size = 1
+
+        ENUMTY.Twchar ->
+            size = 2
+
+        ENUMTY.Tdchar ->
+            size = 4
+
+        else -> {
+            size = -1
+            assert(false)
+        }
+    }
+    return size
+}
 
 }

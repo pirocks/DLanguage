@@ -33,7 +33,7 @@ public abstract class DNamedStubElementType<S extends DNamedStubBase<T>, T exten
 
     @NotNull
     public DAttributes deserializeAttributes(@NotNull final StubInputStream dataStream, final StubElement parentStub) throws IOException {
-        return DAttributes.read(dataStream);
+        return DAttributes.Companion.read(dataStream);
     }
 
     @NotNull

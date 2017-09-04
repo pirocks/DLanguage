@@ -25,8 +25,7 @@ import net.masterthought.dlanguage.psi.DLanguageStructDeclaration
 //}
 //
 //
-class DTypeStruct : DType(ENUMTY.Tstruct, Flags()) {
-    val struct: DLanguageStructDeclaration
+class DTypeStruct(val struct: DLanguageStructDeclaration) : DType(ENUMTY.Tstruct, Flags()) {
 
     override fun toText(): String {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.

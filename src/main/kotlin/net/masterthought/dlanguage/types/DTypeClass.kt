@@ -47,4 +47,36 @@ class DTypeClass(val interfaceOrClass: InterfaceOrClass) : DType(ENUMTY.Tclass, 
     override fun implicitlyConvertibleTo(to: DType): Match {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
+
+    fun isBaseOf(`class`: DTypeClass): Pair<Boolean, Int> {
+        var cd: DTypeClass? = `class`
+        //printf("ClassDeclaration.isBaseOf(this = '%s', cd = '%s')\n", toChars(), cd.toChars());
+        while (cd != null) {
+            /* cd.baseClass might not be set if cd is forward referenced.
+             */
+            if (cd.baseClass() != null && !cd.isInterfaceDeclaration()) {
+                throw UnableToDeduceTypeException()
+//                    cd.error("base class is forward referenced by %s", toChars());
+            }
+
+            if (this == cd.baseClass())
+                return Pair(true, 0)
+
+            cd = cd.baseClass()
+        }
+        return Pair(false, 0)
+    }
+
+    fun isInterfaceDeclaration(): Boolean {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    fun baseClass(): DTypeClass? {
+        val superType = interfaceOrClass.baseClassList?.baseClasss?.firstOrNull()?.type
+        if (superType != null) {
+            return from(superType, true, Mods()) as DTypeClass//todo cache etc...
+        } else {
+            return null
+        }
+    }
 }
