@@ -1,4 +1,4 @@
-module gold.types.convertible.pointer.declarations;
+module declarations;
 
 class TopLevel : TopLevelInterface{}
 

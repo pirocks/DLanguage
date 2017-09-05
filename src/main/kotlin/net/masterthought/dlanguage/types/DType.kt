@@ -261,10 +261,6 @@ abstract class DType(open val ty: TY, val flags: Flags) {
         if (t1.varargs != t2.varargs)
             return 0
 
-        fun convertParams(parameters: List<Pair<DType, String>>): List<DTypeParameter> {//todo this function should not need to exsist
-            return parameters.map { DTypeParameter(DTypeStorageClass(/*todo*/), false/*todo*/, it.second, it.first) }
-        }
-
         if (t1.parameters.isNotEmpty() && t2.parameters.isNotEmpty()) {//check that this is correct
             val dim = DTypeParameter.dim(t1.parameters)
             if (dim != DTypeParameter.dim(t2.parameters))
@@ -328,10 +324,10 @@ abstract class DType(open val ty: TY, val flags: Flags) {
                 return Lcovariant(t1, t2)
 
             // If t1n is forward referenced:
-            val cd = t1n.interfaceOrClass
+//            val cd = t1n.interfaceOrClass
 //            if (cd._scope)
 //                cd.semantic(null);
-            return 3 // forward references
+//            return 3 // forward references
         }
         if (t1n.ty == ENUMTY.Tstruct && t2n.ty == ENUMTY.Tstruct) {
             if ((t1n as DTypeStruct).struct == (t2n as DTypeStruct).struct && MODimplicitConv(t1n.mods, t2n.mods))//this can't be correct either
