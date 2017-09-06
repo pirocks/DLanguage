@@ -8,14 +8,15 @@ open class Mods {
     open var MODshared: Boolean
     open var MODwild: Boolean
 
-    constructor(MODconst: Boolean = false, MODimmutable: Boolean = false, MODshared: Boolean = false, MODwild: Boolean = false) {
+    constructor(MODconst: Boolean = false, MODimmutable: Boolean = false, MODshared: Boolean = false, MODwild: Boolean = false, MODmutable: Boolean = false) {
         this.MODconst = MODconst
         this.MODimmutable = MODimmutable
         this.MODshared = MODshared
         this.MODwild = MODwild
+        this.MODmutable = MODmutable
     }
 
-    open var MODmutable: Boolean = false//not really used
+    open var MODmutable: Boolean//not really used
     open var MODwildconst: Boolean
         get() = MODconst && MODwild
         set(thing) = throw IllegalStateException(thing.toString())

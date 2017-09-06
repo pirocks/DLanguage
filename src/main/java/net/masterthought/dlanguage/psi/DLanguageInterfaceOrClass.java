@@ -38,4 +38,6 @@ public interface DLanguageInterfaceOrClass extends PsiElement, DNamedElement, St
                                         @NotNull final PsiElement place) {
         return ScopeProcessorImpl.INSTANCE.processDeclarations(this, processor, state, lastParent, place);
     }
+
+    boolean isInterface();
 }

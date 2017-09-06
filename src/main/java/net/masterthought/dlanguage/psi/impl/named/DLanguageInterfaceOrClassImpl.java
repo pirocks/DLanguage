@@ -88,4 +88,12 @@ public class DLanguageInterfaceOrClassImpl extends DNamedStubbedPsiElementBase<D
         return ScopeProcessorImpl.INSTANCE.processDeclarations(this, processor, state, lastParent, place);
     }
 
+    @Override
+    public boolean isInterface() {
+        if (getGreenStub() != null) {
+            return getGreenStub().isInterface();
+        }
+        return getParent() instanceof DLanguageInterfaceDeclaration;
+    }
+
 }

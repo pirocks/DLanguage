@@ -405,4 +405,62 @@ abstract class DType(open val ty: TY, val flags: Flags) {
     }
 
 
+//    fun aliasThisOf(): DType? {
+//        val ad = isAggregate(this);
+//        if (!ad || !ad.aliasthis)
+//            return null;
+//
+//        val s = ad.aliasthis;
+//        if (s.isAliasDeclaration())
+//            s = s.toAlias();
+//
+//        if (s.isTupleDeclaration())
+//            return null;
+//
+//        if (null != s.isVarDeclaration())
+//        {
+//            val t = vd.type;
+//            if (vd.needThis())
+//                t = t.addMod(this.mods);
+//            return t;
+//        }
+//        if (null != s.isFuncDeclaration())
+//        {
+//            fd = resolveFuncCall(Loc(), null, fd, null, this, null, 1);
+//            if (!fd || fd.errors || !fd.functionSemantic())
+//                return DType.terror;
+//
+//            val t = fd.type.nextOf();
+//            if (!t) // issue 14185
+//                throw UnableToDeduceTypeException()
+//            t = t.substWildTo( if(mods == Mods()) Mods(MODmutable = false) else mods);
+//            return t;
+//        }
+//        if (null != .isDeclaration())
+//        {
+//            assert(d.type);
+//            return d.type;
+//        }
+//        if (null != s.isEnumDeclaration())
+//        {
+//            return ed.type;
+//        }
+//        if (null != s.isTemplateDeclaration())
+//        {
+//            assert(td._scope);
+//            val fd = resolveFuncCall(Loc(), null, td, null, this, null, 1);
+//            if (!fd || fd.errors || !fd.functionSemantic())
+//                throw UnableToDeduceTypeException()
+//
+//            val t = fd.type.nextOf();
+//            if (!t)
+//                throw UnableToDeduceTypeException()
+//            t = t.substWildTo(if(mods == Mods()) Mods(MODmutable = false) else mods);
+//            return t;
+//        }
+//
+//        //printf("%s\n", s.kind());
+//        return null;
+//    }
+
 }

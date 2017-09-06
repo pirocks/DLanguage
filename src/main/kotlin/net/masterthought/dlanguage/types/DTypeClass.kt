@@ -45,16 +45,39 @@ class DTypeClass(val interfaceOrClass: InterfaceOrClass) : DType(ENUMTY.Tclass, 
     }
 
     override fun implicitlyConvertibleTo(to: DType): Match {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        var m = constConv(to)
+        if (m > MATCH.nomatch)
+            return m
+
+//        val cdto = to.isClassHandle()
+        val cdto = (to as? DTypeClass)?.interfaceOrClass
+        if (cdto != null) {//todo when is this null? with interface declarations?
+            //printf("TypeClass::implicitConvTo(to = '%s') %s, isbase = %d %d\n", to->toChars(), toChars(), cdto->isBaseInfoComplete(), sym->isBaseInfoComplete());
+            if ((to as DTypeClass).isBaseOf(this).first && MODimplicitConv(mods, to.mods)) {
+                //printf("'to' is base\n");
+                return MATCH.convert
+            }
+        }
+
+        m = MATCH.nomatch
+//        if (interfaceOrClass.aliasthis && !(att.RECtracing)) {
+//            att = (att.RECtracing) as AliasThisRec
+//            m = aliasThisOf().implicitlyConvertibleTo(to)
+//            att = LINK.d(AliasThisRec)
+//            att and RECtracing.inv()
+//        }
+        //todo handle alias this.
+        return m
     }
 
+    //todo this needs testing
     fun isBaseOf(`class`: DTypeClass): Pair<Boolean, Int> {
         var cd: DTypeClass? = `class`
         //printf("ClassDeclaration.isBaseOf(this = '%s', cd = '%s')\n", toChars(), cd.toChars());
         while (cd != null) {
             /* cd.baseClass might not be set if cd is forward referenced.
              */
-            if (cd.baseClass() != null && !cd.isInterfaceDeclaration()) {
+            if (cd.baseClass() == null && !cd.isInterfaceDeclaration()) {
                 throw UnableToDeduceTypeException()
 //                    cd.error("base class is forward referenced by %s", toChars());
             }
@@ -68,7 +91,7 @@ class DTypeClass(val interfaceOrClass: InterfaceOrClass) : DType(ENUMTY.Tclass, 
     }
 
     fun isInterfaceDeclaration(): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return interfaceOrClass.isInterface
     }
 
     fun baseClass(): DTypeClass? {
