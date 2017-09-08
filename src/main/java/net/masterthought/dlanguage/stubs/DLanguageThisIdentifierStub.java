@@ -20,7 +20,7 @@ public class DLanguageThisIdentifierStub extends DNamedStubBase<DLanguageThisIde
     }
 
     public DType getDType() {
-        DType dType = null;
+        final DType dType = null;
         return dType;
     }
 }

@@ -10,12 +10,12 @@ import net.masterthought.dlanguage.stubs.interfaces.HasMembersStub;
 public class DLanguageInterfaceOrClassStub extends DNamedStubBase<DLanguageInterfaceOrClass> implements HasMembersStub {
     private final boolean isInterface;
 
-    public DLanguageInterfaceOrClassStub(final StubElement parent, final IStubElementType elementType, final String name, final DAttributes attributes, boolean isInterface) {
+    public DLanguageInterfaceOrClassStub(final StubElement parent, final IStubElementType elementType, final String name, final DAttributes attributes, final boolean isInterface) {
         super(parent, elementType, name, attributes);
         this.isInterface = isInterface;
     }
 
-    public DLanguageInterfaceOrClassStub(final StubElement parent, final IStubElementType elementType, final StringRef name, final DAttributes attributes, boolean isInterface) {
+    public DLanguageInterfaceOrClassStub(final StubElement parent, final IStubElementType elementType, final StringRef name, final DAttributes attributes, final boolean isInterface) {
         super(parent, elementType, name, attributes);
         this.isInterface = isInterface;
     }

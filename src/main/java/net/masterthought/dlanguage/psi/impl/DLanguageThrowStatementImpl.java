@@ -16,15 +16,15 @@ import static net.masterthought.dlanguage.psi.DLanguageTypes.OP_SCOLON;
 
 
 public class DLanguageThrowStatementImpl extends ASTWrapperPsiElement implements DLanguageThrowStatement {
-    public DLanguageThrowStatementImpl(ASTNode node) {
+    public DLanguageThrowStatementImpl(final ASTNode node) {
         super(node);
     }
 
-    public void accept(@NotNull DLanguageVisitor visitor) {
+    public void accept(@NotNull final DLanguageVisitor visitor) {
         visitor.visitThrowStatement(this);
     }
 
-    public void accept(@NotNull PsiElementVisitor visitor) {
+    public void accept(@NotNull final PsiElementVisitor visitor) {
         if (visitor instanceof DLanguageVisitor) accept((DLanguageVisitor) visitor);
         else super.accept(visitor);
     }
