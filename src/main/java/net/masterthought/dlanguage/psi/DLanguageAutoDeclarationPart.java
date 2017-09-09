@@ -3,12 +3,13 @@ package net.masterthought.dlanguage.psi;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.StubBasedPsiElement;
 import net.masterthought.dlanguage.psi.interfaces.DNamedElement;
+import net.masterthought.dlanguage.psi.interfaces.VariableDeclarationInterface;
 import net.masterthought.dlanguage.stubs.DLanguageAutoDeclarationPartStub;
 import net.masterthought.dlanguage.types.TypeOf;
 import org.jetbrains.annotations.Nullable;
 
 
-public interface DLanguageAutoDeclarationPart extends PsiElement, DNamedElement, StubBasedPsiElement<DLanguageAutoDeclarationPartStub>, TypeOf {
+public interface DLanguageAutoDeclarationPart extends PsiElement, DNamedElement, StubBasedPsiElement<DLanguageAutoDeclarationPartStub>, TypeOf, VariableDeclarationInterface {
     @Nullable
     DLanguageIdentifier getIdentifier();
 

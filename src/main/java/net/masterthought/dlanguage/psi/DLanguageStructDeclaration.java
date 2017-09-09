@@ -6,10 +6,13 @@ import com.intellij.psi.StubBasedPsiElement;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import net.masterthought.dlanguage.psi.interfaces.DNamedElement;
 import net.masterthought.dlanguage.psi.interfaces.HasMembers;
+import net.masterthought.dlanguage.psi.interfaces.VariableDeclarationInterface;
 import net.masterthought.dlanguage.resolve.ScopeProcessorImpl;
 import net.masterthought.dlanguage.stubs.DLanguageStructDeclarationStub;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Set;
 
 
 public interface DLanguageStructDeclaration extends PsiElement, DNamedElement, StubBasedPsiElement<DLanguageStructDeclarationStub>, HasMembers<DLanguageStructDeclarationStub> {
@@ -30,6 +33,8 @@ public interface DLanguageStructDeclaration extends PsiElement, DNamedElement, S
 
     @Nullable
     PsiElement getOP_SCOLON();
+
+    Set<VariableDeclarationInterface> getFields();
 
     @Override
     default boolean processDeclarations(@NotNull final PsiScopeProcessor processor,

@@ -12,7 +12,6 @@ class DTypeAArray(val value: DType, val key: DType) : DTypeArray(value, ENUMTY.T
         //printf("TypeAArray::implicitConvTo(to = %s) this = %s\n", to->toChars(), toChars());
         if (equals(to))
             return MATCH.exact
-
         if (to.ty == ENUMTY.Taarray) {
             val ta = to as DTypeAArray
 
