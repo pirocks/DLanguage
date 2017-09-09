@@ -9,35 +9,30 @@ class DTypeAArray(val value: DType, val key: DType) : DTypeArray(value, ENUMTY.T
     }
 
     override fun implicitlyConvertibleTo(to: DType): Match {
-        /**
-         * equals return ...
-         * use super of Type, not TypeNext, and do a bunch of constConv
-         */
-
-        /**
-         * //printf("TypeAArray::implicitConvTo(to = %s) this = %s\n", to->toChars(), toChars());
+        //printf("TypeAArray::implicitConvTo(to = %s) this = %s\n", to->toChars(), toChars());
         if (equals(to))
-        return MATCHexact;
+            return MATCH.exact
 
-        if (to.ty == Taarray)
-        {
-        TypeAArray ta = cast(TypeAArray)to;
+        if (to.ty == ENUMTY.Taarray) {
+            val ta = to as DTypeAArray
 
-        if (!MODimplicitConv(next.mod, ta.next.mod))
-        return MATCHnomatch; // not const-compatible
+            if (!MODimplicitConv(next.mods, ta.next.mods))
+                return MATCH.nomatch // not const-compatible
 
-        if (!MODimplicitConv(index.mod, ta.index.mod))
-        return MATCHnomatch; // not const-compatible
+            if (!MODimplicitConv(key.mods, ta.key.mods))
+                return MATCH.nomatch // not const-compatible
 
-        MATCH m = next.constConv(ta.next);
-        MATCH mi = index.constConv(ta.index);
-        if (m > MATCHnomatch && mi > MATCHnomatch)
-        {
-        return MODimplicitConv(mod, to.mod) ? MATCHconst : MATCHnomatch;
+            val m: MATCH = next.constConv(ta.next)
+            val mi: MATCH = key.constConv(ta.key)
+            if (m != MATCH.nomatch && mi != MATCH.nomatch) {
+                if (MODimplicitConv(mods, to.mods))
+                    return MATCH.constant
+                else
+                    return MATCH.nomatch
+            }
         }
-        }
-        return Type.implicitConvTo(to);
-         */
+//        return DType.implicitConvTo(to);
+        return Match.nomatch
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }
