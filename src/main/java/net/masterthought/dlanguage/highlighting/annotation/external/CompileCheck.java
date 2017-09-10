@@ -126,7 +126,19 @@ public class CompileCheck {
     private TextRange calculateTextRange(final PsiFile file, final int line, final int column) {
         final int startOffset = getOffsetStart(file, line, column);
         final int endOffset = getOffsetEnd(file, line);
-        return new TextRange(startOffset, endOffset);
+        try {
+            class IgnoresInvalidTextRange extends TextRange {
+                private IgnoresInvalidTextRange(final int startOffset, final int endOffset) {
+                    super(startOffset, endOffset, false);
+                }
+            }
+            return new IgnoresInvalidTextRange(startOffset, endOffset);
+        } catch (final Throwable e) {
+            if (e.getMessage().contains("Invalid range")) {
+                //do nothing.
+                return null;
+            } else throw e;
+        }
     }
 
     @Nullable
@@ -186,5 +198,4 @@ public class CompileCheck {
             }
         }
     }
-
 }

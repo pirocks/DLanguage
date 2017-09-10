@@ -9122,8 +9122,8 @@ class DLangParser {
     }
 
     class Pair<First, Second> {
-        First first;
-        Second second;
+        final First first;
+        final Second second;
 
         Pair(final First first, final Second second) {
             this.first = first;

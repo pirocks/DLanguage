@@ -7,11 +7,10 @@ import com.intellij.execution.process.ProcessOutput;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.projectRoots.*;
 import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.roots.PersistentOrderRootType;
 import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import net.masterthought.dlanguage.icons.DLanguageIcons;
 import net.masterthought.dlanguage.library.LibFileRootType;
 import org.jdom.Element;
@@ -163,18 +162,23 @@ public class DLanguageSdkType extends SdkType {
     }
 
     @Nullable
+    @Override // takes precedence over getVersionString(String)
+    public String getVersionString(@NotNull final Sdk sdk) {
+        final String sdkName = sdk.getName();
+        return StringUtil.isNotEmpty(sdkName) ? sdkName.substring(sdkName.indexOf('v') + 1) : null;
+    }
+
+    @Nullable
     @Override
     public String getVersionString(@NotNull final String sdkHome) {
         final String version = getDmdVersion(sdkHome);
 
-        if(version != null) {
-            final Matcher m = Pattern.compile(".*v(\\d+\\.\\d+).*").matcher(version);
-            if(m.matches()) {
-                return m.group(1);
-            }
+        if(StringUtil.isNotEmpty(version)) {
+            final Matcher m = Pattern.compile("(?:.*v)(.+)").matcher(version);
+            return m.matches() ? m.group(1) : null;
         }
 
-        return "2.0";
+        return null;
     }
 
     @Nullable
@@ -183,9 +187,10 @@ public class DLanguageSdkType extends SdkType {
         return null;
     }
 
+    @NotNull
     @Override
     public String getPresentableName() {
-        return "Digital Mars D compiler";
+        return DLanguageBundle.INSTANCE.message("compilers.dmd.presentableName");
     }
 
     @Override
@@ -195,7 +200,7 @@ public class DLanguageSdkType extends SdkType {
     }
 
     @Override
-    public boolean isRootTypeApplicable(final OrderRootType type) {
+    public boolean isRootTypeApplicable(@NotNull final OrderRootType type) {
         return type != LibFileRootType.getInstance() && super.isRootTypeApplicable(type);
     }
 

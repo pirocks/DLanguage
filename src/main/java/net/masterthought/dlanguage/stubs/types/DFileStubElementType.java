@@ -43,7 +43,7 @@ public class DFileStubElementType extends IStubFileElementType<DLanguageFileStub
 
     @Override
     public void serialize(@NotNull final DLanguageFileStub stub, @NotNull final StubOutputStream dataStream) throws IOException {
-        dataStream.writeName(stub.getModuleName());
+        dataStream.writeName(stub.getModuleName());//todo is this correct?
     }
 
     @NotNull
