@@ -49,7 +49,7 @@ public class GdbMiList {
      * @return A string containing the contents of the list.
      */
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         sb.append("[");
         switch (type) {
             case Values:

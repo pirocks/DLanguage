@@ -40,7 +40,7 @@ public class GdbBreakpointProperties extends XBreakpointProperties {
     }
 
     @Override
-    public void loadState(Object state) {
+    public void loadState(final Object state) {
         m_log.warn("loadState: stub");
     }
 }

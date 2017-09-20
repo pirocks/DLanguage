@@ -84,7 +84,7 @@ public class GdbThread {
      * @return The formatted thread name.
      */
     public String formatName() {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         sb.append("[");
         sb.append(id);
         sb.append("]");

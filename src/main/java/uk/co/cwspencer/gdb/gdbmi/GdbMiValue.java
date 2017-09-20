@@ -57,7 +57,7 @@ public class GdbMiValue {
     /**
      * Constructor; sets the type only.
      */
-    public GdbMiValue(Type type) {
+    public GdbMiValue(final Type type) {
         this.type = type;
 
         if (type == Type.String) {
@@ -75,7 +75,7 @@ public class GdbMiValue {
      * @return A string containing the value.
      */
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         switch (type) {
             case String:
                 sb.append("\"");

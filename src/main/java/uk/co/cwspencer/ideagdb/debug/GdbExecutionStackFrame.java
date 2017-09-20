@@ -71,7 +71,7 @@ public class GdbExecutionStackFrame extends XStackFrame {
      * @param thread The thread the frame is in.
      * @param frame  The GDB stack frame to wrap.
      */
-    public GdbExecutionStackFrame(Gdb gdb, int thread, GdbStackFrame frame) {
+    public GdbExecutionStackFrame(final Gdb gdb, final int thread, final GdbStackFrame frame) {
         m_gdb = gdb;
         m_thread = thread;
         m_frame = frame;
@@ -119,8 +119,8 @@ public class GdbExecutionStackFrame extends XStackFrame {
             return null;
         }
 
-        String path = m_frame.fileAbsolute.replace(File.separatorChar, '/');
-        VirtualFile file = LocalFileSystem.getInstance().findFileByPath(path);
+        final String path = m_frame.fileAbsolute.replace(File.separatorChar, '/');
+        final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(path);
         if (file == null) {
             return null;
         }
@@ -133,7 +133,7 @@ public class GdbExecutionStackFrame extends XStackFrame {
      *
      * @param component The stack frame visual component.
      */
-    public void customizePresentation(SimpleColoredComponent component) {
+    public void customizePresentation(final SimpleColoredComponent component) {
         if (m_frame.address == null) {
             component.append(XDebuggerBundle.message("invalid.frame"),
                 SimpleTextAttributes.ERROR_ATTRIBUTES);
@@ -141,11 +141,11 @@ public class GdbExecutionStackFrame extends XStackFrame {
         }
 
         // Format the frame information
-        XSourcePosition sourcePosition = getSourcePosition();
+        final XSourcePosition sourcePosition = getSourcePosition();
         if (m_frame.function != null) {
             // Strip any arguments from the function name
             String function = m_frame.function;
-            int parenIndex = function.indexOf('(');
+            final int parenIndex = function.indexOf('(');
             if (parenIndex != -1) {
                 function = function.substring(0, parenIndex);
             }
@@ -170,7 +170,7 @@ public class GdbExecutionStackFrame extends XStackFrame {
                 sourcePosition.getFile().getName() + ":" + (sourcePosition.getLine() + 1),
                 SimpleTextAttributes.REGULAR_ATTRIBUTES);
         } else {
-            String addressStr = "0x" + Long.toHexString(m_frame.address);
+            final String addressStr = "0x" + Long.toHexString(m_frame.address);
             component.append(addressStr, SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES);
             component.appendTextPadding(addressStr.length());
         }
@@ -190,7 +190,7 @@ public class GdbExecutionStackFrame extends XStackFrame {
         // -var-update after the first call)
         m_gdb.getVariablesForFrame(m_thread, m_frameNo, new Gdb.GdbEventCallback() {
             @Override
-            public void onGdbCommandCompleted(GdbEvent event) {
+            public void onGdbCommandCompleted(final GdbEvent event) {
                 onGdbVariablesReady(event, node);
             }
         });
@@ -202,7 +202,7 @@ public class GdbExecutionStackFrame extends XStackFrame {
      * @param event The event.
      * @param node  The node passed to computeChildren().
      */
-    private void onGdbVariablesReady(GdbEvent event, final XCompositeNode node) {
+    private void onGdbVariablesReady(final GdbEvent event, final XCompositeNode node) {
         if (event instanceof GdbErrorEvent) {
             node.setErrorMessage(((GdbErrorEvent) event).message);
             return;
@@ -214,15 +214,15 @@ public class GdbExecutionStackFrame extends XStackFrame {
         }
 
         // Inspect the data
-        GdbVariableObjects variables = (GdbVariableObjects) event;
+        final GdbVariableObjects variables = (GdbVariableObjects) event;
         if (variables.objects == null || variables.objects.isEmpty()) {
             // No data
             node.addChildren(XValueChildrenList.EMPTY, true);
         }
 
         // Build a XValueChildrenList
-        XValueChildrenList children = new XValueChildrenList(variables.objects.size());
-        for (GdbVariableObject variable : variables.objects) {
+        final XValueChildrenList children = new XValueChildrenList(variables.objects.size());
+        for (final GdbVariableObject variable : variables.objects) {
             children.add(variable.expression, new GdbValue(m_gdb, variable));
         }
         node.addChildren(children, true);

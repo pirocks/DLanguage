@@ -39,7 +39,7 @@ public class GdbMiStreamRecord extends GdbMiRecord {
      * @param type      The record type.
      * @param userToken The user token. May be null.
      */
-    public GdbMiStreamRecord(Type type, Long userToken) {
+    public GdbMiStreamRecord(final Type type, final Long userToken) {
         this.type = type;
         this.userToken = userToken;
     }

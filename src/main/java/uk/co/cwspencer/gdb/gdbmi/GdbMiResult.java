@@ -43,7 +43,7 @@ public class GdbMiResult {
      *
      * @param variable The name of the variable.
      */
-    public GdbMiResult(String variable) {
+    public GdbMiResult(final String variable) {
         this.variable = variable;
     }
 

@@ -54,7 +54,7 @@ public class GdbExecutionStack extends XExecutionStack {
      * @param gdb    Handle to the GDB instance.
      * @param thread The thread.
      */
-    public GdbExecutionStack(Gdb gdb, GdbThread thread) {
+    public GdbExecutionStack(final Gdb gdb, final GdbThread thread) {
         super(thread.formatName(), DlangIcons.FILE);
 
         m_gdb = gdb;
@@ -87,10 +87,10 @@ public class GdbExecutionStack extends XExecutionStack {
     @Override
     public void computeStackFrames(final int firstFrameIndex, final XStackFrameContainer container) {
         // Just get the whole stack
-        String command = "-stack-list-frames";
+        final String command = "-stack-list-frames";
         m_gdb.sendCommand(command, new Gdb.GdbEventCallback() {
             @Override
-            public void onGdbCommandCompleted(GdbEvent event) {
+            public void onGdbCommandCompleted(final GdbEvent event) {
                 onGdbStackTraceReady(event, firstFrameIndex, container);
             }
         });
@@ -103,8 +103,8 @@ public class GdbExecutionStack extends XExecutionStack {
      * @param firstFrameIndex The first frame from the list to use.
      * @param container       The container passed to computeStackFrames().
      */
-    private void onGdbStackTraceReady(GdbEvent event, int firstFrameIndex,
-                                      XStackFrameContainer container) {
+    private void onGdbStackTraceReady(final GdbEvent event, final int firstFrameIndex,
+                                      final XStackFrameContainer container) {
         if (event instanceof GdbErrorEvent) {
             container.errorOccurred(((GdbErrorEvent) event).message);
             return;
@@ -116,16 +116,16 @@ public class GdbExecutionStack extends XExecutionStack {
         }
 
         // Inspect the stack trace
-        GdbStackTrace stackTrace = (GdbStackTrace) event;
+        final GdbStackTrace stackTrace = (GdbStackTrace) event;
         if (stackTrace.stack == null || stackTrace.stack.isEmpty()) {
             // No data
             container.addStackFrames(new ArrayList<XStackFrame>(0), true);
         }
 
         // Build a list of GdbExecutionStaceFrames
-        List<GdbExecutionStackFrame> stack = new ArrayList<GdbExecutionStackFrame>();
+        final List<GdbExecutionStackFrame> stack = new ArrayList<GdbExecutionStackFrame>();
         for (int i = firstFrameIndex; i < stackTrace.stack.size(); ++i) {
-            GdbStackFrame frame = stackTrace.stack.get(i);
+            final GdbStackFrame frame = stackTrace.stack.get(i);
             stack.add(new GdbExecutionStackFrame(m_gdb, m_thread.id, frame));
         }
 

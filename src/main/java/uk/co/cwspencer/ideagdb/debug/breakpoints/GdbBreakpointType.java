@@ -46,16 +46,16 @@ public class GdbBreakpointType extends XLineBreakpointType<GdbBreakpointProperti
 
     @Nullable
     @Override
-    public GdbBreakpointProperties createBreakpointProperties(@NotNull VirtualFile file, int line) {
+    public GdbBreakpointProperties createBreakpointProperties(@NotNull final VirtualFile file, final int line) {
         m_log.warn("createBreakpointProperties: stub");
         return null;
     }
 
     @Override
-    public boolean canPutAt(@NotNull VirtualFile file, int line, @NotNull Project project) {
+    public boolean canPutAt(@NotNull final VirtualFile file, final int line, @NotNull final Project project) {
         // TODO: We can't just always return true because otherwise it prevents Java breakpoints
         // being set. It seems like there should be a better way to do this though..
-        String extension = file.getExtension();
+        final String extension = file.getExtension();
         return extension != null && extension.equals("d");
     }
 }

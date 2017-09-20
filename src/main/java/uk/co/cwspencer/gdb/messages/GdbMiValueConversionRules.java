@@ -52,10 +52,10 @@ public class GdbMiValueConversionRules {
      * Converts results where the target type has a GdbMiObject annotation.
      */
     @GdbMiConversionRule
-    public static Object convertValueToTypeWithGdbMiObjectAnnotation(Class<?> type,
-                                                                     ParameterizedType genericType, GdbMiValue value) {
+    public static Object convertValueToTypeWithGdbMiObjectAnnotation(final Class<?> type,
+                                                                     final ParameterizedType genericType, final GdbMiValue value) {
         // If the field type class has a GdbMiObject annotation then recursively process it
-        GdbMiObject objectAnnotation = type.getAnnotation(GdbMiObject.class);
+        final GdbMiObject objectAnnotation = type.getAnnotation(GdbMiObject.class);
         if (objectAnnotation != null) {
             // Get the list of results
             List<GdbMiResult> results = null;
@@ -98,8 +98,8 @@ public class GdbMiValueConversionRules {
      * Converts string results to enums.
      */
     @GdbMiConversionRule
-    public static Object convertStringToEnum(Class<?> type, ParameterizedType genericType,
-                                             GdbMiValue value) {
+    public static Object convertStringToEnum(final Class<?> type, final ParameterizedType genericType,
+                                             final GdbMiValue value) {
         // Check if the field type is an enum
         if (type.isEnum()) {
             // Only strings can be converted
@@ -110,7 +110,7 @@ public class GdbMiValueConversionRules {
             }
 
             // Check the enum has a GdbMiEnum annotation
-            GdbMiEnum enumAnnotation = type.getAnnotation(GdbMiEnum.class);
+            final GdbMiEnum enumAnnotation = type.getAnnotation(GdbMiEnum.class);
             if (enumAnnotation == null) {
                 m_log.warn(type + " is an enum, but the does not have a GdbMiEnum annotation");
                 return null;
@@ -119,7 +119,7 @@ public class GdbMiValueConversionRules {
             // Convert the GDB/MI string into an enum value name. Hyphens are stripped and the
             // first letter of each word is capitalised
             boolean capitalise = true;
-            StringBuilder sb = new StringBuilder();
+            final StringBuilder sb = new StringBuilder();
             for (int i = 0; i != value.string.length(); ++i) {
                 char ch = value.string.charAt(i);
                 if (ch == '-') {
@@ -132,12 +132,12 @@ public class GdbMiValueConversionRules {
                 }
                 sb.append(ch);
             }
-            String name = sb.toString();
+            final String name = sb.toString();
 
             // Search the enum
             Enum jValue = null;
-            Enum[] enumConstants = (Enum[]) type.getEnumConstants();
-            for (Enum enumValue : enumConstants) {
+            final Enum[] enumConstants = (Enum[]) type.getEnumConstants();
+            for (final Enum enumValue : enumConstants) {
                 if (enumValue.name().equals(name)) {
                     // Found it
                     jValue = enumValue;
@@ -161,8 +161,8 @@ public class GdbMiValueConversionRules {
      * Converts strings to simple types.
      */
     @GdbMiConversionRule
-    public static Object convertStringToSimple(Class<?> type, ParameterizedType genericType,
-                                               GdbMiValue value) {
+    public static Object convertStringToSimple(final Class<?> type, final ParameterizedType genericType,
+                                               final GdbMiValue value) {
         if (value.type == GdbMiValue.Type.String) {
             if (type.equals(String.class)) {
                 return value.string;
@@ -177,9 +177,9 @@ public class GdbMiValueConversionRules {
                 } else {
                     // Try parsing it as an integer
                     try {
-                        int intValue = Integer.parseInt(value.string);
+                        final int intValue = Integer.parseInt(value.string);
                         return intValue != 0;
-                    } catch (NumberFormatException ex) {
+                    } catch (final NumberFormatException ex) {
                         // Don't know how to convert this to a bool
                     }
                 }
@@ -193,31 +193,31 @@ public class GdbMiValueConversionRules {
      */
     @SuppressWarnings("unchecked")
     @GdbMiConversionRule
-    public static Object convertListOfValuesToList(Class<?> type, ParameterizedType genericType,
-                                                   GdbMiValue value) throws InvocationTargetException, IllegalAccessException {
+    public static Object convertListOfValuesToList(final Class<?> type, final ParameterizedType genericType,
+                                                   final GdbMiValue value) throws InvocationTargetException, IllegalAccessException {
         if (value.type != GdbMiValue.Type.List || genericType == null ||
             !type.equals(List.class)) {
             return null;
         }
 
-        List list = new ArrayList();
+        final List list = new ArrayList();
         if (value.list.type == GdbMiList.Type.Empty) {
             return list;
         }
 
         // Get the value type from the list
-        Type[] listTypes = genericType.getActualTypeArguments();
+        final Type[] listTypes = genericType.getActualTypeArguments();
         assert listTypes.length == 1;
         if (!(listTypes[0] instanceof Class)) {
             return null;
         }
 
-        Class<?> listItemType = (Class<?>) listTypes[0];
+        final Class<?> listItemType = (Class<?>) listTypes[0];
 
         // Process each value in the list
         if (value.list.type == GdbMiList.Type.Values) {
-            for (GdbMiValue subValue : value.list.values) {
-                Object item = GdbMiMessageConverter.applyConversionRules(listItemType, null,
+            for (final GdbMiValue subValue : value.list.values) {
+                final Object item = GdbMiMessageConverter.applyConversionRules(listItemType, null,
                     subValue);
                 if (item == null) {
                     return null;
@@ -225,8 +225,8 @@ public class GdbMiValueConversionRules {
                 list.add(item);
             }
         } else {
-            for (GdbMiResult result : value.list.results) {
-                Object item = GdbMiMessageConverter.applyConversionRules(listItemType, null,
+            for (final GdbMiResult result : value.list.results) {
+                final Object item = GdbMiMessageConverter.applyConversionRules(listItemType, null,
                     result.value);
                 if (item == null) {
                     return null;
@@ -245,8 +245,8 @@ public class GdbMiValueConversionRules {
      */
     @SuppressWarnings("unchecked")
     @GdbMiConversionRule
-    public static Object convertListOfTuplesToMap(Class<?> type, ParameterizedType genericType,
-                                                  GdbMiValue value) throws InvocationTargetException, IllegalAccessException {
+    public static Object convertListOfTuplesToMap(final Class<?> type, final ParameterizedType genericType,
+                                                  final GdbMiValue value) throws InvocationTargetException, IllegalAccessException {
         if (value.type != GdbMiValue.Type.List || genericType == null ||
             !type.equals(Map.class)) {
             return null;
@@ -257,30 +257,30 @@ public class GdbMiValueConversionRules {
             return null;
         }
 
-        Map map = new LinkedHashMap();
+        final Map map = new LinkedHashMap();
         if (value.list.type == GdbMiList.Type.Empty) {
             return map;
         }
 
         // Get the key and value types from the map
-        Type[] mapTypes = genericType.getActualTypeArguments();
+        final Type[] mapTypes = genericType.getActualTypeArguments();
         assert mapTypes.length == 2;
         if (!(mapTypes[0] instanceof Class) || !(mapTypes[1] instanceof Class)) {
             return null;
         }
 
-        Class<?> mapKeyType = (Class<?>) mapTypes[0];
-        Class<?> mapValueType = (Class<?>) mapTypes[1];
+        final Class<?> mapKeyType = (Class<?>) mapTypes[0];
+        final Class<?> mapValueType = (Class<?>) mapTypes[1];
 
         // Process each value in the list
-        for (GdbMiValue subValue : value.list.values) {
+        for (final GdbMiValue subValue : value.list.values) {
             // Verify the value is a tuple and contains two elements
             if (subValue.type != GdbMiValue.Type.Tuple || subValue.tuple.size() < 1 ||
                 subValue.tuple.size() > 2) {
                 return null;
             }
 
-            Object key = GdbMiMessageConverter.applyConversionRules(mapKeyType, null,
+            final Object key = GdbMiMessageConverter.applyConversionRules(mapKeyType, null,
                 subValue.tuple.get(0).value);
             if (key == null) {
                 return null;

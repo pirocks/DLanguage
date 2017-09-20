@@ -54,14 +54,14 @@ public class GdbConsoleView {
     // The last command that was sent
     private String m_lastCommand;
 
-    public GdbConsoleView(Gdb gdb, @NotNull Project project) {
+    public GdbConsoleView(final Gdb gdb, @NotNull final Project project) {
         m_gdb = gdb;
         m_console = new ConsoleViewImpl(project, true);
         m_consoleContainer.add(m_console.getComponent(), BorderLayout.CENTER);
         m_prompt.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent event) {
-                String command = event.getActionCommand();
+            public void actionPerformed(final ActionEvent event) {
+                final String command = event.getActionCommand();
                 if (command.isEmpty() && m_lastCommand != null) {
                     // Resend the last command
                     m_gdb.sendCommand(m_lastCommand);

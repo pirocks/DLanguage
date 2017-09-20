@@ -38,13 +38,13 @@ public class GdbMiUtil {
      * @param string The string to format.
      * @return The formatted string.
      */
-    public static String formatGdbString(String string, Boolean autoQuote) {
-        StringBuilder sb = new StringBuilder();
+    public static String formatGdbString(final String string, final Boolean autoQuote) {
+        final StringBuilder sb = new StringBuilder();
         if (autoQuote) {
             sb.append("\"");
         }
         for (int i = 0; i < string.length(); ++i) {
-            char ch = string.charAt(i);
+            final char ch = string.charAt(i);
 
             // Restrict the use of escape characters to those that are likely to be safe
             if (ch == '\n') {
@@ -69,7 +69,7 @@ public class GdbMiUtil {
         return sb.toString();
     }
 
-    public static String formatGdbString(String string) {
+    public static String formatGdbString(final String string) {
         return formatGdbString(string, true);
     }
 }

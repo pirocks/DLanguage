@@ -49,7 +49,7 @@ public class GdbBreakpointHandler extends
     private final Gdb m_gdb;
     private final GdbDebugProcess m_debugProcess;
 
-    public GdbBreakpointHandler(Gdb gdb, GdbDebugProcess debugProcess) {
+    public GdbBreakpointHandler(final Gdb gdb, final GdbDebugProcess debugProcess) {
         super(GdbBreakpointType.class);
         m_gdb = gdb;
         m_debugProcess = debugProcess;
@@ -66,21 +66,21 @@ public class GdbBreakpointHandler extends
         // TODO: I think we can use tracepoints here if the suspend policy isn't to stop the process
 
         // Check if the breakpoint already exists
-        Integer number = findBreakpointNumber(breakpoint);
+        final Integer number = findBreakpointNumber(breakpoint);
         if (number != null) {
             // Re-enable the breakpoint
             m_gdb.sendCommand("-break-enable " + number);
         } else {
             // Set the breakpoint
-            XSourcePosition sourcePosition = breakpoint.getSourcePosition();
+            final XSourcePosition sourcePosition = breakpoint.getSourcePosition();
             if (sourcePosition == null) {
                 return;
             }
 
-            String command = "-break-insert -f " + sourcePosition.getFile().getPath() + ":" + (sourcePosition.getLine() + 1);
+            final String command = "-break-insert -f " + sourcePosition.getFile().getPath() + ":" + (sourcePosition.getLine() + 1);
             m_gdb.sendCommand(command, new Gdb.GdbEventCallback() {
                 @Override
-                public void onGdbCommandCompleted(GdbEvent event) {
+                public void onGdbCommandCompleted(final GdbEvent event) {
                     onGdbBreakpointReady(event, breakpoint);
                 }
             });
@@ -94,9 +94,9 @@ public class GdbBreakpointHandler extends
      * @param temporary  Whether we are deleting the breakpoint or temporarily disabling it.
      */
     @Override
-    public void unregisterBreakpoint(@NotNull XLineBreakpoint<GdbBreakpointProperties> breakpoint,
-                                     boolean temporary) {
-        Integer number = findBreakpointNumber(breakpoint);
+    public void unregisterBreakpoint(@NotNull final XLineBreakpoint<GdbBreakpointProperties> breakpoint,
+                                     final boolean temporary) {
+        final Integer number = findBreakpointNumber(breakpoint);
         if (number == null) {
             m_log.warn("Cannot remove breakpoint; could not find it in breakpoint table");
             return;
@@ -120,7 +120,7 @@ public class GdbBreakpointHandler extends
      * @param number The GDB breakpoint number.
      * @return The breakpoint, or null if it could not be found.
      */
-    public XLineBreakpoint<GdbBreakpointProperties> findBreakpoint(int number) {
+    public XLineBreakpoint<GdbBreakpointProperties> findBreakpoint(final int number) {
         synchronized (m_breakpoints) {
             return m_breakpoints.get(number);
         }
@@ -132,8 +132,8 @@ public class GdbBreakpointHandler extends
      * @param breakpoint The breakpoint to search for.
      * @return The breakpoint number, or null if it could not be found.
      */
-    public Integer findBreakpointNumber(XLineBreakpoint<GdbBreakpointProperties> breakpoint) {
-        List<Integer> numbers;
+    public Integer findBreakpointNumber(final XLineBreakpoint<GdbBreakpointProperties> breakpoint) {
+        final List<Integer> numbers;
         synchronized (m_breakpoints) {
             numbers = m_breakpoints.getKeysByValue(breakpoint);
         }
@@ -153,8 +153,8 @@ public class GdbBreakpointHandler extends
      * @param event      The event.
      * @param breakpoint The breakpoint we tried to set.
      */
-    private void onGdbBreakpointReady(GdbEvent event,
-                                      XLineBreakpoint<GdbBreakpointProperties> breakpoint) {
+    private void onGdbBreakpointReady(final GdbEvent event,
+                                      final XLineBreakpoint<GdbBreakpointProperties> breakpoint) {
         if (event instanceof GdbErrorEvent) {
             m_debugProcess.getSession().updateBreakpointPresentation(breakpoint,
                 AllIcons.Debugger.Db_invalid_breakpoint, ((GdbErrorEvent) event).message);
@@ -168,7 +168,7 @@ public class GdbBreakpointHandler extends
         }
 
         // Save the breakpoint
-        GdbBreakpoint gdbBreakpoint = (GdbBreakpoint) event;
+        final GdbBreakpoint gdbBreakpoint = (GdbBreakpoint) event;
         if (gdbBreakpoint.number == null) {
             m_debugProcess.getSession().updateBreakpointPresentation(breakpoint,
                 AllIcons.Debugger.Db_invalid_breakpoint, "No breakpoint number received from GDB");

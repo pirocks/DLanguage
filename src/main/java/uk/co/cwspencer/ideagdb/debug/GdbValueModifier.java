@@ -53,7 +53,7 @@ public class GdbValueModifier extends XValueModifier {
      * @param gdb            Handle to the GDB instance.
      * @param variableObject The variable object to modify.
      */
-    public GdbValueModifier(Gdb gdb, GdbVariableObject variableObject) {
+    public GdbValueModifier(final Gdb gdb, final GdbVariableObject variableObject) {
         m_gdb = gdb;
         m_variableObject = variableObject;
     }
@@ -65,12 +65,12 @@ public class GdbValueModifier extends XValueModifier {
      * @param callback   The callback for when the operation is complete.
      */
     @Override
-    public void setValue(@NotNull String expression, @NotNull final XModificationCallback callback) {
+    public void setValue(@NotNull final String expression, @NotNull final XModificationCallback callback) {
         // TODO: Format the expression properly
         m_gdb.sendCommand("-var-assign " + m_variableObject.name + " " + expression,
             new Gdb.GdbEventCallback() {
                 @Override
-                public void onGdbCommandCompleted(GdbEvent event) {
+                public void onGdbCommandCompleted(final GdbEvent event) {
                     onGdbNewValueReady(event, callback);
                 }
             });
@@ -93,7 +93,7 @@ public class GdbValueModifier extends XValueModifier {
      * @param event    The event.
      * @param callback The callback passed to setValue().
      */
-    private void onGdbNewValueReady(GdbEvent event, XModificationCallback callback) {
+    private void onGdbNewValueReady(final GdbEvent event, final XModificationCallback callback) {
         if (event instanceof GdbErrorEvent) {
             callback.errorOccurred(((GdbErrorEvent) event).message);
             return;

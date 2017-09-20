@@ -45,7 +45,7 @@ public class GdbUtil {
         .put("string", false)
         .build();
 
-    public static String getGoObjectType(String originalType) {
+    public static String getGoObjectType(final String originalType) {
         if (originalType.contains("struct string")) {
             return originalType.replace("struct ", "");
         }
@@ -53,8 +53,8 @@ public class GdbUtil {
         return originalType;
     }
 
-    public static Boolean supportsEditing(String varType) {
-        String goType = getGoObjectType(varType);
+    public static Boolean supportsEditing(final String varType) {
+        final String goType = getGoObjectType(varType);
 
         if (!editingSupport.containsKey(goType)) {
             return true;
@@ -63,13 +63,13 @@ public class GdbUtil {
         return editingSupport.get(goType);
     }
 
-    public static Boolean isKnownGdb(String path) {
+    public static Boolean isKnownGdb(final String path) {
         try {
-            GeneralCommandLine command = new GeneralCommandLine();
+            final GeneralCommandLine command = new GeneralCommandLine();
             command.setExePath(path);
             command.addParameter("--version");
 
-            ProcessOutput output = new CapturingProcessHandler(
+            final ProcessOutput output = new CapturingProcessHandler(
                 command.createProcess(),
                 Charset.defaultCharset(),
                 command.getCommandLineString()).runProcess();
@@ -79,21 +79,21 @@ public class GdbUtil {
                 return false;
             }
 
-            String cmdOutput = output.getStdout();
+            final String cmdOutput = output.getStdout();
             return cmdOutput.contains("(GDB) 7.6") || cmdOutput.contains("(GDB) 7.4");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             LOG.error("Exception while executing the process:", e);
             return false;
         }
     }
 
-    public static Boolean isValidGdbPath(String path) {
+    public static Boolean isValidGdbPath(final String path) {
         try {
-            GeneralCommandLine command = new GeneralCommandLine();
+            final GeneralCommandLine command = new GeneralCommandLine();
             command.setExePath(path);
             command.addParameter("--version");
 
-            ProcessOutput output = new CapturingProcessHandler(
+            final ProcessOutput output = new CapturingProcessHandler(
                 command.createProcess(),
                 Charset.defaultCharset(),
                 command.getCommandLineString()).runProcess();
@@ -105,7 +105,7 @@ public class GdbUtil {
 
             // TODO maybe we should warn the user that his GDB version is not the latest at time of writing (7.6.2)
             return output.getStdout().contains("GDB");
-        } catch (Exception e) {
+        } catch (final Exception e) {
 //            LOG.error("Exception while executing the process:", e);
             return false;
         }

@@ -45,8 +45,8 @@ public class GdbDebuggerEditorsProvider extends XDebuggerEditorsProvider {
 
     @NotNull
     @Override
-    public Document createDocument(@NotNull Project project, @NotNull String text,
-                                   @Nullable XSourcePosition sourcePosition, @NotNull EvaluationMode mode) {
+    public Document createDocument(@NotNull final Project project, @NotNull final String text,
+                                   @Nullable final XSourcePosition sourcePosition, @NotNull final EvaluationMode mode) {
         // TODO: Return a proper value
         return EditorFactory.getInstance().createDocument(text);
     }

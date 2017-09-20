@@ -43,7 +43,7 @@ public class GdbMiToken {
      * @param type  The type of the token.
      * @param value The value of the token.
      */
-    public GdbMiToken(Type type, String value) {
+    public GdbMiToken(final Type type, final String value) {
         this.type = type;
         this.value = value;
     }
@@ -53,7 +53,7 @@ public class GdbMiToken {
      *
      * @param type The type of token.
      */
-    public GdbMiToken(Type type) {
+    public GdbMiToken(final Type type) {
         this.type = type;
     }
 
@@ -63,7 +63,7 @@ public class GdbMiToken {
      * @return A string containing the type and, if set, the value.
      */
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         sb.append(type);
         if (value != null) {
             sb.append(": ");

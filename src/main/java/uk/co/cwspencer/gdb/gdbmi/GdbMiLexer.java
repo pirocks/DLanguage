@@ -54,7 +54,7 @@ public class GdbMiLexer {
      * @param data   Data read from the GDB process.
      * @param length Number of bytes from data to process.
      */
-    public void process(byte[] data, int length) {
+    public void process(final byte[] data, final int length) {
         for (int i = 0; i != length; ++i) {
             switch (m_state) {
                 case Idle:

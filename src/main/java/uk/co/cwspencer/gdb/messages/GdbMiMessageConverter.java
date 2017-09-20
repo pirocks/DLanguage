@@ -56,7 +56,7 @@ public class GdbMiMessageConverter {
      * @param record The GDB result record.
      * @return The new object, or null if it could not be created.
      */
-    public static GdbEvent processRecord(GdbMiResultRecord record) {
+    public static GdbEvent processRecord(final GdbMiResultRecord record) {
         return processRecord(record, null);
     }
 
@@ -69,12 +69,12 @@ public class GdbMiMessageConverter {
      *                    type.
      * @return The new object, or null if it could not be created.
      */
-    public static GdbEvent processRecord(GdbMiResultRecord record, String commandType) {
+    public static GdbEvent processRecord(final GdbMiResultRecord record, final String commandType) {
         // Iterate through the list of event types
         GdbEvent event = null;
         for (Class<?> clazz : GdbMiEventTypes.classes) {
             // Verify the type has a GdbMiEvent annotation
-            GdbMiEvent eventAnnotation = clazz.getAnnotation(GdbMiEvent.class);
+            final GdbMiEvent eventAnnotation = clazz.getAnnotation(GdbMiEvent.class);
             if (eventAnnotation == null) {
                 m_log.warn("Class " + clazz.getName() + " is in the GdbMiEventTypes.classes list " +
                     "but does not have a GdbMiEvent annotation");
@@ -84,7 +84,7 @@ public class GdbMiMessageConverter {
             // Check if this type is appropriate for the record
             if (eventAnnotation.recordType() == record.type) {
                 boolean match = false;
-                for (String className : eventAnnotation.className()) {
+                for (final String className : eventAnnotation.className()) {
                     if (className.equals(record.className)) {
                         match = true;
                         break;
@@ -97,8 +97,8 @@ public class GdbMiMessageConverter {
 
                     // If it is a 'done' event then search for a more specific event type
                     if (commandType != null && clazz.equals(GdbDoneEvent.class)) {
-                        for (Class<?> doneEventClass : GdbMiEventTypes.doneEventTypes) {
-                            GdbMiDoneEvent doneEventAnnotation =
+                        for (final Class<?> doneEventClass : GdbMiEventTypes.doneEventTypes) {
+                            final GdbMiDoneEvent doneEventAnnotation =
                                 doneEventClass.getAnnotation(GdbMiDoneEvent.class);
                             if (doneEventAnnotation == null) {
                                 m_log.warn("Class " + doneEventClass.getName() + " is in the " +
@@ -111,7 +111,7 @@ public class GdbMiMessageConverter {
                                 // Found a match; check if we need to transpose a specific result
                                 // onto this class
                                 if (!doneEventAnnotation.transpose().isEmpty()) {
-                                    List<GdbMiResult> transposedResults = transposeDoneEvent(record,
+                                    final List<GdbMiResult> transposedResults = transposeDoneEvent(record,
                                         doneEventAnnotation);
                                     if (transposedResults == null) {
                                         m_log.warn("Class " + doneEventClass.getName() + " is " +
@@ -148,10 +148,10 @@ public class GdbMiMessageConverter {
      * @param doneEventAnnotation The annotation on the class.
      * @return The new list of results, or null if it could not be transposed.
      */
-    private static List<GdbMiResult> transposeDoneEvent(GdbMiResultRecord record,
-                                                        GdbMiDoneEvent doneEventAnnotation) {
+    private static List<GdbMiResult> transposeDoneEvent(final GdbMiResultRecord record,
+                                                        final GdbMiDoneEvent doneEventAnnotation) {
         // Search for the requested result
-        for (GdbMiResult result : record.results) {
+        for (final GdbMiResult result : record.results) {
             if (result.variable.equals(doneEventAnnotation.transpose())) {
                 // Found it; check it is an appropriate type (it must be a tuple or a list of
                 // results)
@@ -176,20 +176,20 @@ public class GdbMiMessageConverter {
      * @param results The results from GDB.
      * @return The new object, or null if it could not be created.
      */
-    public static Object processObject(Class<?> clazz, List<GdbMiResult> results) {
+    public static Object processObject(final Class<?> clazz, final List<GdbMiResult> results) {
         try {
-            Object object = clazz.newInstance();
+            final Object object = clazz.newInstance();
 
             // Populate the fields with data from the result
-            Field[] fields = clazz.getFields();
-            for (Field field : fields) {
-                GdbMiField fieldAnnotation = field.getAnnotation(GdbMiField.class);
+            final Field[] fields = clazz.getFields();
+            for (final Field field : fields) {
+                final GdbMiField fieldAnnotation = field.getAnnotation(GdbMiField.class);
                 if (fieldAnnotation == null) {
                     continue;
                 }
 
                 // Find a result with the requested variable name
-                for (GdbMiResult result : results) {
+                for (final GdbMiResult result : results) {
                     if (!fieldAnnotation.name().equals(result.variable)) {
                         continue;
                     }
@@ -201,7 +201,7 @@ public class GdbMiMessageConverter {
             }
 
             return object;
-        } catch (Throwable ex) {
+        } catch (final Throwable ex) {
             m_log.warn("Failed to convert GDB/MI message to a Java object", ex);
             return null;
         }
@@ -217,12 +217,12 @@ public class GdbMiMessageConverter {
      * @param fieldAnnotation The GdbMiField annotation on the field.
      * @param result          The result to get the data from.
      */
-    private static void convertField(Object event, Class<?> clazz, Field field,
-                                     GdbMiField fieldAnnotation, GdbMiResult result) throws InvocationTargetException,
+    private static void convertField(final Object event, final Class<?> clazz, final Field field,
+                                     final GdbMiField fieldAnnotation, final GdbMiResult result) throws InvocationTargetException,
         IllegalAccessException {
         // Check the result type is supported by the field
         boolean foundValueType = false;
-        for (GdbMiValue.Type valueType : fieldAnnotation.valueType()) {
+        for (final GdbMiValue.Type valueType : fieldAnnotation.valueType()) {
             if (valueType == result.value.type) {
                 foundValueType = true;
                 break;
@@ -253,42 +253,42 @@ public class GdbMiMessageConverter {
      * @param fieldAnnotation The GdbMiField annotation on the field.
      * @param result          The result to get the data from.
      */
-    private static void convertFieldUsingValueProcessor(Object event, Class<?> clazz, Field field,
-                                                        GdbMiField fieldAnnotation, GdbMiResult result) throws InvocationTargetException,
+    private static void convertFieldUsingValueProcessor(final Object event, final Class<?> clazz, final Field field,
+                                                        final GdbMiField fieldAnnotation, final GdbMiResult result) throws InvocationTargetException,
         IllegalAccessException {
         // Get the value processor function
-        Method valueProcessor;
+        final Method valueProcessor;
         try {
-            String valueProcessorName = fieldAnnotation.valueProcessor();
-            int lastDotIndex = valueProcessorName.lastIndexOf('.');
+            final String valueProcessorName = fieldAnnotation.valueProcessor();
+            final int lastDotIndex = valueProcessorName.lastIndexOf('.');
             if (lastDotIndex == -1) {
                 // Value processor is a function on the parent class
                 valueProcessor = clazz.getMethod(valueProcessorName, GdbMiValue.class);
             } else {
                 // Value processor is a fully-qualified name
-                String className = valueProcessorName.substring(0, lastDotIndex);
-                String methodName = valueProcessorName.substring(lastDotIndex + 1);
+                final String className = valueProcessorName.substring(0, lastDotIndex);
+                final String methodName = valueProcessorName.substring(lastDotIndex + 1);
 
-                Class<?> valueProcessorClass = Class.forName(className);
+                final Class<?> valueProcessorClass = Class.forName(className);
                 valueProcessor = valueProcessorClass.getMethod(methodName, GdbMiValue.class);
             }
-        } catch (NoSuchMethodException ex) {
+        } catch (final NoSuchMethodException ex) {
             m_log.warn("Annotation on " + field.getName() + " has value processor " +
                 fieldAnnotation.valueProcessor() + ", but no such function exists on the class " +
                 "(or it does not take the right arguments)", ex);
             return;
-        } catch (ClassNotFoundException ex) {
+        } catch (final ClassNotFoundException ex) {
             m_log.warn("Annotation on " + field.getName() + " has value processor " +
                 fieldAnnotation.valueProcessor() + ", but the referenced class does not exist", ex);
             return;
         }
 
         // Invoke the method
-        Object resultValue = null;
-        Object value;
+        final Object resultValue = null;
+        final Object value;
         try {
             value = valueProcessor.invoke(event, result.value);
-        } catch (Throwable ex) {
+        } catch (final Throwable ex) {
             m_log.warn("Field to invoke value processor for field " + field.getName() + " with " +
                 "value " + resultValue, ex);
             return;
@@ -316,7 +316,7 @@ public class GdbMiMessageConverter {
         // Set the value on the field
         try {
             field.set(event, value);
-        } catch (IllegalAccessException ex) {
+        } catch (final IllegalAccessException ex) {
             m_log.warn("Failed to set value on field " + field, ex);
         }
     }
@@ -329,17 +329,17 @@ public class GdbMiMessageConverter {
      * @param field  The field on the object to put the value into.
      * @param result The result to get the data from.
      */
-    static void convertFieldManually(Object event, Field field, GdbMiResult result) throws
+    static void convertFieldManually(final Object event, final Field field, final GdbMiResult result) throws
         InvocationTargetException, IllegalAccessException {
         ParameterizedType genericType = null;
         {
-            Type basicGenericType = field.getGenericType();
+            final Type basicGenericType = field.getGenericType();
             if (basicGenericType instanceof ParameterizedType) {
                 genericType = (ParameterizedType) basicGenericType;
             }
         }
 
-        Object value = applyConversionRules(field.getType(), genericType, result.value);
+        final Object value = applyConversionRules(field.getType(), genericType, result.value);
         if (value != null) {
             field.set(event, value);
         } else {
@@ -356,12 +356,12 @@ public class GdbMiMessageConverter {
      * @param value             The value to get the data from.
      * @return The new object, or null if it could not be created.
      */
-    static Object applyConversionRules(Class<?> targetType, ParameterizedType genericTargetType,
-                                       GdbMiValue value) throws InvocationTargetException, IllegalAccessException {
+    static Object applyConversionRules(final Class<?> targetType, final ParameterizedType genericTargetType,
+                                       final GdbMiValue value) throws InvocationTargetException, IllegalAccessException {
         // Apply the conversion rules until we get a match
         Object jValue = null;
-        Method[] methods = GdbMiValueConversionRules.class.getMethods();
-        for (Method method : methods) {
+        final Method[] methods = GdbMiValueConversionRules.class.getMethods();
+        for (final Method method : methods) {
             // Verify it is a conversion rule
             if (method.getAnnotation(GdbMiConversionRule.class) == null) {
                 continue;

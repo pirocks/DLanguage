@@ -47,7 +47,7 @@ public class GdbMiResultRecord extends GdbMiRecord {
      * @param type      The record type.
      * @param userToken The user token. May be null.
      */
-    public GdbMiResultRecord(Type type, Long userToken) {
+    public GdbMiResultRecord(final Type type, final Long userToken) {
         this.type = type;
         this.userToken = userToken;
     }
@@ -58,7 +58,7 @@ public class GdbMiResultRecord extends GdbMiRecord {
      * @return A string containing the class name and any results.
      */
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         sb.append(className);
         if (!results.isEmpty()) {
             sb.append(": [");

@@ -68,7 +68,7 @@ public class GdbMiParser {
      *
      * @param data Data read from the GDB process.
      */
-    public void process(byte[] data) {
+    public void process(final byte[] data) {
         process(data, data.length);
     }
 
@@ -78,13 +78,13 @@ public class GdbMiParser {
      * @param data   Data read from the GDB process.
      * @param length Number of bytes from data to process.
      */
-    public void process(byte[] data, int length) {
+    public void process(final byte[] data, final int length) {
         // Run the data through the lexer first
         m_lexer.process(data, length);
 
         // Parse the data
-        List<GdbMiToken> tokens = m_lexer.getTokens();
-        for (GdbMiToken token : tokens) {
+        final List<GdbMiToken> tokens = m_lexer.getTokens();
+        for (final GdbMiToken token : tokens) {
             if (m_state.isEmpty()) {
                 throw new IllegalArgumentException("Mismatched tuple or list detected");
             }
@@ -254,7 +254,7 @@ public class GdbMiParser {
                     // Identifier
                     switch (token.type) {
                         case Identifier: {
-                            GdbMiResult result = new GdbMiResult(token.value);
+                            final GdbMiResult result = new GdbMiResult(token.value);
                             m_valueStack.push(result.value);
                             m_resultRecord.results.add(result);
                         }
@@ -342,7 +342,7 @@ public class GdbMiParser {
 
                             if (!m_valueStack.isEmpty()) {
                                 // Currently reading a value
-                                GdbMiValue value = m_valueStack.pop();
+                                final GdbMiValue value = m_valueStack.pop();
                                 assert value.type == GdbMiValue.Type.String;
                                 value.string = m_sb.toString();
                                 m_state.pop();
@@ -438,7 +438,7 @@ public class GdbMiParser {
                             // 0x1ff. As such, we need to parse it as an integer and then truncate it to
                             // 8 bits before casting it to a 16-bit char to match the behaviour of C strings
                         {
-                            int ch = Integer.parseInt(token.value, 8) & 0xff;
+                            final int ch = Integer.parseInt(token.value, 8) & 0xff;
                             m_sb.append((char) ch);
                         }
                         setState(FsmState.String);
@@ -458,13 +458,13 @@ public class GdbMiParser {
                             // two characters to prevent Integer.parseInt from throwing an exception if it
                             // is too long
                         {
-                            int tokenLen = token.value.length();
+                            final int tokenLen = token.value.length();
                             if (tokenLen > 2) {
                                 token.value = token.value.substring(tokenLen - 2, tokenLen);
                             }
                         }
                         {
-                            int ch = Integer.parseInt(token.value, 16);
+                            final int ch = Integer.parseInt(token.value, 16);
                             m_sb.append((char) ch);
                         }
                         setState(FsmState.String);
@@ -486,7 +486,7 @@ public class GdbMiParser {
                             break;
 
                         case Identifier: {
-                            GdbMiResult result = new GdbMiResult(token.value);
+                            final GdbMiResult result = new GdbMiResult(token.value);
                             m_valueStack.lastElement().tuple.add(result);
                             m_valueStack.push(result.value);
                         }
@@ -524,7 +524,7 @@ public class GdbMiParser {
                     // Identifier
                     switch (token.type) {
                         case Identifier: {
-                            GdbMiResult result = new GdbMiResult(token.value);
+                            final GdbMiResult result = new GdbMiResult(token.value);
                             m_valueStack.lastElement().tuple.add(result);
                             m_valueStack.push(result.value);
                         }
@@ -552,10 +552,10 @@ public class GdbMiParser {
                             break;
 
                         case StringPrefix: {
-                            GdbMiList list = m_valueStack.lastElement().list;
+                            final GdbMiList list = m_valueStack.lastElement().list;
                             list.type = GdbMiList.Type.Values;
                             list.values = new ArrayList<GdbMiValue>();
-                            GdbMiValue value = new GdbMiValue(GdbMiValue.Type.String);
+                            final GdbMiValue value = new GdbMiValue(GdbMiValue.Type.String);
                             list.values.add(value);
                             m_valueStack.push(value);
                         }
@@ -566,10 +566,10 @@ public class GdbMiParser {
                         break;
 
                         case TuplePrefix: {
-                            GdbMiList list = m_valueStack.lastElement().list;
+                            final GdbMiList list = m_valueStack.lastElement().list;
                             list.type = GdbMiList.Type.Values;
                             list.values = new ArrayList<GdbMiValue>();
-                            GdbMiValue value = new GdbMiValue(GdbMiValue.Type.Tuple);
+                            final GdbMiValue value = new GdbMiValue(GdbMiValue.Type.Tuple);
                             value.tuple = new ArrayList<GdbMiResult>();
                             list.values.add(value);
                             m_valueStack.push(value);
@@ -580,10 +580,10 @@ public class GdbMiParser {
                         break;
 
                         case Identifier: {
-                            GdbMiList list = m_valueStack.lastElement().list;
+                            final GdbMiList list = m_valueStack.lastElement().list;
                             list.type = GdbMiList.Type.Results;
                             list.results = new ArrayList<GdbMiResult>();
-                            GdbMiResult result = new GdbMiResult(token.value);
+                            final GdbMiResult result = new GdbMiResult(token.value);
                             list.results.add(result);
                             m_valueStack.push(result.value);
                         }
@@ -623,7 +623,7 @@ public class GdbMiParser {
                     // ListPrefix
                     switch (token.type) {
                         case StringPrefix: {
-                            GdbMiValue value = new GdbMiValue(GdbMiValue.Type.String);
+                            final GdbMiValue value = new GdbMiValue(GdbMiValue.Type.String);
                             m_valueStack.lastElement().list.values.add(value);
                             m_valueStack.push(value);
                         }
@@ -634,7 +634,7 @@ public class GdbMiParser {
                         break;
 
                         case TuplePrefix: {
-                            GdbMiValue value = new GdbMiValue(GdbMiValue.Type.Tuple);
+                            final GdbMiValue value = new GdbMiValue(GdbMiValue.Type.Tuple);
                             value.tuple = new ArrayList<GdbMiResult>();
                             m_valueStack.lastElement().list.values.add(value);
                             m_valueStack.push(value);
@@ -645,7 +645,7 @@ public class GdbMiParser {
                         break;
 
                         case ListPrefix: {
-                            GdbMiValue value = new GdbMiValue(GdbMiValue.Type.List);
+                            final GdbMiValue value = new GdbMiValue(GdbMiValue.Type.List);
                             value.list = new GdbMiList();
                             m_valueStack.lastElement().list.values.add(value);
                             m_valueStack.push(value);
@@ -684,8 +684,8 @@ public class GdbMiParser {
                     // Identifier
                     switch (token.type) {
                         case Identifier: {
-                            GdbMiList list = m_valueStack.lastElement().list;
-                            GdbMiResult result = new GdbMiResult(token.value);
+                            final GdbMiList list = m_valueStack.lastElement().list;
+                            final GdbMiResult result = new GdbMiResult(token.value);
                             list.results.add(result);
                             m_valueStack.push(result.value);
                         }
@@ -740,7 +740,7 @@ public class GdbMiParser {
      *
      * @param state The new state.
      */
-    private void setState(FsmState state) {
+    private void setState(final FsmState state) {
         m_state.pop();
         m_state.push(state);
     }

@@ -57,7 +57,7 @@ public class GdbValue extends XValue {
      * @param gdb            Handle to the GDB instance.
      * @param variableObject The variable object to show the value of.
      */
-    public GdbValue(Gdb gdb, GdbVariableObject variableObject) {
+    public GdbValue(final Gdb gdb, final GdbVariableObject variableObject) {
         m_gdb = gdb;
         m_variableObject = variableObject;
     }
@@ -69,7 +69,7 @@ public class GdbValue extends XValue {
      * @param place Where the node will be shown.
      */
     @Override
-    public void computePresentation(@NotNull final XValueNode node, @NotNull XValuePlace place) {
+    public void computePresentation(@NotNull final XValueNode node, @NotNull final XValuePlace place) {
         final String goType = GdbUtil.getGoObjectType(m_variableObject.type);
         final Boolean hasChildren = m_variableObject.numChildren != null && m_variableObject.numChildren > 0;
 
@@ -111,7 +111,7 @@ public class GdbValue extends XValue {
         m_gdb.sendCommand("-var-list-children --all-values " +
             GdbMiUtil.formatGdbString(m_variableObject.name), new Gdb.GdbEventCallback() {
             @Override
-            public void onGdbCommandCompleted(GdbEvent event) {
+            public void onGdbCommandCompleted(final GdbEvent event) {
                 onGdbChildrenReady(event, node);
             }
         });
@@ -123,7 +123,7 @@ public class GdbValue extends XValue {
      * @param event The event.
      * @param node  The node passed to computeChildren().
      */
-    private void onGdbChildrenReady(GdbEvent event, final XCompositeNode node) {
+    private void onGdbChildrenReady(final GdbEvent event, final XCompositeNode node) {
         if (event instanceof GdbErrorEvent) {
             node.setErrorMessage(((GdbErrorEvent) event).message);
             return;
@@ -135,15 +135,15 @@ public class GdbValue extends XValue {
         }
 
         // Inspect the data
-        GdbVariableObjects variables = (GdbVariableObjects) event;
+        final GdbVariableObjects variables = (GdbVariableObjects) event;
         if (variables.objects == null || variables.objects.isEmpty()) {
             // No data
             node.addChildren(XValueChildrenList.EMPTY, true);
         }
 
         // Build a XValueChildrenList
-        XValueChildrenList children = new XValueChildrenList(variables.objects.size());
-        for (GdbVariableObject variable : variables.objects) {
+        final XValueChildrenList children = new XValueChildrenList(variables.objects.size());
+        for (final GdbVariableObject variable : variables.objects) {
             children.add(variable.expression, new GdbValue(m_gdb, variable));
         }
         node.addChildren(children, true);
@@ -154,13 +154,13 @@ public class GdbValue extends XValue {
 
         m_gdb.sendCommand("-var-list-children --all-values " + GdbMiUtil.formatGdbString(m_variableObject.name), new Gdb.GdbEventCallback() {
             @Override
-            public void onGdbCommandCompleted(GdbEvent event) {
+            public void onGdbCommandCompleted(final GdbEvent event) {
                 onGoGdbStringReady(node, event);
             }
         });
     }
 
-    private void onGoGdbStringReady(@NotNull final XValueNode node, GdbEvent event) {
+    private void onGoGdbStringReady(@NotNull final XValueNode node, final GdbEvent event) {
         String value;
         Boolean isTrueString = false;
         if (event instanceof GdbErrorEvent) {
@@ -170,15 +170,15 @@ public class GdbValue extends XValue {
             m_log.warn("Unexpected event " + event + " received from -var-list-children request");
         } else {
             // Inspect the data
-            GdbVariableObjects variables = (GdbVariableObjects) event;
+            final GdbVariableObjects variables = (GdbVariableObjects) event;
             if (variables.objects == null || variables.objects.isEmpty()) {
                 // No data
                 value = "Unexpected data received from GDB";
             } else {
                 value = "Unexpected data received from GDB";
-                String stringSubVar = GdbMiUtil.formatGdbString(m_variableObject.name, false) + ".str";
+                final String stringSubVar = GdbMiUtil.formatGdbString(m_variableObject.name, false) + ".str";
 
-                for (GdbVariableObject variable : variables.objects) {
+                for (final GdbVariableObject variable : variables.objects) {
                     if (variable.name.equals(stringSubVar)) {
                         value = variable.value;
                         isTrueString = true;
@@ -195,7 +195,7 @@ public class GdbValue extends XValue {
 
             node.setPresentation(getGdbVarIcon(), "string (" + value.length() + ")", value, false);
         } else {
-            Boolean hasChildren = m_variableObject.numChildren != null && m_variableObject.numChildren > 0;
+            final Boolean hasChildren = m_variableObject.numChildren != null && m_variableObject.numChildren > 0;
             node.setPresentation(getGdbVarIcon(), "unknown", m_variableObject.value, hasChildren);
         }
     }

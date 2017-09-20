@@ -188,12 +188,12 @@ public class GdbBreakpoint extends GdbDoneEvent {
     /**
      * Value processor for number.
      */
-    public Integer processNumber(GdbMiValue value) {
+    public Integer processNumber(final GdbMiValue value) {
         if (value.type != GdbMiValue.Type.String) {
             return null;
         }
 
-        int dotIndex = value.string.indexOf('.');
+        final int dotIndex = value.string.indexOf('.');
         if (dotIndex == -1) {
             return Integer.parseInt(value.string);
         } else {
@@ -204,12 +204,12 @@ public class GdbBreakpoint extends GdbDoneEvent {
     /**
      * Value processor for instanceNumber.
      */
-    public Integer processInstanceNumber(GdbMiValue value) {
+    public Integer processInstanceNumber(final GdbMiValue value) {
         if (value.type != GdbMiValue.Type.String) {
             return null;
         }
 
-        int dotIndex = value.string.indexOf('.');
+        final int dotIndex = value.string.indexOf('.');
         if (dotIndex == -1) {
             return null;
         } else {
@@ -220,7 +220,7 @@ public class GdbBreakpoint extends GdbDoneEvent {
     /**
      * Value processor for addressAvailability.
      */
-    public AddressAvailability processAddressAvailability(GdbMiValue value) {
+    public AddressAvailability processAddressAvailability(final GdbMiValue value) {
         if (value.type != GdbMiValue.Type.String) {
             return null;
         }
@@ -237,7 +237,7 @@ public class GdbBreakpoint extends GdbDoneEvent {
             try {
                 Long.parseLong(value.string.substring(2), 16);
                 return AddressAvailability.Available;
-            } catch (Throwable ex) {
+            } catch (final Throwable ex) {
                 return null;
             }
         }
@@ -248,7 +248,7 @@ public class GdbBreakpoint extends GdbDoneEvent {
     /**
      * Value processor for address.
      */
-    public Long processAddress(GdbMiValue value) {
+    public Long processAddress(final GdbMiValue value) {
         if (value.type != GdbMiValue.Type.String || value.string.equals("<PENDING>") ||
             value.string.equals("<MULTIPLE>")) {
             return null;

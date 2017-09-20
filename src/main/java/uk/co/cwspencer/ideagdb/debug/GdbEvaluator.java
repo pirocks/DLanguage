@@ -56,7 +56,7 @@ public class GdbEvaluator extends XDebuggerEvaluator {
      * @param thread The thread to evaluate expressions in.
      * @param frame  The frame to evaluate expressions in.
      */
-    public GdbEvaluator(Gdb gdb, int thread, int frame) {
+    public GdbEvaluator(final Gdb gdb, final int thread, final int frame) {
         m_gdb = gdb;
         m_thread = thread;
         m_frame = frame;
@@ -70,11 +70,11 @@ public class GdbEvaluator extends XDebuggerEvaluator {
      * @param expressionPosition ??
      */
     @Override
-    public void evaluate(@NotNull String expression, @NotNull final XEvaluationCallback callback,
-                         @Nullable XSourcePosition expressionPosition) {
+    public void evaluate(@NotNull final String expression, @NotNull final XEvaluationCallback callback,
+                         @Nullable final XSourcePosition expressionPosition) {
         m_gdb.evaluateExpression(m_thread, m_frame, expression, new Gdb.GdbEventCallback() {
             @Override
-            public void onGdbCommandCompleted(GdbEvent event) {
+            public void onGdbCommandCompleted(final GdbEvent event) {
                 onGdbExpressionReady(event, callback);
             }
         });
@@ -115,7 +115,7 @@ public class GdbEvaluator extends XDebuggerEvaluator {
      * @param event    The event.
      * @param callback The callback passed to evaluate().
      */
-    private void onGdbExpressionReady(GdbEvent event, XEvaluationCallback callback) {
+    private void onGdbExpressionReady(final GdbEvent event, final XEvaluationCallback callback) {
         if (event instanceof GdbErrorEvent) {
             callback.errorOccurred(((GdbErrorEvent) event).message);
             return;
@@ -126,13 +126,13 @@ public class GdbEvaluator extends XDebuggerEvaluator {
             return;
         }
 
-        GdbVariableObjects variableObjects = (GdbVariableObjects) event;
+        final GdbVariableObjects variableObjects = (GdbVariableObjects) event;
         if (variableObjects.objects.isEmpty()) {
             callback.errorOccurred("Failed to evaluate expression");
             return;
         }
 
-        GdbVariableObject variableObject = variableObjects.objects.get(0);
+        final GdbVariableObject variableObject = variableObjects.objects.get(0);
         if (variableObject.value == null) {
             callback.errorOccurred("Failed to evaluate expression");
             return;

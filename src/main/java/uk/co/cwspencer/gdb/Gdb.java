@@ -79,7 +79,7 @@ public class Gdb {
      * @param workingDirectory Working directory to launch the GDB process in. May be null.
      * @param listener         Listener that is to receive GDB events.
      */
-    public Gdb(@NotNull final String gdbPath, final String workingDirectory, GdbListener listener) {
+    public Gdb(@NotNull final String gdbPath, final String workingDirectory, final GdbListener listener) {
         // Prepare GDB
         m_listener = listener;
         m_readThread = new Thread(new Runnable() {
@@ -141,7 +141,7 @@ public class Gdb {
      * @param command The command to send. This may be a normal CLI command or a GDB/MI command. It
      *                should not contain any line breaks.
      */
-    public void sendCommand(String command) {
+    public void sendCommand(final String command) {
         sendCommand(command, null);
     }
 
@@ -152,7 +152,7 @@ public class Gdb {
      *                 should not contain any line breaks.
      * @param callback The callback function.
      */
-    public synchronized void sendCommand(String command, GdbEventCallback callback) {
+    public synchronized void sendCommand(final String command, final GdbEventCallback callback) {
         // Queue the command
         if (command.equals("-gdb-exit")) {
             m_queuedCommands.clear();
@@ -168,7 +168,7 @@ public class Gdb {
      * @param capability The capability to check for.
      * @return Whether GDB has the capability.
      */
-    public synchronized boolean hasCapability(String capability) {
+    public synchronized boolean hasCapability(final String capability) {
 
         final String cap = capability;
 
@@ -196,11 +196,11 @@ public class Gdb {
     public void getVariablesForFrame(final int thread, final int frame,
                                      final GdbEventCallback callback) {
         // Get a list of local variables
-        String command = "-stack-list-variables --thread " + thread + " --frame " + frame +
+        final String command = "-stack-list-variables --thread " + thread + " --frame " + frame +
             " --no-values";
         sendCommand(command, new GdbEventCallback() {
             @Override
-            public void onGdbCommandCompleted(GdbEvent event) {
+            public void onGdbCommandCompleted(final GdbEvent event) {
                 onGdbVariablesReady(event, thread, frame, callback);
             }
         });
@@ -214,18 +214,18 @@ public class Gdb {
      * @param expression The expression to evaluate.
      * @param callback   The callback function.
      */
-    public void evaluateExpression(int thread, int frame, final String expression,
+    public void evaluateExpression(final int thread, final int frame, final String expression,
                                    final GdbEventCallback callback) {
         // TODO: Make this more efficient
 
         // Create a new variable object if necessary
-        GdbVariableObject variableObject = m_variableObjectsByExpression.get(expression);
+        final GdbVariableObject variableObject = m_variableObjectsByExpression.get(expression);
         if (variableObject == null) {
-            String command = "-var-create --thread " + thread + " --frame " + frame + " - @ " +
+            final String command = "-var-create --thread " + thread + " --frame " + frame + " - @ " +
                 formatVarName(expression);
             sendCommand(command, new GdbEventCallback() {
                 @Override
-                public void onGdbCommandCompleted(GdbEvent event) {
+                public void onGdbCommandCompleted(final GdbEvent event) {
                     onGdbNewVariableObjectReady(event, expression, callback);
                 }
             });
@@ -235,8 +235,8 @@ public class Gdb {
         sendCommand("-var-update --thread " + thread + " --frame " + frame + " --all-values *",
             new GdbEventCallback() {
                 @Override
-                public void onGdbCommandCompleted(GdbEvent event) {
-                    HashSet<String> expressions = new HashSet<String>();
+                public void onGdbCommandCompleted(final GdbEvent event) {
+                    final HashSet<String> expressions = new HashSet<String>();
                     expressions.add(expression);
                     onGdbVariableObjectsUpdated(event, expressions, callback);
                 }
@@ -249,7 +249,7 @@ public class Gdb {
      * @param gdbPath          Path to the GDB executable.
      * @param workingDirectory Working directory to launch the GDB process in. May be null.
      */
-    private void runGdb(String gdbPath, String workingDirectory) {
+    private void runGdb(final String gdbPath, final String workingDirectory) {
         try {
             // Launch the process
             final String[] commandLine = {
@@ -262,7 +262,7 @@ public class Gdb {
                 workingDirectoryFile = new File(workingDirectory);
             }
 
-            Project project = ((GdbDebugProcess) m_listener).m_project;
+            final Project project = ((GdbDebugProcess) m_listener).m_project;
 
 //            Sdk sdk = SdkUtil.getGoogleGoSdkForProject(project);
 //            if (sdk == null) {
@@ -274,7 +274,7 @@ public class Gdb {
 //                return;
 //            }
 
-            String projectDir = project.getBasePath();
+            final String projectDir = project.getBasePath();
 
             if (projectDir == null) {
                 return;
@@ -282,8 +282,8 @@ public class Gdb {
 
 //            String[] goEnv = SdkUtil.getExtendedGoEnv(sdkData, projectDir, "");
 
-            Process process = Runtime.getRuntime().exec(commandLine, new String[]{}, workingDirectoryFile);
-            InputStream stream = process.getInputStream();
+            final Process process = Runtime.getRuntime().exec(commandLine, new String[]{}, workingDirectoryFile);
+            final InputStream stream = process.getInputStream();
 
             // Save a reference to the process and launch the writer thread
             synchronized (this) {
@@ -299,7 +299,7 @@ public class Gdb {
 
             // Start listening for data
             //GdbMiParser parser = new GdbMiParser();
-            GdbMiParser2 parser = new GdbMiParser2(((GdbDebugProcess) m_listener).m_gdbRawConsole);
+            final GdbMiParser2 parser = new GdbMiParser2(((GdbDebugProcess) m_listener).m_gdbRawConsole);
             byte[] buffer = new byte[BUFFER_SIZE];
             int bytes;
             while ((bytes = stream.read(buffer)) != -1) {
@@ -307,7 +307,7 @@ public class Gdb {
                 try {
                     parser.process(buffer, bytes);
                     buffer = new byte[BUFFER_SIZE];
-                } catch (IllegalArgumentException ex) {
+                } catch (final IllegalArgumentException ex) {
                     m_log.error("GDB/MI parsing error. Current buffer contents: \"" +
                         new String(buffer, 0, bytes) + "\"", ex);
                     m_listener.onGdbError(ex);
@@ -315,13 +315,13 @@ public class Gdb {
                 }
 
                 // Handle the records
-                List<GdbMiRecord> records = parser.getRecords();
-                for (GdbMiRecord record : records) {
+                final List<GdbMiRecord> records = parser.getRecords();
+                for (final GdbMiRecord record : records) {
                     handleRecord(record);
                 }
                 records.clear();
             }
-        } catch (Throwable ex) {
+        } catch (final Throwable ex) {
             m_listener.onGdbError(ex);
         }
     }
@@ -350,21 +350,21 @@ public class Gdb {
 
                     // Insert the commands into the pending queue
                     long token = m_token;
-                    for (CommandData command : m_queuedCommands) {
+                    for (final CommandData command : m_queuedCommands) {
                         m_pendingCommands.put(token++, command);
                     }
 
                     // Swap the queues
-                    List<CommandData> tmp = queuedCommands;
+                    final List<CommandData> tmp = queuedCommands;
                     queuedCommands = m_queuedCommands;
                     m_queuedCommands = tmp;
                 }
 
                 // Send the queued commands to GDB
-                StringBuilder sb = new StringBuilder();
-                for (CommandData command : queuedCommands) {
+                final StringBuilder sb = new StringBuilder();
+                for (final CommandData command : queuedCommands) {
                     // Construct the message
-                    long token = m_token++;
+                    final long token = m_token++;
                     m_listener.onGdbCommandSent(command.command, token);
 
                     sb.append(token);
@@ -374,13 +374,13 @@ public class Gdb {
                 queuedCommands.clear();
 
                 // Send the messages
-                byte[] message = sb.toString().getBytes(m_ascii);
+                final byte[] message = sb.toString().getBytes(m_ascii);
                 stream.write(message);
                 stream.flush();
             }
-        } catch (InterruptedException ex) {
+        } catch (final InterruptedException ex) {
             // We are exiting
-        } catch (Throwable ex) {
+        } catch (final Throwable ex) {
             m_listener.onGdbError(ex);
         }
     }
@@ -390,7 +390,7 @@ public class Gdb {
      *
      * @param record The record.
      */
-    private void handleRecord(GdbMiRecord record) {
+    private void handleRecord(final GdbMiRecord record) {
         switch (record.type) {
             case Target:
             case Console:
@@ -419,7 +419,7 @@ public class Gdb {
      *
      * @param record The record.
      */
-    private void handleStreamRecord(GdbMiStreamRecord record) {
+    private void handleStreamRecord(final GdbMiStreamRecord record) {
         // Notify the listener
         m_listener.onStreamRecordReceived(record);
     }
@@ -429,7 +429,7 @@ public class Gdb {
      *
      * @param record The record.
      */
-    private void handleResultRecord(GdbMiResultRecord record) {
+    private void handleResultRecord(final GdbMiResultRecord record) {
         // Notify the listener
         m_listener.onResultRecordReceived(record);
 
@@ -442,14 +442,14 @@ public class Gdb {
             }
             if (pendingCommand != null) {
                 // Get the command type
-                int separatorIndex = pendingCommand.command.indexOf(' ');
+                final int separatorIndex = pendingCommand.command.indexOf(' ');
                 commandType = separatorIndex == -1 ? pendingCommand.command :
                     pendingCommand.command.substring(0, separatorIndex);
             }
         }
 
         // Process the event into something more useful
-        GdbEvent event = GdbMiMessageConverter.processRecord(record, commandType);
+        final GdbEvent event = GdbMiMessageConverter.processRecord(record, commandType);
         if (event != null) {
             // Notify the listener
             m_listener.onGdbEventReceived(event);
@@ -467,14 +467,14 @@ public class Gdb {
      * @param frame    The frame number.
      * @param callback The user-provided callback function.
      */
-    private void onGdbVariablesReady(GdbEvent event, int thread, int frame,
+    private void onGdbVariablesReady(final GdbEvent event, final int thread, final int frame,
                                      final GdbEventCallback callback) {
         if (event instanceof GdbErrorEvent) {
             callback.onGdbCommandCompleted(event);
             return;
         }
         if (!(event instanceof GdbVariables)) {
-            GdbErrorEvent errorEvent = new GdbErrorEvent();
+            final GdbErrorEvent errorEvent = new GdbErrorEvent();
             errorEvent.message = "Unexpected data received from GDB";
             callback.onGdbCommandCompleted(errorEvent);
             m_log.warn("Unexpected event " + event + " received from -stack-list-variables " +
@@ -485,13 +485,13 @@ public class Gdb {
         // Create variable objects for each of the variables if we haven't done so already
         final GdbVariables variables = (GdbVariables) event;
         for (final String variable : variables.variables.keySet()) {
-            GdbVariableObject variableObject = m_variableObjectsByExpression.get(variable);
+            final GdbVariableObject variableObject = m_variableObjectsByExpression.get(variable);
             if (variableObject == null) {
-                String command = "-var-create --thread " + thread + " --frame " + frame + " - @ " +
+                final String command = "-var-create --thread " + thread + " --frame " + frame + " - @ " +
                     formatVarName(variable);
                 sendCommand(command, new GdbEventCallback() {
                     @Override
-                    public void onGdbCommandCompleted(GdbEvent event) {
+                    public void onGdbCommandCompleted(final GdbEvent event) {
                         onGdbNewVariableObjectReady(event, variable, callback);
                     }
                 });
@@ -502,7 +502,7 @@ public class Gdb {
         sendCommand("-var-update --thread " + thread + " --frame " + frame + " --all-values *",
             new GdbEventCallback() {
                 @Override
-                public void onGdbCommandCompleted(GdbEvent event) {
+                public void onGdbCommandCompleted(final GdbEvent event) {
                     onGdbVariableObjectsUpdated(event, variables.variables.keySet(), callback);
                 }
             });
@@ -515,23 +515,23 @@ public class Gdb {
      * @param expression The expression used to create the variable object.
      * @param callback   The user-provided callback function.
      */
-    private void onGdbNewVariableObjectReady(GdbEvent event, String expression,
-                                             GdbEventCallback callback) {
+    private void onGdbNewVariableObjectReady(final GdbEvent event, final String expression,
+                                             final GdbEventCallback callback) {
         if (event instanceof GdbErrorEvent) {
             callback.onGdbCommandCompleted(event);
             return;
         }
         if (!(event instanceof GdbVariableObject)) {
-            GdbErrorEvent errorEvent = new GdbErrorEvent();
+            final GdbErrorEvent errorEvent = new GdbErrorEvent();
             errorEvent.message = "Unexpected data received from GDB";
             callback.onGdbCommandCompleted(errorEvent);
             m_log.warn("Unexpected event " + event + " received from -var-create request");
             return;
         }
 
-        GdbVariableObject variableObject = (GdbVariableObject) event;
+        final GdbVariableObject variableObject = (GdbVariableObject) event;
         if (variableObject.name == null) {
-            GdbErrorEvent errorEvent = new GdbErrorEvent();
+            final GdbErrorEvent errorEvent = new GdbErrorEvent();
             errorEvent.message = "Unexpected data received from GDB";
             callback.onGdbCommandCompleted(errorEvent);
             m_log.warn("Variable object returned by GDB does not have a name");
@@ -551,14 +551,14 @@ public class Gdb {
      * @param variables The variables the user requested.
      * @param callback  The user-provided callback function.
      */
-    private void onGdbVariableObjectsUpdated(GdbEvent event, Set<String> variables,
-                                             GdbEventCallback callback) {
+    private void onGdbVariableObjectsUpdated(final GdbEvent event, final Set<String> variables,
+                                             final GdbEventCallback callback) {
         if (event instanceof GdbErrorEvent) {
             callback.onGdbCommandCompleted(event);
             return;
         }
         if (!(event instanceof GdbVariableObjectChanges)) {
-            GdbErrorEvent errorEvent = new GdbErrorEvent();
+            final GdbErrorEvent errorEvent = new GdbErrorEvent();
             errorEvent.message = "Unexpected data received from GDB";
             callback.onGdbCommandCompleted(errorEvent);
             m_log.warn("Unexpected event " + event + " received from -var-create request");
@@ -566,15 +566,15 @@ public class Gdb {
         }
 
         // Update variable objects with changes
-        GdbVariableObjectChanges changes = (GdbVariableObjectChanges) event;
+        final GdbVariableObjectChanges changes = (GdbVariableObjectChanges) event;
         if (changes.changes != null) {
-            for (GdbVariableObjectChange change : changes.changes) {
+            for (final GdbVariableObjectChange change : changes.changes) {
                 if (change.name == null) {
                     m_log.warn("Received a GDB variable object change with no name");
                     continue;
                 }
 
-                GdbVariableObject variableObject = m_variableObjectsByName.get(change.name);
+                final GdbVariableObject variableObject = m_variableObjectsByName.get(change.name);
                 if (variableObject == null) {
                     m_log.warn("Received a GDB variable object change for a variable object " +
                         "that does not exist");
@@ -606,10 +606,10 @@ public class Gdb {
         }
 
         // Construct the list of variable object the user requested
-        GdbVariableObjects list = new GdbVariableObjects();
+        final GdbVariableObjects list = new GdbVariableObjects();
         list.objects = new ArrayList<GdbVariableObject>();
-        for (String expression : variables) {
-            GdbVariableObject object = m_variableObjectsByExpression.get(expression);
+        for (final String expression : variables) {
+            final GdbVariableObject object = m_variableObjectsByExpression.get(expression);
             if (object != null) {
                 list.objects.add(object);
             }
@@ -623,7 +623,7 @@ public class Gdb {
      *
      * @param event The event.
      */
-    public void onGdbCapabilitiesReady(GdbEvent event) {
+    public void onGdbCapabilitiesReady(final GdbEvent event) {
         if (event instanceof GdbErrorEvent) {
             m_log.warn("Failed to get GDB capabilities list: " + ((GdbErrorEvent) event).message);
             return;
@@ -634,9 +634,9 @@ public class Gdb {
         }
 
         // Save the list
-        GdbFeatures features = (GdbFeatures) event;
+        final GdbFeatures features = (GdbFeatures) event;
         if (features.features != null) {
-            Set<String> capabilities = new HashSet<String>(features.features);
+            final Set<String> capabilities = new HashSet<String>(features.features);
             synchronized (this) {
                 m_capabilities = capabilities;
             }
@@ -662,7 +662,7 @@ public class Gdb {
         // The user provided callback; may be null
         GdbEventCallback callback;
 
-        CommandData(String command, GdbEventCallback callback) {
+        CommandData(final String command, final GdbEventCallback callback) {
             this.command = command;
             this.callback = callback;
         }
