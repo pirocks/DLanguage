@@ -508,6 +508,13 @@ public class Gdb {
             });
     }
 
+    private static void error(final GdbEvent event, final GdbEventCallback callback) {
+        final GdbErrorEvent errorEvent = new GdbErrorEvent();
+        errorEvent.message = "Unexpected data received from GDB";
+        callback.onGdbCommandCompleted(errorEvent);
+        m_log.warn("Unexpected event " + event + " received from -var-create request");
+    }
+
     /**
      * Callback function for when GDB has responded to our new variable object request.
      *
@@ -522,10 +529,7 @@ public class Gdb {
             return;
         }
         if (!(event instanceof GdbVariableObject)) {
-            final GdbErrorEvent errorEvent = new GdbErrorEvent();
-            errorEvent.message = "Unexpected data received from GDB";
-            callback.onGdbCommandCompleted(errorEvent);
-            m_log.warn("Unexpected event " + event + " received from -var-create request");
+            error(event, callback);
             return;
         }
 
@@ -558,11 +562,7 @@ public class Gdb {
             return;
         }
         if (!(event instanceof GdbVariableObjectChanges)) {
-            final GdbErrorEvent errorEvent = new GdbErrorEvent();
-            errorEvent.message = "Unexpected data received from GDB";
-            callback.onGdbCommandCompleted(errorEvent);
-            m_log.warn("Unexpected event " + event + " received from -var-create request");
-            return;
+            error(event, callback);
         }
 
         // Update variable objects with changes

@@ -21,7 +21,7 @@ import uk.co.cwspencer.ideagdb.debug.utils.SdkUtil;
 
 public class RunUtil {
     @Nullable
-    static RunContentDescriptor startDebugger(DefaultProgramRunner buildRunner, RunProfileState state, ExecutionEnvironment env, Project project, Executor executor, String execName) throws ExecutionException {
+    static RunContentDescriptor startDebugger(final DefaultProgramRunner buildRunner, RunProfileState state, ExecutionEnvironment env, Project project, Executor executor, String execName) throws ExecutionException {
         final ExecutionResult result = state.execute(executor, buildRunner);
         if (result == null) {
             return null;
@@ -55,7 +55,7 @@ public class RunUtil {
             }
         });
 
-        gdbProcess.sendCommand("file " + execName);
+        gdbProcess.sendCommand("-file-exec-and-symbols " + execName);
 
         // Send startup commands
         String[] commandsArray = new String[0];//configuration.STARTUP_COMMANDS.split("\\r?\\n");

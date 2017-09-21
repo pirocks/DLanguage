@@ -37,6 +37,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.ui.content.Content;
 import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugSession;
@@ -56,6 +57,10 @@ import uk.co.cwspencer.gdb.messages.*;
 import uk.co.cwspencer.ideagdb.debug.breakpoints.GdbBreakpointHandler;
 import uk.co.cwspencer.ideagdb.debug.breakpoints.GdbBreakpointProperties;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -94,8 +99,50 @@ public class GdbDebugProcess extends XDebugProcess implements GdbListener {
         m_project = project;
         debugSession = session;
 
+        String gdbDebuggerPath = null;
+        if (SystemInfo.isWindows) {
+//            gdbDebuggerPath = getClass().getClassLoader().getResource("native/mago/mago-mi.exe").getPath().replace("file:/C:/","/C/");
+            try {
+                final InputStream inputStreamExe = getClass().getClassLoader().getResource("native/mago/mago-mi.exe").openStream();
+                String tempPathName = System.getProperty("java.io.tmpdir") + "mago-mi.exe";
+                int num = 1;
+                while (true) {
+                    if (!new File(tempPathName).exists())
+                        break;
+                    tempPathName = System.getProperty("java.io.tmpdir") + "mago-mi" + num + ".exe";
+                    num++;
+                }
+                final File tempFile = new File(tempPathName);
+                if (!tempFile.createNewFile()) {
+                    throw new IOException();
+                }
+                tempFile.deleteOnExit();
+                final FileOutputStream os = new FileOutputStream(tempFile);
+                byte[] b = new byte[4096];
+                int length;
+
+                while ((length = inputStreamExe.read(b)) != -1) {
+                    os.write(b, 0, length);
+                }
+
+                inputStreamExe.close();
+                os.close();
+                tempFile.setExecutable(true);
+                gdbDebuggerPath = tempFile.getAbsolutePath();
+
+            } catch (final IOException e) {
+                Logger.getInstance(this.getClass()).error(e);
+                e.printStackTrace();
+            }
+        } else if (ToolKey.GDB_KEY.getPath(project) == null) {
+            //todo warn about un-configured gdb
+            throw new IllegalStateException("gdb not configured");
+        } else {
+            gdbDebuggerPath = ToolKey.GDB_KEY.getPath(project);
+        }
+
         // Prepare GDB
-        m_gdb = new Gdb(ToolKey.GDB_KEY.getPath(project), project.getBasePath(), this);
+        m_gdb = new Gdb(gdbDebuggerPath, project.getBasePath(), this);
 
         // Create the GDB console
         m_gdbConsole = new GdbConsoleView(m_gdb, session.getProject());
