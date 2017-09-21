@@ -26,6 +26,7 @@ package uk.co.cwspencer.gdb.gdbmi;
 
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
+import com.intellij.openapi.util.SystemInfo;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.UnsupportedEncodingException;
@@ -58,7 +59,9 @@ public class GdbMiParser2 {
     }
 
     private static GdbMiResult parseBreakpointHitLineFrameLine(String line) {
-        line = "{" + line + "}";
+        if (SystemInfo.isWindows) {//todo create some kind of is mago method, becuase thats what I mean
+            line = "{" + line + "}";
+        }
         final Collection<GdbMiResult> results = parseFrameLine(line);
         final GdbMiResult[] result = results.toArray(new GdbMiResult[results.size()]);
         return result[0];
@@ -89,12 +92,13 @@ public class GdbMiParser2 {
             "(?:func=\"([^\"]+)\")?,?";
 
         if (hasArgs) {
-            pattern += "(?:args=\\[(.*?)\\])?,";
+            pattern += "(?:args=\\[(.*?)\\])?,?";
         }
 
         pattern += "(?:file=\"([^\"]+)\")?,?" +
             "(?:fullname=\"([^\"]+)\")?,?" +
-            "(?:line=\"(\\d+)\")?" +
+            "(?:line=\"(\\d+)\")?,?" +
+            "(?:from=\"([^\"]+)\")?,?" +
             "\\}";
 
         p = Pattern.compile(pattern);

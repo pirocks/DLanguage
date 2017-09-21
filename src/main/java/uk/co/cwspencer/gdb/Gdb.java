@@ -72,6 +72,9 @@ public class Gdb {
     // List of capabilities supported by GDB
     private Set<String> m_capabilities;
 
+    //hack to fix mago bug
+    private final Set<CommandData> pendingBreakPoints = new HashSet<>();
+
     /**
      * Constructor; prepares GDB.
      *
@@ -156,6 +159,13 @@ public class Gdb {
         // Queue the command
         if (command.equals("-gdb-exit")) {
             m_queuedCommands.clear();
+        }
+        //hack to work around mago
+        if (command.contains("-break-insert -f")) {
+            pendingBreakPoints.add(new CommandData(command.replace("-break-insert -f", "-break-insert"), callback));
+        }
+        if (command.contains("run")) {
+            m_queuedCommands.addAll(pendingBreakPoints);
         }
 
         m_queuedCommands.add(new CommandData(command, callback));

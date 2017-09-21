@@ -109,8 +109,8 @@ public class GdbDebugProcess extends XDebugProcess implements GdbListener {
                 while (true) {
                     if (!new File(tempPathName).exists())
                         break;
-                    tempPathName = System.getProperty("java.io.tmpdir") + "mago-mi" + num + ".exe";
                     num++;
+                    tempPathName = System.getProperty("java.io.tmpdir") + "mago-mi" + num + ".exe";
                 }
                 final File tempFile = new File(tempPathName);
                 if (!tempFile.createNewFile()) {

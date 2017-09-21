@@ -31,7 +31,12 @@ public class RunUtil {
 
 
         if (SdkUtil.isHostOsWindows()) {
-            execName = execName.concat(".exe");
+            execName = execName.replaceAll("\\\\", "\\\\\\\\");
+            if (!(execName.length() < 4)) {
+                if (!execName.substring(execName.length() - 4, execName.length()).equals(".exe")) {
+                    execName = execName.concat(".exe");
+                }
+            } else execName = execName.concat(".exe");
         }
 
         final XDebugSession debugSession = XDebuggerManager.getInstance(project).startSession(env,
