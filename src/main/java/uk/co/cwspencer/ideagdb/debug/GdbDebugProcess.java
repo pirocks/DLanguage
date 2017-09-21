@@ -57,10 +57,9 @@ import uk.co.cwspencer.gdb.messages.*;
 import uk.co.cwspencer.ideagdb.debug.breakpoints.GdbBreakpointHandler;
 import uk.co.cwspencer.ideagdb.debug.breakpoints.GdbBreakpointProperties;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -94,6 +93,22 @@ public class GdbDebugProcess extends XDebugProcess implements GdbListener {
         init(session);
     }
 
+    /**
+     * copy pasta http://www.baeldung.com/sha-256-hashing-java
+     *
+     * @param hash
+     * @return
+     */
+    private static String bytesToHex(final byte[] hash) {
+        final StringBuilder hexString = new StringBuilder();
+        for (final byte aHashByte : hash) {
+            final String hex = Integer.toHexString(0xff & aHashByte);
+            if (hex.length() == 1) hexString.append('0');
+            hexString.append(hex);
+        }
+        return hexString.toString();
+    }
+
     private void init(final XDebugSession session) {
         final Project project = session.getProject();
         m_project = project;
@@ -102,38 +117,7 @@ public class GdbDebugProcess extends XDebugProcess implements GdbListener {
         String gdbDebuggerPath = null;
         if (SystemInfo.isWindows) {
 //            gdbDebuggerPath = getClass().getClassLoader().getResource("native/mago/mago-mi.exe").getPath().replace("file:/C:/","/C/");
-            try {
-                final InputStream inputStreamExe = getClass().getClassLoader().getResource("native/mago/mago-mi.exe").openStream();
-                String tempPathName = System.getProperty("java.io.tmpdir") + "mago-mi.exe";
-                int num = 1;
-                while (true) {
-                    if (!new File(tempPathName).exists())
-                        break;
-                    num++;
-                    tempPathName = System.getProperty("java.io.tmpdir") + "mago-mi" + num + ".exe";
-                }
-                final File tempFile = new File(tempPathName);
-                if (!tempFile.createNewFile()) {
-                    throw new IOException();
-                }
-                tempFile.deleteOnExit();
-                final FileOutputStream os = new FileOutputStream(tempFile);
-                final byte[] b = new byte[4096];
-                int length;
-
-                while ((length = inputStreamExe.read(b)) != -1) {
-                    os.write(b, 0, length);
-                }
-
-                inputStreamExe.close();
-                os.close();
-                tempFile.setExecutable(true);
-                gdbDebuggerPath = tempFile.getAbsolutePath();
-
-            } catch (final IOException e) {
-                Logger.getInstance(this.getClass()).error(e);
-                e.printStackTrace();
-            }
+            gdbDebuggerPath = initMago();
         } else if (ToolKey.GDB_KEY.getPath(project) == null) {
             //todo warn about un-configured gdb
             throw new IllegalStateException("gdb not configured");
@@ -156,6 +140,74 @@ public class GdbDebugProcess extends XDebugProcess implements GdbListener {
 
         // Launch the process
         m_gdb.start();
+    }
+
+    private String initMago() {
+        try {
+            final MessageDigest digest = MessageDigest.getInstance("MD5");
+            final InputStream inputStreamExe = getClass().getClassLoader().getResource("native/mago/mago-mi.exe").openStream();
+            final String expectedHash = bytesToHex(calcHash(digest, inputStreamExe));
+            inputStreamExe.close();
+            try (InputStream inputStreamExe1 = getClass().getClassLoader().getResource("native/mago/mago-mi.exe").openStream()) {
+                String tempPathName = System.getProperty("java.io.tmpdir") + "mago-mi.exe";
+                int num = 1;
+                while (true) {
+                    if (new File(tempPathName).exists()) {
+                        if (fileIsSame(digest, tempPathName, expectedHash)) {
+                            return tempPathName;
+                        }
+                    } else
+                        break;
+                    num++;
+                    tempPathName = System.getProperty("java.io.tmpdir") + "mago-mi" + num + ".exe";
+                }
+                return extractMago(inputStreamExe1, tempPathName);
+            }
+        } catch (final IOException | NoSuchAlgorithmException e) {
+            Logger.getInstance(this.getClass()).error(e);
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private boolean fileIsSame(final MessageDigest digest, final String tempPathName, final String expectedHash) throws IOException {
+        final FileInputStream inputStream = new FileInputStream(new File(tempPathName));
+        final Boolean toReturn = bytesToHex(calcHash(digest, inputStream)).equals(expectedHash);
+        inputStream.close();
+        return toReturn;
+    }
+
+    private byte[] calcHash(final MessageDigest digest, final InputStream inputStreamExe) throws IOException {
+        final byte[] b = new byte[4096];
+        int length;
+
+        while ((length = inputStreamExe.read(b)) != -1) {
+            digest.update(b, 0, length);
+        }
+        return digest.digest();
+    }
+
+    @NotNull
+    private String extractMago(final InputStream magoExeInputStream, final String filePath) throws IOException {
+        final String gdbDebuggerPath;
+        final File tempFile = new File(filePath);
+        if (!tempFile.createNewFile()) {
+            throw new IOException();
+        }
+        tempFile.deleteOnExit();
+        final FileOutputStream os = new FileOutputStream(tempFile);
+        final byte[] b = new byte[4096];
+        int length;
+
+        while ((length = magoExeInputStream.read(b)) != -1) {
+            os.write(b, 0, length);
+        }
+
+        magoExeInputStream.close();
+        os.close();
+        tempFile.setExecutable(true);
+        gdbDebuggerPath = tempFile.getAbsolutePath();
+        return gdbDebuggerPath;
     }
 
     @NotNull
