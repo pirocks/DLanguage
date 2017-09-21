@@ -118,7 +118,7 @@ public class GdbDebugProcess extends XDebugProcess implements GdbListener {
                 }
                 tempFile.deleteOnExit();
                 final FileOutputStream os = new FileOutputStream(tempFile);
-                byte[] b = new byte[4096];
+                final byte[] b = new byte[4096];
                 int length;
 
                 while ((length = inputStreamExe.read(b)) != -1) {

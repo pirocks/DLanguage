@@ -21,7 +21,7 @@ import uk.co.cwspencer.ideagdb.debug.utils.SdkUtil;
 
 public class RunUtil {
     @Nullable
-    static RunContentDescriptor startDebugger(final DefaultProgramRunner buildRunner, RunProfileState state, ExecutionEnvironment env, Project project, Executor executor, String execName) throws ExecutionException {
+    static RunContentDescriptor startDebugger(final DefaultProgramRunner buildRunner, final RunProfileState state, final ExecutionEnvironment env, final Project project, final Executor executor, String execName) throws ExecutionException {
         final ExecutionResult result = state.execute(executor, buildRunner);
         if (result == null) {
             return null;
@@ -38,19 +38,19 @@ public class RunUtil {
             new XDebugProcessStarter() {
                 @NotNull
                 @Override
-                public XDebugProcess start(@NotNull XDebugSession session) throws ExecutionException {
+                public XDebugProcess start(@NotNull final XDebugSession session) throws ExecutionException {
                     return new GdbDebugProcess(project, session, result);
                 }
             });
 
-        GdbDebugProcess debugProcess = ((GdbDebugProcess) debugSession.getDebugProcess());
+        final GdbDebugProcess debugProcess = ((GdbDebugProcess) debugSession.getDebugProcess());
 
         final Gdb gdbProcess = debugProcess.m_gdb;
 
         // Queue startup commands
         gdbProcess.sendCommand("-list-features", new Gdb.GdbEventCallback() {
             @Override
-            public void onGdbCommandCompleted(GdbEvent event) {
+            public void onGdbCommandCompleted(final GdbEvent event) {
                 gdbProcess.onGdbCapabilitiesReady(event);
             }
         });
@@ -58,7 +58,7 @@ public class RunUtil {
         gdbProcess.sendCommand("-file-exec-and-symbols " + execName);
 
         // Send startup commands
-        String[] commandsArray = new String[0];//configuration.STARTUP_COMMANDS.split("\\r?\\n");
+        final String[] commandsArray = new String[0];//configuration.STARTUP_COMMANDS.split("\\r?\\n");
         for (String command : commandsArray) {
             command = command.trim();
             if (!command.isEmpty()) {

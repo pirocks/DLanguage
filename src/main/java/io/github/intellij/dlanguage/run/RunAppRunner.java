@@ -24,25 +24,25 @@ public class RunAppRunner extends DefaultProgramRunner {
     }
 
     @Override
-    public boolean canRun(@NotNull String executorId, @NotNull RunProfile profile) {
+    public boolean canRun(@NotNull final String executorId, @NotNull final RunProfile profile) {
         return (DefaultDebugExecutor.EXECUTOR_ID.equals(executorId) || DefaultRunExecutor.EXECUTOR_ID.equals(executorId)) &&
             profile instanceof DlangRunAppConfiguration;
     }
 
     @Nullable
     @Override
-    protected RunContentDescriptor doExecute(RunProfileState state, ExecutionEnvironment env) throws ExecutionException {
+    protected RunContentDescriptor doExecute(final RunProfileState state, final ExecutionEnvironment env) throws ExecutionException {
         if (env.getExecutor().getActionName().equals(DefaultDebugExecutor.EXECUTOR_ID)) {
-            Project project = env.getProject();
+            final Project project = env.getProject();
 
-            Executor executor = env.getExecutor();
-            Logger logger = Logger.getInstance(this.getClass());
+            final Executor executor = env.getExecutor();
+            final Logger logger = Logger.getInstance(this.getClass());
             try {
                 return RunUtil.startDebugger(this, state, env, project, executor, ((DlangRunAppState) state).getExecutableCommandLine(((DlangRunAppState) state).getConfig()).getExePath());//todo this is yucky
-            } catch (ModuleNotFoundException e) {
+            } catch (final ModuleNotFoundException e) {
                 e.printStackTrace();
                 logger.error(e.toString());
-            } catch (NoValidDlangSdkFound NoValidDlangSdkFound) {
+            } catch (final NoValidDlangSdkFound NoValidDlangSdkFound) {
                 NoValidDlangSdkFound.printStackTrace();
                 logger.error(NoValidDlangSdkFound.toString());
             }

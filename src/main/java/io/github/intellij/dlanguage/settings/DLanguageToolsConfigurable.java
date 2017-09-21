@@ -11,8 +11,6 @@ import com.intellij.ui.TextAccessor;
 import com.intellij.util.messages.Topic;
 import io.github.intellij.dlanguage.utils.ExecUtil;
 import io.github.intellij.dlanguage.utils.GuiUtil;
-import io.github.intellij.dlanguage.utils.ExecUtil;
-import io.github.intellij.dlanguage.utils.GuiUtil;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -86,7 +84,7 @@ public class DLanguageToolsConfigurable implements SearchableConfigurable {
      * identity function since cabal plays nice.
      */
     private static String getVersion(final String cmd, final String versionFlag) {
-        String versionOutput = ExecUtil.readCommandLine(null, cmd, versionFlag);
+        final String versionOutput = ExecUtil.readCommandLine(null, cmd, versionFlag);
         final int endOfFirstLine = versionOutput.indexOf('\n');
         if (endOfFirstLine < 0)
             return versionOutput;
@@ -288,7 +286,7 @@ public class DLanguageToolsConfigurable implements SearchableConfigurable {
         }
 
         public void updateVersion() {
-            String pathText = pathField.getText();
+            final String pathText = pathField.getText();
             if (pathText.isEmpty()) {
                 versionField.setText("");
             } else {

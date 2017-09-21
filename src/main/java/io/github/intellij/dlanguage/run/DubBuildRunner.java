@@ -22,17 +22,17 @@ public class DubBuildRunner extends DefaultProgramRunner {
     }
 
     @Override
-    public boolean canRun(@NotNull String executorId, @NotNull RunProfile profile) {
+    public boolean canRun(@NotNull final String executorId, @NotNull final RunProfile profile) {
         return (DefaultDebugExecutor.EXECUTOR_ID.equals(executorId) || DefaultRunExecutor.EXECUTOR_ID.equals(executorId)) && profile instanceof DlangRunDubConfiguration;
     }
 
     @Nullable
     @Override
-    protected RunContentDescriptor doExecute(RunProfileState state, ExecutionEnvironment env) throws ExecutionException {
+    protected RunContentDescriptor doExecute(final RunProfileState state, final ExecutionEnvironment env) throws ExecutionException {
         if (env.getExecutor().getActionName().equals(DefaultDebugExecutor.EXECUTOR_ID)) {
-            Project project = env.getProject();
+            final Project project = env.getProject();
 
-            Executor executor = env.getExecutor();
+            final Executor executor = env.getExecutor();
             return RunUtil.startDebugger(this, state, env, project, executor, project.getBasePath().concat("/").concat(project.getName()));
         }
         return super.doExecute(state, env);

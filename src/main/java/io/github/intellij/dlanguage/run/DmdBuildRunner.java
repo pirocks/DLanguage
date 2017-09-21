@@ -18,14 +18,14 @@ public class DmdBuildRunner extends DefaultProgramRunner {
     }
 
     @Override
-    public boolean canRun(@NotNull String executorId, @NotNull RunProfile profile) {
+    public boolean canRun(@NotNull final String executorId, @NotNull final RunProfile profile) {
         return (/*DefaultDebugExecutor.EXECUTOR_ID.equals(executorId) ||*/ DefaultRunExecutor.EXECUTOR_ID.equals(executorId)) &&
             profile instanceof DlangRunDmdConfiguration;
     }
 
     @Nullable
     @Override
-    protected RunContentDescriptor doExecute(RunProfileState state, ExecutionEnvironment env) throws ExecutionException {
+    protected RunContentDescriptor doExecute(final RunProfileState state, final ExecutionEnvironment env) throws ExecutionException {
         /*if (env.getExecutor().getActionName().equals(DefaultDebugExecutor.EXECUTOR_ID)) {
             Project project = env.getProject();
 

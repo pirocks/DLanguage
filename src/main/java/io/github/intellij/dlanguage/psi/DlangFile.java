@@ -8,8 +8,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.stubs.StubElement;
-import io.github.intellij.dlanguage.psi.interfaces.DNamedElement;
-import io.github.intellij.dlanguage.stubs.DlangFileStub;
 import io.github.intellij.dlanguage.DLanguage;
 import io.github.intellij.dlanguage.DlangFileType;
 import io.github.intellij.dlanguage.psi.interfaces.DNamedElement;
@@ -94,10 +92,10 @@ public class DlangFile extends PsiFileBase {
 
     public DLanguageFunctionDeclaration getMainFunction() {
         final DLanguageFunctionDeclaration[] res = new DLanguageFunctionDeclaration[1];
-        PsiScopeProcessor mainFunctionProcessor = new PsiScopeProcessor() {
+        final PsiScopeProcessor mainFunctionProcessor = new PsiScopeProcessor() {
 
             @Override
-            public boolean execute(@NotNull PsiElement element, @NotNull ResolveState state) {
+            public boolean execute(@NotNull final PsiElement element, @NotNull final ResolveState state) {
                 if (element instanceof DLanguageFunctionDeclaration) {
                     if (((DNamedElement) element).getName().equals("main")) {
                         res[0] = (DLanguageFunctionDeclaration) element;
@@ -109,12 +107,12 @@ public class DlangFile extends PsiFileBase {
 
             @Nullable
             @Override
-            public <T> T getHint(@NotNull Key<T> hintKey) {
+            public <T> T getHint(@NotNull final Key<T> hintKey) {
                 return null;
             }
 
             @Override
-            public void handleEvent(@NotNull Event event, @Nullable Object associated) {
+            public void handleEvent(@NotNull final Event event, @Nullable final Object associated) {
 
             }
         };
