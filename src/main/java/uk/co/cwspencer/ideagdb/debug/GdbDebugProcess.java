@@ -419,7 +419,7 @@ public class GdbDebugProcess extends XDebugProcess implements GdbListener {
      * @param record The record.
      */
     @Override
-    public void onResultRecordReceived(final GdbMiResultRecord record) {
+    public void onResultRecordReceived(final @NotNull GdbMiResultRecord record) {
         // Log the record
         final StringBuilder sb = new StringBuilder();
         sb.append(m_timeFormat.format(new Date()));

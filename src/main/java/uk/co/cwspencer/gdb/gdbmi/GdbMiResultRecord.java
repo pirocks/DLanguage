@@ -24,8 +24,12 @@
 
 package uk.co.cwspencer.gdb.gdbmi;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Class representing a result record from a GDB/MI stream.
@@ -36,10 +40,7 @@ public class GdbMiResultRecord extends GdbMiRecord {
      */
     public String className;
 
-    /**
-     * The results.
-     */
-    public List<GdbMiResult> results = new ArrayList<GdbMiResult>();
+    private final List<GdbMiResult> results = new ArrayList<GdbMiResult>();
 
     /**
      * Constructor.
@@ -60,11 +61,11 @@ public class GdbMiResultRecord extends GdbMiRecord {
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append(className);
-        if (!results.isEmpty()) {
+        if (!getResults().isEmpty()) {
             sb.append(": [");
-            for (int i = 0; i != results.size(); ++i) {
-                sb.append(results.get(i));
-                if (i < results.size() - 1) {
+            for (int i = 0; i != getResults().size(); ++i) {
+                sb.append(getResults().get(i));
+                if (i < getResults().size() - 1) {
                     sb.append(", ");
                 }
             }
@@ -72,4 +73,22 @@ public class GdbMiResultRecord extends GdbMiRecord {
         }
         return sb.toString();
     }
+
+    /**
+     * The results.
+     */
+    public List<GdbMiResult> getResults() {
+        return results;
+    }
+
+    public void addResult(@NotNull final GdbMiResult res) {
+        results.add(res);
+    }
+
+    public void addResults(@NotNull final Collection<GdbMiResult> res) {
+        assert (res.stream().allMatch(Objects::nonNull));
+        results.addAll(res);
+    }
+
+
 }

@@ -93,7 +93,7 @@ public class GdbMiMessageConverter {
 
                 if (match) {
                     // Found a matching event type wrapper
-                    List<GdbMiResult> results = record.results;
+                    List<GdbMiResult> results = record.getResults();
 
                     // If it is a 'done' event then search for a more specific event type
                     if (commandType != null && clazz.equals(GdbDoneEvent.class)) {
@@ -151,7 +151,7 @@ public class GdbMiMessageConverter {
     private static List<GdbMiResult> transposeDoneEvent(final GdbMiResultRecord record,
                                                         final GdbMiDoneEvent doneEventAnnotation) {
         // Search for the requested result
-        for (final GdbMiResult result : record.results) {
+        for (final GdbMiResult result : record.getResults()) {
             if (result.variable.equals(doneEventAnnotation.transpose())) {
                 // Found it; check it is an appropriate type (it must be a tuple or a list of
                 // results)

@@ -163,6 +163,7 @@ public class Gdb {
         //hack to work around mago
         if (command.contains("-break-insert -f")) {
             pendingBreakPoints.add(new CommandData(command.replace("-break-insert -f", "-break-insert"), callback));
+//            return;
         }
         if (command.contains("run")) {
             m_queuedCommands.addAll(pendingBreakPoints);
@@ -400,7 +401,7 @@ public class Gdb {
      *
      * @param record The record.
      */
-    private void handleRecord(final GdbMiRecord record) {
+    private void handleRecord(final @NotNull GdbMiRecord record) {
         switch (record.type) {
             case Target:
             case Console:
@@ -439,7 +440,7 @@ public class Gdb {
      *
      * @param record The record.
      */
-    private void handleResultRecord(final GdbMiResultRecord record) {
+    private void handleResultRecord(final @NotNull GdbMiResultRecord record) {
         // Notify the listener
         m_listener.onResultRecordReceived(record);
 

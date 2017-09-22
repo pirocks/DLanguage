@@ -43,15 +43,12 @@ public class GdbMiParser2 {
 
     private static final Set<String> START_TOKENS = new HashSet<String>(Arrays.asList(
         "*", "+", "=", "~", "@", "&"));
-
+    private final ConsoleView rawConsole;
+    // List of unprocessed records
+    private final List<GdbMiRecord> m_records = new ArrayList<GdbMiRecord>();
     // Partially processed record
     private GdbMiResultRecord m_resultRecord;
     private GdbMiStreamRecord m_streamRecord;
-
-    private final ConsoleView rawConsole;
-
-    // List of unprocessed records
-    private final List<GdbMiRecord> m_records = new ArrayList<GdbMiRecord>();
     private Long currentToken;
 
     public GdbMiParser2(@Nullable final ConsoleView rawConsole) {
@@ -172,7 +169,12 @@ public class GdbMiParser2 {
         stackListVarsVal.list.type = GdbMiList.Type.Values;
         stackListVarsVal.list.values = new ArrayList<GdbMiValue>();
 
-        final Pattern p = Pattern.compile("\\{(?:name=\"([^\"]+)\")(?:,arg=\"([^\"]+)\")?\\}");
+        final Pattern p;
+        if (SystemInfo.isWindows) {//todo
+            p = Pattern.compile("\"([^\"]+)\"");
+        } else {
+            p = Pattern.compile("\\{(?:name=\"([^\"]+)\")(?:,arg=\"([^\"]+)\")?\\}");
+        }
         final Matcher m = p.matcher(line);
 
         while (m.find()) {
@@ -184,7 +186,7 @@ public class GdbMiParser2 {
             varNameVal.value.string = m.group(1);
             varVal.tuple.add(varNameVal);
 
-            if (m.group(2) != null) {
+            if ((!SystemInfo.isWindows) && m.group(2) != null) {//todo
                 final GdbMiResult argVal = new GdbMiResult("arg");
                 argVal.value.type = GdbMiValue.Type.String;
                 argVal.value.string = m.group(2);
@@ -564,9 +566,16 @@ public class GdbMiParser2 {
             rawConsole.print(line + "\n", ConsoleViewContentType.SYSTEM_OUTPUT);
         }
 
-        GdbMiRecord result;
 
-        if (line.matches("\\d+\\^.*")) {
+//        //todo really means if is mago-mi option
+        if (SystemInfo.isWindows) {
+            if (line.charAt(0) == '@') {
+                line = line.substring(1);
+            }
+        }
+
+        GdbMiRecord result;
+        if (line.matches("\\d+\\^.*\\r?\\n?")) {
             currentToken = Long.parseLong(line.substring(0, line.indexOf('^')), 10);
 
             result = new GdbMiResultRecord(GdbMiRecord.Type.Immediate, currentToken);
@@ -640,7 +649,7 @@ public class GdbMiParser2 {
 
         line = line.substring(line.indexOf(',') + 1);
         if (line.startsWith("bkpt")) {
-            result.results.add(parseBreakpointLine(line));
+            result.addResult(parseBreakpointLine(line));
             return result;
         }
 
@@ -650,7 +659,7 @@ public class GdbMiParser2 {
             final GdbMiResult subRes = new GdbMiResult(m.group(1));
             subRes.value = new GdbMiValue(GdbMiValue.Type.String);
             subRes.value.string = m.group(2).replace("\\\\t", "    ");
-            result.results.add(subRes);
+            result.addResult(subRes);
         }
 
         return result;
@@ -667,24 +676,24 @@ public class GdbMiParser2 {
         line = line.substring(line.indexOf(',') + 1);
         if (result.className.equals("stopped")) {
             if (line.startsWith("reason=\"breakpoint-hit\"")) {
-                result.results.addAll(parseBreakpointHitLine(line));
+                result.addResults(parseBreakpointHitLine(line));
             } else if (line.startsWith("reason=\"end-stepping-range\"")) {
-                result.results.addAll(parseEndSteppingRangeLine(line));
+                result.addResults(parseEndSteppingRangeLine(line));
             } else if (line.startsWith("reason=\"signal-received\"")) {
-                result.results.addAll(parseSignalReceivedLine(line));
+                result.addResults(parseSignalReceivedLine(line));
             } else if (line.startsWith("reason=\"function-finished\"")) {
-                result.results.addAll(parseFunctionFinishedLine(line));
+                result.addResults(parseFunctionFinishedLine(line));
             } else if (line.startsWith("reason=\"location-reached\"")) {
-                result.results.addAll(parseLocationReachedLine(line));
+                result.addResults(parseLocationReachedLine(line));
             } else if (line.startsWith("reason=\"exited\"")) {
-                result.results.addAll(parseStoppedExitedLine(line));
+                result.addResults(parseStoppedExitedLine(line));
             } else if (line.startsWith("reason=\"exited-normally\"")) {
                 final GdbMiResult reasonVal = new GdbMiResult("reason");
                 reasonVal.value = new GdbMiValue(GdbMiValue.Type.String);
                 reasonVal.value.string = "exited-normally";
-                result.results.add(reasonVal);
+                result.addResult(reasonVal);
             } else if (line.startsWith("frame=")) {
-                result.results.addAll(parseStoppedFrameLine(line));
+                result.addResults(parseStoppedFrameLine(line));
             } else {
                 printUnhandledLine(line);
             }
@@ -694,7 +703,7 @@ public class GdbMiParser2 {
 
         if (result.className.equals("running")) {
             if (line.startsWith("thread-id")) {
-                result.results.add(parseRunningThreadId(line));
+                result.addResult(parseRunningThreadId(line));
             } else {
                 printUnhandledLine(line);
             }
@@ -717,43 +726,43 @@ public class GdbMiParser2 {
 
         // Check for breakpoint
         if (line.startsWith("bkpt=")) {
-            result.results.add(parseBreakpointLine(line));
+            result.addResult(parseBreakpointLine(line));
             return result;
         } else if (line.startsWith("stack=")) {
-            result.results.add(parseStackListLine(line));
+            result.addResult(parseStackListLine(line));
             return result;
         } else if (line.startsWith("variables=")) {
-            result.results.add(parseStackListVariablesLine(line));
+            result.addResult(parseStackListVariablesLine(line));
             return result;
         } else if (line.startsWith("name=\"var")) {
-            result.results.addAll(parseVarCreateLine(line));
+            result.addResults(parseVarCreateLine(line));
             return result;
         } else if (line.startsWith("changelist=")) {
-            result.results.add(parseChangelistLine(line));
+            result.addResult(parseChangelistLine(line));
             return result;
         } else if (line.startsWith("msg=")) {
-            result.results.add(parseMsgLine(line));
+            result.addResult(parseMsgLine(line));
             return result;
         } else if (line.startsWith("numchild=")) {
-            result.results.addAll(parseNumChildLine(line));
+            result.addResults(parseNumChildLine(line));
             return result;
         } else if (line.startsWith("features=")) {
-            result.results.add(parseFeaturesLine(line));
+            result.addResult(parseFeaturesLine(line));
             return result;
         } else if (line.startsWith("value=")) {
             final GdbMiResult valueVal = new GdbMiResult("value");
             valueVal.value = new GdbMiValue(GdbMiValue.Type.String);
             valueVal.value.string = line.substring(7, line.length() - 1);
-            result.results.add(valueVal);
+            result.addResult(valueVal);
             return result;
         } else if (line.startsWith("thread-ids=")) {
-            result.results.addAll(parseThreadIdsLine(line));
+            result.addResults(parseThreadIdsLine(line));
             return result;
         } else if (line.startsWith("new-thread-id=")) {
-            result.results.addAll(parseNewThreadIdLine(line));
+            result.addResults(parseNewThreadIdLine(line));
             return result;
         } else if (line.startsWith("threads=")) {
-            result.results.addAll(parseThreadsLine(line));
+            result.addResults(parseThreadsLine(line));
             return result;
         }
 
@@ -786,8 +795,8 @@ public class GdbMiParser2 {
             "(?:type=\"([^\"]+)\")," +
             "(?:disp=\"([^\"]+)\")," +
             "(?:enabled=\"([^\"]+)\")," +
-            "(?:addr=\"([^\"]+)\")," +
-            "(?:func=\"([^\"]+)\")," +
+            "(?:addr=\"([^\"]+)\")?,?" +
+            "(?:func=\"([^\"]+)\")?,?" +
             "(?:file=\"([^\"]+)\")," +
             "(?:fullname=\"([^\"]+)\")," +
             "(?:line=\"([^\"]+)\")";
@@ -901,69 +910,104 @@ public class GdbMiParser2 {
         final GdbMiResult subRes = new GdbMiResult("bkpt");
         final GdbMiValue bkptVal = new GdbMiValue(GdbMiValue.Type.Tuple);
 
-        final String pattern = "(?:number=\"([^\"]+)\")," +
-            "(?:type=\"([^\"]+)\")," +
-            "(?:disp=\"([^\"]+)\")," +
-            "(?:enabled=\"([^\"]+)\")," +
-            "(?:addr=\"([^\"]+)\")," +
-            "(?:pending=\"([^\"]+)\")," +
-            "(?:times=\"(\\d+)\")," +
-            "(?:original-location=\"([^\"]+)\")";
+        final String numberPattern = "(?:number=\"([^\"]+)\"),";
+        final String typePattern = "(?:type=\"([^\"]+)\"),";
+        final String dispPattern = "(?:disp=\"([^\"]+)\"),";
+        final String enabledPattern = "(?:enabled=\"([^\"]+)\"),";
+        final String addrPattern = "(?:addr=\"([^\"]+)\"),";
+        final String pendingPattern = "(?:pending=\"([^\"]+)\"),";
+        final String timesPattern = "(?:times=\"(\\d+)\"),";
+        final String locationPattern = "(?:original-location=\"([^\"]+)\")";
 
-        final Pattern p = Pattern.compile(pattern);
-        final Matcher m = p.matcher(line);
-
+        final Pattern p = Pattern.compile(numberPattern);
+        Matcher m = p.matcher(line);
         if (!m.find()) {
             printUnhandledLine(line);
             return subRes;
         }
-
-        Integer matchGroup = 0;
-
         // number="1"
         final GdbMiResult numVal = new GdbMiResult("number");
         numVal.value.type = GdbMiValue.Type.String;
-        numVal.value.string = m.group(++matchGroup);
+        numVal.value.string = m.group(1);
         bkptVal.tuple.add(numVal);
 
         // type="breakpoint"
-        final GdbMiResult typeVal = new GdbMiResult("type");
-        typeVal.value.type = GdbMiValue.Type.String;
-        typeVal.value.string = m.group(++matchGroup);
-        bkptVal.tuple.add(typeVal);
+        try {
+            m = Pattern.compile(typePattern).matcher(line);
+            if (!m.find()) {
+                printUnhandledLine(line);
+                return subRes;
+            }
+            final GdbMiResult typeVal = new GdbMiResult("type");
+            typeVal.value.type = GdbMiValue.Type.String;
+            typeVal.value.string = m.group(1);
+            bkptVal.tuple.add(typeVal);
+        } catch (final IllegalStateException ignored) {
+            //we do not care whatsoever
+        }
 
         // disp="keep"
+        m = Pattern.compile(dispPattern).matcher(line);
+        if (!m.find()) {
+            printUnhandledLine(line);
+            return subRes;
+        }
         final GdbMiResult dispVal = new GdbMiResult("disp");
         dispVal.value.type = GdbMiValue.Type.String;
-        dispVal.value.string = m.group(++matchGroup);
+        dispVal.value.string = m.group(1);
         bkptVal.tuple.add(dispVal);
 
         // enabled="y"
+        m = Pattern.compile(enabledPattern).matcher(line);
+        if (!m.find()) {
+            printUnhandledLine(line);
+            return subRes;
+        }
         final GdbMiResult enabledVal = new GdbMiResult("enabled");
         enabledVal.value.type = GdbMiValue.Type.String;
-        enabledVal.value.string = m.group(++matchGroup);
+        enabledVal.value.string = m.group(1);
         bkptVal.tuple.add(enabledVal);
 
         // addr="0x0000000000400c57"
+        m = Pattern.compile(addrPattern).matcher(line);
+        if (!m.find()) {
+            printUnhandledLine(line);
+            return subRes;
+        }
         final GdbMiResult addrVal = new GdbMiResult("addr");
         addrVal.value.type = GdbMiValue.Type.String;
-        addrVal.value.string = m.group(++matchGroup);
+        addrVal.value.string = m.group(1);
         bkptVal.tuple.add(addrVal);
 
+        m = Pattern.compile(pendingPattern).matcher(line);
+        if (!m.find()) {
+            printUnhandledLine(line);
+            return subRes;
+        }
         final GdbMiResult pendingVal = new GdbMiResult("pending");
         pendingVal.value.type = GdbMiValue.Type.String;
-        pendingVal.value.string = m.group(++matchGroup);
+        pendingVal.value.string = m.group(1);
         bkptVal.tuple.add(pendingVal);
 
         // times="0"
+        m = Pattern.compile(timesPattern).matcher(line);
+        if (!m.find()) {
+            printUnhandledLine(line);
+            return subRes;
+        }
         final GdbMiResult timesVal = new GdbMiResult("times");
         timesVal.value.type = GdbMiValue.Type.String;
-        timesVal.value.string = m.group(++matchGroup);
+        timesVal.value.string = m.group(1);
         bkptVal.tuple.add(timesVal);
 
+        m = Pattern.compile(locationPattern).matcher(line);
+        if (!m.find()) {
+            printUnhandledLine(line);
+            return subRes;
+        }
         final GdbMiResult originalLocationVal = new GdbMiResult("original-location");
         originalLocationVal.value.type = GdbMiValue.Type.String;
-        originalLocationVal.value.string = m.group(++matchGroup);
+        originalLocationVal.value.string = m.group(1);
         bkptVal.tuple.add(originalLocationVal);
 
         subRes.value = bkptVal;
@@ -1166,9 +1210,17 @@ public class GdbMiParser2 {
         Matcher m = p.matcher(line);
         final Boolean hasCore = m.find();
 
+        p = Pattern.compile("(?:bkptno=\"(\\d+)\")");
+        m = p.matcher(line);
+        final boolean hasBkptno = m.find();
+
+        p = Pattern.compile("(?:disp=\"([^\"]+)\"),");
+        m = p.matcher(line);
+        final boolean hasDisp = m.find();
+
         String pattern = "(?:reason=\"([^\"]+)\")," +
-            "(?:disp=\"([^\"]+)\")," +
-            "(?:bkptno=\"(\\d+)\")," +
+            (hasDisp ? "(?:disp=\"([^\"]+)\")," : "") +
+            (hasBkptno ? "(?:bkptno=\"(\\d+)\")," : "") +
             "(?:frame=\\{([^\\}].+)\\})," +
             "(?:thread-id=\"([^\"]+)\")," +
             "(?:stopped-threads=\"([^\"]+)\")";
@@ -1185,44 +1237,56 @@ public class GdbMiParser2 {
             return result;
         }
 
+        int currentGroup = 1;
+
         // reason="breakpoint-hit"
         final GdbMiResult reasonVal = new GdbMiResult("reason");
         reasonVal.value.type = GdbMiValue.Type.String;
-        reasonVal.value.string = m.group(1);
+        reasonVal.value.string = m.group(currentGroup);
         result.add(reasonVal);
+        currentGroup++;
 
         // disp="keep"
-        final GdbMiResult dispVal = new GdbMiResult("disp");
-        dispVal.value.type = GdbMiValue.Type.String;
-        dispVal.value.string = m.group(2);
-        result.add(dispVal);
+        if (hasDisp) {
+            final GdbMiResult dispVal = new GdbMiResult("disp");
+            dispVal.value.type = GdbMiValue.Type.String;
+            dispVal.value.string = m.group(currentGroup);
+            result.add(dispVal);
+            currentGroup++;
+        }
 
         // bkptno="1"
-        final GdbMiResult bkptNoVal = new GdbMiResult("bkptno");
-        bkptNoVal.value.type = GdbMiValue.Type.String;
-        bkptNoVal.value.string = m.group(3);
-        result.add(bkptNoVal);
+        if (hasBkptno) {
+            final GdbMiResult bkptNoVal = new GdbMiResult("bkptno");
+            bkptNoVal.value.type = GdbMiValue.Type.String;
+            bkptNoVal.value.string = m.group(currentGroup);
+            result.add(bkptNoVal);
+            currentGroup++;
+        }
 
         // frame={*}
-        result.add(parseBreakpointHitLineFrameLine(m.group(4)));
+        result.add(parseBreakpointHitLineFrameLine(m.group(currentGroup)));
+        currentGroup++;
 
         // thread-id="1"
         final GdbMiResult threadIdVal = new GdbMiResult("thread-id");
         threadIdVal.value.type = GdbMiValue.Type.String;
-        threadIdVal.value.string = m.group(5);
+        threadIdVal.value.string = m.group(currentGroup);
         result.add(threadIdVal);
+        currentGroup++;
 
         // stopped-threads="all"
         final GdbMiResult stoppedThreadsVal = new GdbMiResult("stopped-threads");
         stoppedThreadsVal.value.type = GdbMiValue.Type.String;
-        stoppedThreadsVal.value.string = m.group(6);
+        stoppedThreadsVal.value.string = m.group(currentGroup);
         result.add(stoppedThreadsVal);
+        currentGroup++;
 
         // core="6"
         final GdbMiResult coreVal = new GdbMiResult("core");
         coreVal.value.type = GdbMiValue.Type.String;
         if (hasCore) {
-            coreVal.value.string = m.group(7);
+            coreVal.value.string = m.group(currentGroup);
         } else {
             coreVal.value.string = "1";
         }
@@ -1238,16 +1302,27 @@ public class GdbMiParser2 {
         Matcher m = p.matcher(line);
         final Boolean hasThreadId = m.find();
 
-        String pattern = "(?:name=\"([^\"]+)\")," +
-            "(?:numchild=\"([^\"]+)\")," +
-            "(?:value=\"(.*?)\")," +
-            "(?:type=\"([^\"]+)\"),";
+        String pattern;
+        if (SystemInfo.isWindows) {
+            pattern =
+                "(?:name=\"([^\"]+)\")," +
+                    "(?:type=\"([^\"]+)\")," +
+                    "(?:value=\"(.*?)\")," +
+                    "(?:numchild=\"([^\"]+)\")";
+        } else {
+            pattern = "(?:name=\"([^\"]+)\")," +
+                "(?:numchild=\"([^\"]+)\")," +
+                "(?:value=\"(.*?)\")," +
+                "(?:type=\"([^\"]+)\"),";
+        }
 
         if (hasThreadId) {
             pattern += "(?:thread-id=\"([^\"]+)\"),";
         }
 
-        pattern += "(?:has_more=\"([^\"]+)\")";
+        if (!SystemInfo.isWindows) {
+            pattern += "(?:has_more=\"([^\"]+)\")";
+        }
 
         p = Pattern.compile(pattern);
         m = p.matcher(line);
@@ -1292,10 +1367,12 @@ public class GdbMiParser2 {
         }
 
         // has_more="0"
-        final GdbMiResult hasMoreVal = new GdbMiResult("has_more");
-        hasMoreVal.value.type = GdbMiValue.Type.String;
-        hasMoreVal.value.string = m.group(++matchGroup);
-        result.add(hasMoreVal);
+        if (!SystemInfo.isWindows) {
+            final GdbMiResult hasMoreVal = new GdbMiResult("has_more");
+            hasMoreVal.value.type = GdbMiValue.Type.String;
+            hasMoreVal.value.string = m.group(++matchGroup);
+            result.add(hasMoreVal);
+        }
 
         return result;
     }
@@ -1615,12 +1692,12 @@ public class GdbMiParser2 {
         }
 
         Pattern p = Pattern.compile(
-            "\\{(?:id=\"(\\d+)\")," +
-                "(?:target-id=\"([^\"]+)\")," +
-                "(?:name=\"([^\"]+)\")," +
-                "(?:frame=\\{([^\\}].+?)\\})," +
-                "(?:state=\"([^\"]+)\")," +
-                "(?:core=\"(\\d+)\")" +
+            "\\{(?:id=\"(\\d+)\")?,?" +
+                "(?:target-id=\"([^\"]+)\")?,?" +
+                "(?:name=\"([^\"]+)\")?,?" +
+                "(?:frame=\\{([^\\}].+?)\\})?,?" +
+                "(?:state=\"([^\"]+)\")?,?" +
+                "(?:core=\"(\\d+)\")?" +
                 "\\}"
         );
         Matcher m = p.matcher(line);

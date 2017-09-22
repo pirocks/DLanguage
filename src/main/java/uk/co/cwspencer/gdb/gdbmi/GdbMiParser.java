@@ -256,7 +256,7 @@ public class GdbMiParser {
                         case Identifier: {
                             final GdbMiResult result = new GdbMiResult(token.value);
                             m_valueStack.push(result.value);
-                            m_resultRecord.results.add(result);
+                            m_resultRecord.getResults().add(result);
                         }
                         setState(FsmState.ResultRecordResultEquals);
                         break;
