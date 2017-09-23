@@ -24,6 +24,8 @@
 
 package uk.co.cwspencer.gdb.messages;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import uk.co.cwspencer.gdb.gdbmi.GdbMiValue;
 
 /**
@@ -34,7 +36,8 @@ public class GdbMiMessageConverterUtils {
     /**
      * Converts a hexadecimal string to a long.
      */
-    public static Long hexStringToLong(final GdbMiValue value) {
+    @Nullable
+    public static Long hexStringToLong(@NotNull final GdbMiValue value) {
         Long longValue = null;
         if (value.type == GdbMiValue.Type.String && value.string.substring(0, 2).equals("0x")) {
             longValue = Long.parseLong(value.string.substring(2), 16);
@@ -45,7 +48,7 @@ public class GdbMiMessageConverterUtils {
     /**
      * Returns true if value is equal to "all".
      */
-    public static Boolean valueIsAll(final GdbMiValue value) {
+    public static Boolean valueIsAll(@NotNull final GdbMiValue value) {
         return value.type == GdbMiValue.Type.String && value.string.equals("all");
     }
 
@@ -53,7 +56,7 @@ public class GdbMiMessageConverterUtils {
      * Returns null if value is equal to "all", or otherwise requests normal processing for the
      * value.
      */
-    public static Object passThroughIfNotAll(final GdbMiValue value) {
+    public static Object passThroughIfNotAll(@NotNull final GdbMiValue value) {
         if (valueIsAll(value)) {
             return null;
         }
@@ -64,7 +67,7 @@ public class GdbMiMessageConverterUtils {
      * Returns null if value is equal to "??", or otherwise requests normal processing for the
      * value.
      */
-    public static Object passThroughIfNotQQ(final GdbMiValue value) {
+    public static Object passThroughIfNotQQ(@NotNull final GdbMiValue value) {
         if (value.type == GdbMiValue.Type.String && value.string.equals("??")) {
             return null;
         }

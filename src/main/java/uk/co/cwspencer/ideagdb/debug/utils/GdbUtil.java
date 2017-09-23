@@ -28,6 +28,7 @@ import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.CapturingProcessHandler;
 import com.intellij.execution.process.ProcessOutput;
 import com.intellij.openapi.diagnostic.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.nio.charset.Charset;
 import java.util.Map;
@@ -45,7 +46,7 @@ public class GdbUtil {
         .put("string", false)
         .build();
 
-    public static String getGoObjectType(final String originalType) {
+    public static String getGoObjectType(@NotNull final String originalType) {
         if (originalType.contains("struct string")) {
             return originalType.replace("struct ", "");
         }
@@ -53,7 +54,7 @@ public class GdbUtil {
         return originalType;
     }
 
-    public static Boolean supportsEditing(final String varType) {
+    public static Boolean supportsEditing(@NotNull final String varType) {
         final String goType = getGoObjectType(varType);
 
         if (!editingSupport.containsKey(goType)) {
@@ -63,7 +64,7 @@ public class GdbUtil {
         return editingSupport.get(goType);
     }
 
-    public static Boolean isKnownGdb(final String path) {
+    public static Boolean isKnownGdb(@NotNull final String path) {
         try {
             final GeneralCommandLine command = new GeneralCommandLine();
             command.setExePath(path);
@@ -81,13 +82,13 @@ public class GdbUtil {
 
             final String cmdOutput = output.getStdout();
             return cmdOutput.contains("(GDB) 7.6") || cmdOutput.contains("(GDB) 7.4");
-        } catch (final Exception e) {
+        } catch (@NotNull final Exception e) {
             LOG.error("Exception while executing the process:", e);
             return false;
         }
     }
 
-    public static Boolean isValidGdbPath(final String path) {
+    public static Boolean isValidGdbPath(@NotNull final String path) {
         try {
             final GeneralCommandLine command = new GeneralCommandLine();
             command.setExePath(path);
@@ -105,7 +106,7 @@ public class GdbUtil {
 
             // TODO maybe we should warn the user that his GDB version is not the latest at time of writing (7.6.2)
             return output.getStdout().contains("GDB");
-        } catch (final Exception e) {
+        } catch (@NotNull final Exception e) {
 //            LOG.error("Exception while executing the process:", e);
             return false;
         }

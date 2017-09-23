@@ -24,6 +24,9 @@
 
 package uk.co.cwspencer.gdb.gdbmi;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,8 +35,10 @@ import java.util.List;
  */
 public class GdbMiLexer {
     // State of the lexer FSM
+    @NotNull
     private FsmState m_state = FsmState.Idle;
     // Temporary store for partially read tokens
+    @Nullable
     private StringBuilder m_partialToken;
     // List of unprocessed tokens
     private final List<GdbMiToken> m_tokens = new ArrayList<GdbMiToken>();
@@ -44,6 +49,7 @@ public class GdbMiLexer {
      *
      * @return A list of unprocessed tokens.
      */
+    @NotNull
     public List<GdbMiToken> getTokens() {
         return m_tokens;
     }

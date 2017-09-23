@@ -24,6 +24,7 @@
 
 package uk.co.cwspencer.gdb.messages.annotations;
 
+import org.jetbrains.annotations.NotNull;
 import uk.co.cwspencer.gdb.gdbmi.GdbMiRecord;
 
 import java.lang.annotation.Retention;
@@ -37,10 +38,10 @@ public @interface GdbMiEvent {
     /**
      * The record type.
      */
-    GdbMiRecord.Type recordType();
+    @NotNull GdbMiRecord.Type recordType();
 
     /**
      * The event class name(s).
      */
-    String[] className();
+    @NotNull String[] className();
 }

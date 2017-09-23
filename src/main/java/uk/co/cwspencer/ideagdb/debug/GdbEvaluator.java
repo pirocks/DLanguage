@@ -115,7 +115,7 @@ public class GdbEvaluator extends XDebuggerEvaluator {
      * @param event    The event.
      * @param callback The callback passed to evaluate().
      */
-    private void onGdbExpressionReady(final GdbEvent event, final XEvaluationCallback callback) {
+    private void onGdbExpressionReady(final GdbEvent event, @NotNull final XEvaluationCallback callback) {
         if (event instanceof GdbErrorEvent) {
             callback.errorOccurred(((GdbErrorEvent) event).message);
             return;

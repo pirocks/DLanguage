@@ -93,7 +93,7 @@ public class GdbValueModifier extends XValueModifier {
      * @param event    The event.
      * @param callback The callback passed to setValue().
      */
-    private void onGdbNewValueReady(final GdbEvent event, final XModificationCallback callback) {
+    private void onGdbNewValueReady(final GdbEvent event, @NotNull final XModificationCallback callback) {
         if (event instanceof GdbErrorEvent) {
             callback.errorOccurred(((GdbErrorEvent) event).message);
             return;

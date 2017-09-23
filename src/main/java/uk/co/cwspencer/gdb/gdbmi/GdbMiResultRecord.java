@@ -58,6 +58,7 @@ public class GdbMiResultRecord extends GdbMiRecord {
      *
      * @return A string containing the class name and any results.
      */
+    @NotNull
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append(className);
@@ -77,6 +78,7 @@ public class GdbMiResultRecord extends GdbMiRecord {
     /**
      * The results.
      */
+    @NotNull
     public List<GdbMiResult> getResults() {
         return results;
     }

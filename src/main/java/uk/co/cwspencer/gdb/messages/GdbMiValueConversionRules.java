@@ -25,6 +25,8 @@
 package uk.co.cwspencer.gdb.messages;
 
 import com.intellij.openapi.diagnostic.Logger;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import uk.co.cwspencer.gdb.gdbmi.GdbMiList;
 import uk.co.cwspencer.gdb.gdbmi.GdbMiResult;
 import uk.co.cwspencer.gdb.gdbmi.GdbMiValue;
@@ -52,8 +54,8 @@ public class GdbMiValueConversionRules {
      * Converts results where the target type has a GdbMiObject annotation.
      */
     @GdbMiConversionRule
-    public static Object convertValueToTypeWithGdbMiObjectAnnotation(final Class<?> type,
-                                                                     final ParameterizedType genericType, final GdbMiValue value) {
+    public static Object convertValueToTypeWithGdbMiObjectAnnotation(@NotNull final Class<?> type,
+                                                                     final ParameterizedType genericType, @NotNull final GdbMiValue value) {
         // If the field type class has a GdbMiObject annotation then recursively process it
         final GdbMiObject objectAnnotation = type.getAnnotation(GdbMiObject.class);
         if (objectAnnotation != null) {
@@ -98,8 +100,8 @@ public class GdbMiValueConversionRules {
      * Converts string results to enums.
      */
     @GdbMiConversionRule
-    public static Object convertStringToEnum(final Class<?> type, final ParameterizedType genericType,
-                                             final GdbMiValue value) {
+    public static Object convertStringToEnum(@NotNull final Class<?> type, final ParameterizedType genericType,
+                                             @NotNull final GdbMiValue value) {
         // Check if the field type is an enum
         if (type.isEnum()) {
             // Only strings can be converted
@@ -161,8 +163,8 @@ public class GdbMiValueConversionRules {
      * Converts strings to simple types.
      */
     @GdbMiConversionRule
-    public static Object convertStringToSimple(final Class<?> type, final ParameterizedType genericType,
-                                               final GdbMiValue value) {
+    public static Object convertStringToSimple(@NotNull final Class<?> type, final ParameterizedType genericType,
+                                               @NotNull final GdbMiValue value) {
         if (value.type == GdbMiValue.Type.String) {
             if (type.equals(String.class)) {
                 return value.string;
@@ -179,7 +181,7 @@ public class GdbMiValueConversionRules {
                     try {
                         final int intValue = Integer.parseInt(value.string);
                         return intValue != 0;
-                    } catch (final NumberFormatException ex) {
+                    } catch (@NotNull final NumberFormatException ex) {
                         // Don't know how to convert this to a bool
                     }
                 }
@@ -193,8 +195,8 @@ public class GdbMiValueConversionRules {
      */
     @SuppressWarnings("unchecked")
     @GdbMiConversionRule
-    public static Object convertListOfValuesToList(final Class<?> type, final ParameterizedType genericType,
-                                                   final GdbMiValue value) throws InvocationTargetException, IllegalAccessException {
+    public static Object convertListOfValuesToList(@NotNull final Class<?> type, @Nullable final ParameterizedType genericType,
+                                                   @NotNull final GdbMiValue value) throws InvocationTargetException, IllegalAccessException {
         if (value.type != GdbMiValue.Type.List || genericType == null ||
             !type.equals(List.class)) {
             return null;
@@ -245,8 +247,8 @@ public class GdbMiValueConversionRules {
      */
     @SuppressWarnings("unchecked")
     @GdbMiConversionRule
-    public static Object convertListOfTuplesToMap(final Class<?> type, final ParameterizedType genericType,
-                                                  final GdbMiValue value) throws InvocationTargetException, IllegalAccessException {
+    public static Object convertListOfTuplesToMap(@NotNull final Class<?> type, @Nullable final ParameterizedType genericType,
+                                                  @NotNull final GdbMiValue value) throws InvocationTargetException, IllegalAccessException {
         if (value.type != GdbMiValue.Type.List || genericType == null ||
             !type.equals(Map.class)) {
             return null;

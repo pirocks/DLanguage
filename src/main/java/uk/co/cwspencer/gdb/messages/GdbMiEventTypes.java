@@ -24,6 +24,8 @@
 
 package uk.co.cwspencer.gdb.messages;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Class which holds a reference to all the available GDB event type wrappers.
  */
@@ -31,6 +33,7 @@ public class GdbMiEventTypes {
     /**
      * An array of the event classes.
      */
+    @NotNull
     public static Class<?>[] classes = {
         GdbDoneEvent.class,
         GdbConnectedEvent.class,
@@ -42,6 +45,7 @@ public class GdbMiEventTypes {
     /**
      * An array of types of 'done' events.
      */
+    @NotNull
     public static Class<?>[] doneEventTypes = {
         GdbBreakpoint.class,
         GdbFeatures.class,

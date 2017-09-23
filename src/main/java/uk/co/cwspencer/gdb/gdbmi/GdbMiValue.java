@@ -24,6 +24,9 @@
 
 package uk.co.cwspencer.gdb.gdbmi;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,19 +37,23 @@ public class GdbMiValue {
     /**
      * Type of the value.
      */
-    public Type type;
+    public @NotNull
+    Type type;
     /**
      * String. Will be null if type is not String.
      */
-    public String string;
+    public @Nullable
+    String string;
     /**
      * Tuple. Will be null if type is not Tuple.
      */
-    public List<GdbMiResult> tuple;
+    public @Nullable
+    List<GdbMiResult> tuple;
     /**
      * List. Will be null if type is not List.
      */
-    public GdbMiList list;
+    public @Nullable
+    GdbMiList list;
 
     /**
      * Default constructor.
@@ -57,7 +64,7 @@ public class GdbMiValue {
     /**
      * Constructor; sets the type only.
      */
-    public GdbMiValue(final Type type) {
+    public GdbMiValue(@NotNull final Type type) {
         this.type = type;
 
         if (type == Type.String) {
@@ -74,6 +81,7 @@ public class GdbMiValue {
      *
      * @return A string containing the value.
      */
+    @NotNull
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         switch (type) {

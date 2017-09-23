@@ -27,7 +27,12 @@ package uk.co.cwspencer.gdb;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import uk.co.cwspencer.gdb.gdbmi.*;
+import org.jetbrains.annotations.Nullable;
+import uk.co.cwspencer.gdb.gdbmi.GdbMiRecord;
+import uk.co.cwspencer.gdb.gdbmi.GdbMiResultRecord;
+import uk.co.cwspencer.gdb.gdbmi.GdbMiStreamRecord;
+import uk.co.cwspencer.gdb.gdbmi.GdbMiUtil;
+import uk.co.cwspencer.gdb.gdbmi.parser.GdbMiParser2;
 import uk.co.cwspencer.gdb.messages.*;
 import uk.co.cwspencer.ideagdb.debug.GdbDebugProcess;
 
@@ -59,9 +64,11 @@ public class Gdb {
     // Handle for the GDB process
     private Process m_process;
     // Threads which read/write data from GDB
+    @NotNull
     private final Thread m_readThread;
     private Thread m_writeThread;
     // Flag indicating whether we are stopping
+    @NotNull
     private Boolean m_stopping = false;
     // Flag indicating whether we have received the first record from GDB yet
     private boolean m_firstRecord = true;
@@ -138,39 +145,21 @@ public class Gdb {
         m_readThread.start();
     }
 
+    private static void error(final GdbEvent event, @NotNull final GdbEventCallback callback) {
+        final GdbErrorEvent errorEvent = new GdbErrorEvent();
+        errorEvent.message = "Unexpected data received from GDB";
+        callback.onGdbCommandCompleted(errorEvent);
+        m_log.warn("Unexpected event " + event + " received from -var-create request");
+    }
+
     /**
      * Sends an arbitrary command to GDB.
      *
      * @param command The command to send. This may be a normal CLI command or a GDB/MI command. It
      *                should not contain any line breaks.
      */
-    public void sendCommand(final String command) {
+    public void sendCommand(@NotNull final String command) {
         sendCommand(command, null);
-    }
-
-    /**
-     * Sends an arbitrary command to GDB and requests a completion callback.
-     *
-     * @param command  The command to send. This may be a normal CLI command or a GDB/MI command. It
-     *                 should not contain any line breaks.
-     * @param callback The callback function.
-     */
-    public synchronized void sendCommand(final String command, final GdbEventCallback callback) {
-        // Queue the command
-        if (command.equals("-gdb-exit")) {
-            m_queuedCommands.clear();
-        }
-        //hack to work around mago
-        if (command.contains("-break-insert -f")) {
-            pendingBreakPoints.add(new CommandData(command.replace("-break-insert -f", "-break-insert"), callback));
-//            return;
-        }
-        if (command.contains("run")) {
-            m_queuedCommands.addAll(pendingBreakPoints);
-        }
-
-        m_queuedCommands.add(new CommandData(command, callback));
-        notify();
     }
 
     /**
@@ -197,6 +186,31 @@ public class Gdb {
     }
 
     /**
+     * Sends an arbitrary command to GDB and requests a completion callback.
+     *
+     * @param command  The command to send. This may be a normal CLI command or a GDB/MI command. It
+     *                 should not contain any line breaks.
+     * @param callback The callback function.
+     */
+    public synchronized void sendCommand(@NotNull final String command, final GdbEventCallback callback) {
+        // Queue the command
+        if (command.equals("-gdb-exit")) {
+            m_queuedCommands.clear();
+        }
+        //hack to work around mago
+        if (command.contains("-break-insert -f")) {
+            pendingBreakPoints.add(new CommandData(command.replace("-break-insert -f", "-break-insert"), callback));
+//            return;
+        }
+        if (command.contains("run")) {
+            m_queuedCommands.addAll(pendingBreakPoints);
+        }
+
+        m_queuedCommands.add(new CommandData(command, callback));
+        notify();
+    }
+
+    /**
      * Gets information about the local variables for the given stack frame.
      *
      * @param thread   The thread on which the frame resides.
@@ -205,7 +219,7 @@ public class Gdb {
      *                 or GdbErrorEvent on failure.
      */
     public void getVariablesForFrame(final int thread, final int frame,
-                                     final GdbEventCallback callback) {
+                                     @NotNull final GdbEventCallback callback) {
         // Get a list of local variables
         final String command = "-stack-list-variables --thread " + thread + " --frame " + frame +
             " --no-values";
@@ -226,7 +240,7 @@ public class Gdb {
      * @param callback   The callback function.
      */
     public void evaluateExpression(final int thread, final int frame, final String expression,
-                                   final GdbEventCallback callback) {
+                                   @NotNull final GdbEventCallback callback) {
         // TODO: Make this more efficient
 
         // Create a new variable object if necessary
@@ -243,6 +257,7 @@ public class Gdb {
         }
 
         // Update existing variable objects
+        //todo switch to loop over existing objects
         sendCommand("-var-update --thread " + thread + " --frame " + frame + " --all-values *",
             new GdbEventCallback() {
                 @Override
@@ -260,7 +275,7 @@ public class Gdb {
      * @param gdbPath          Path to the GDB executable.
      * @param workingDirectory Working directory to launch the GDB process in. May be null.
      */
-    private void runGdb(final String gdbPath, final String workingDirectory) {
+    private void runGdb(final String gdbPath, @Nullable final String workingDirectory) {
         try {
             // Launch the process
             final String[] commandLine = {
@@ -318,7 +333,7 @@ public class Gdb {
                 try {
                     parser.process(buffer, bytes);
                     buffer = new byte[BUFFER_SIZE];
-                } catch (final IllegalArgumentException ex) {
+                } catch (@NotNull final IllegalArgumentException ex) {
                     m_log.error("GDB/MI parsing error. Current buffer contents: \"" +
                         new String(buffer, 0, bytes) + "\"", ex);
                     m_listener.onGdbError(ex);
@@ -332,66 +347,7 @@ public class Gdb {
                 }
                 records.clear();
             }
-        } catch (final Throwable ex) {
-            m_listener.onGdbError(ex);
-        }
-    }
-
-    /**
-     * Thread function for processing the write queue.
-     */
-    private void processWriteQueue() {
-        try {
-            OutputStream stream;
-            List<CommandData> queuedCommands = new ArrayList<CommandData>();
-            while (true) {
-                synchronized (this) {
-                    // Wait for some data to process
-                    while (m_queuedCommands.isEmpty()) {
-                        wait();
-                    }
-
-                    // Exit cleanly if we are stopping
-                    if (m_stopping) {
-                        return;
-                    }
-
-                    // Do the processing we need before dropping out of synchronised mode
-                    stream = m_process.getOutputStream();
-
-                    // Insert the commands into the pending queue
-                    long token = m_token;
-                    for (final CommandData command : m_queuedCommands) {
-                        m_pendingCommands.put(token++, command);
-                    }
-
-                    // Swap the queues
-                    final List<CommandData> tmp = queuedCommands;
-                    queuedCommands = m_queuedCommands;
-                    m_queuedCommands = tmp;
-                }
-
-                // Send the queued commands to GDB
-                final StringBuilder sb = new StringBuilder();
-                for (final CommandData command : queuedCommands) {
-                    // Construct the message
-                    final long token = m_token++;
-                    m_listener.onGdbCommandSent(command.command, token);
-
-                    sb.append(token);
-                    sb.append(command.command);
-                    sb.append("\r\n");
-                }
-                queuedCommands.clear();
-
-                // Send the messages
-                final byte[] message = sb.toString().getBytes(m_ascii);
-                stream.write(message);
-                stream.flush();
-            }
-        } catch (final InterruptedException ex) {
-            // We are exiting
-        } catch (final Throwable ex) {
+        } catch (@NotNull final Throwable ex) {
             m_listener.onGdbError(ex);
         }
     }
@@ -471,6 +427,65 @@ public class Gdb {
     }
 
     /**
+     * Thread function for processing the write queue.
+     */
+    private void processWriteQueue() {
+        try {
+            OutputStream stream;
+            List<CommandData> queuedCommands = new ArrayList<CommandData>();
+            while (true) {
+                synchronized (this) {
+                    // Wait for some data to process
+                    while (m_queuedCommands.isEmpty()) {
+                        wait();
+                    }
+
+                    // Exit cleanly if we are stopping
+                    if (m_stopping) {
+                        return;
+                    }
+
+                    // Do the processing we need before dropping out of synchronised mode
+                    stream = m_process.getOutputStream();
+
+                    // Insert the commands into the pending queue
+                    long token = m_token;
+                    for (final CommandData command : m_queuedCommands) {
+                        m_pendingCommands.put(token++, command);
+                    }
+
+                    // Swap the queues
+                    final List<CommandData> tmp = queuedCommands;
+                    queuedCommands = m_queuedCommands;
+                    m_queuedCommands = tmp;
+                }
+
+                // Send the queued commands to GDB
+                final StringBuilder sb = new StringBuilder();
+                for (final CommandData command : queuedCommands) {
+                    // Construct the message
+                    final long token = m_token++;
+                    m_listener.onGdbCommandSent(command.command, token);
+
+                    sb.append(token);
+                    sb.append(command.command);
+                    sb.append("\r\n");
+                }
+                queuedCommands.clear();
+
+                // Send the messages
+                final byte[] message = sb.toString().getBytes(m_ascii);
+                stream.write(message);
+                stream.flush();
+            }
+        } catch (@NotNull final InterruptedException ex) {
+            // We are exiting
+        } catch (@NotNull final Throwable ex) {
+            m_listener.onGdbError(ex);
+        }
+    }
+
+    /**
      * Callback function for when GDB has responded to our stack variables request.
      *
      * @param event    The event.
@@ -479,7 +494,7 @@ public class Gdb {
      * @param callback The user-provided callback function.
      */
     private void onGdbVariablesReady(final GdbEvent event, final int thread, final int frame,
-                                     final GdbEventCallback callback) {
+                                     @NotNull final GdbEventCallback callback) {
         if (event instanceof GdbErrorEvent) {
             callback.onGdbCommandCompleted(event);
             return;
@@ -510,6 +525,7 @@ public class Gdb {
         }
 
         // Update any existing variable objects
+        //todo switch to loop on vars
         sendCommand("-var-update --thread " + thread + " --frame " + frame + " --all-values *",
             new GdbEventCallback() {
                 @Override
@@ -517,13 +533,6 @@ public class Gdb {
                     onGdbVariableObjectsUpdated(event, variables.variables.keySet(), callback);
                 }
             });
-    }
-
-    private static void error(final GdbEvent event, final GdbEventCallback callback) {
-        final GdbErrorEvent errorEvent = new GdbErrorEvent();
-        errorEvent.message = "Unexpected data received from GDB";
-        callback.onGdbCommandCompleted(errorEvent);
-        m_log.warn("Unexpected event " + event + " received from -var-create request");
     }
 
     /**
@@ -534,7 +543,7 @@ public class Gdb {
      * @param callback   The user-provided callback function.
      */
     private void onGdbNewVariableObjectReady(final GdbEvent event, final String expression,
-                                             final GdbEventCallback callback) {
+                                             @NotNull final GdbEventCallback callback) {
         if (event instanceof GdbErrorEvent) {
             callback.onGdbCommandCompleted(event);
             return;
@@ -566,8 +575,8 @@ public class Gdb {
      * @param variables The variables the user requested.
      * @param callback  The user-provided callback function.
      */
-    private void onGdbVariableObjectsUpdated(final GdbEvent event, final Set<String> variables,
-                                             final GdbEventCallback callback) {
+    private void onGdbVariableObjectsUpdated(final GdbEvent event, @NotNull final Set<String> variables,
+                                             @NotNull final GdbEventCallback callback) {
         if (event instanceof GdbErrorEvent) {
             callback.onGdbCommandCompleted(event);
             return;

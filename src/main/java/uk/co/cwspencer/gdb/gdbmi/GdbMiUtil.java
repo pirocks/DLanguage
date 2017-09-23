@@ -24,6 +24,8 @@
 
 package uk.co.cwspencer.gdb.gdbmi;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Utility functions relating to the use of GDB/MI.
  */
@@ -38,7 +40,7 @@ public class GdbMiUtil {
      * @param string The string to format.
      * @return The formatted string.
      */
-    public static String formatGdbString(final String string, final Boolean autoQuote) {
+    public static String formatGdbString(@NotNull final String string, final Boolean autoQuote) {
         final StringBuilder sb = new StringBuilder();
         if (autoQuote) {
             sb.append("\"");
@@ -69,7 +71,7 @@ public class GdbMiUtil {
         return sb.toString();
     }
 
-    public static String formatGdbString(final String string) {
+    public static String formatGdbString(@NotNull final String string) {
         return formatGdbString(string, true);
     }
 }

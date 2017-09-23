@@ -31,6 +31,7 @@ import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import uk.co.cwspencer.gdb.Gdb;
 import uk.co.cwspencer.gdb.messages.GdbBreakpoint;
 import uk.co.cwspencer.gdb.messages.GdbErrorEvent;
@@ -132,6 +133,7 @@ public class GdbBreakpointHandler extends
      * @param breakpoint The breakpoint to search for.
      * @return The breakpoint number, or null if it could not be found.
      */
+    @Nullable
     public Integer findBreakpointNumber(final XLineBreakpoint<GdbBreakpointProperties> breakpoint) {
         final List<Integer> numbers;
         synchronized (m_breakpoints) {
@@ -154,7 +156,7 @@ public class GdbBreakpointHandler extends
      * @param breakpoint The breakpoint we tried to set.
      */
     private void onGdbBreakpointReady(final GdbEvent event,
-                                      final XLineBreakpoint<GdbBreakpointProperties> breakpoint) {
+                                      @NotNull final XLineBreakpoint<GdbBreakpointProperties> breakpoint) {
         if (event instanceof GdbErrorEvent) {
             m_debugProcess.getSession().updateBreakpointPresentation(breakpoint,
                 AllIcons.Debugger.Db_invalid_breakpoint, ((GdbErrorEvent) event).message);

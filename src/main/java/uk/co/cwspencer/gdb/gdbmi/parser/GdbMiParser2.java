@@ -22,12 +22,14 @@
  * THE SOFTWARE.)
  */
 
-package uk.co.cwspencer.gdb.gdbmi;
+package uk.co.cwspencer.gdb.gdbmi.parser;
 
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.util.SystemInfo;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import uk.co.cwspencer.gdb.gdbmi.*;
 
 import java.io.UnsupportedEncodingException;
 import java.util.*;
@@ -43,19 +45,274 @@ public class GdbMiParser2 {
 
     private static final Set<String> START_TOKENS = new HashSet<String>(Arrays.asList(
         "*", "+", "=", "~", "@", "&"));
+    @Nullable
     private final ConsoleView rawConsole;
     // List of unprocessed records
     private final List<GdbMiRecord> m_records = new ArrayList<GdbMiRecord>();
     // Partially processed record
     private GdbMiResultRecord m_resultRecord;
     private GdbMiStreamRecord m_streamRecord;
+    @Nullable
     private Long currentToken;
 
     public GdbMiParser2(@Nullable final ConsoleView rawConsole) {
         this.rawConsole = rawConsole;
     }
 
-    private static GdbMiResult parseBreakpointHitLineFrameLine(String line) {
+    @NotNull
+    private static GdbMiResult parseStackListVariablesLine(final @NotNull String line) {
+        final GdbMiResult subRes = new GdbMiResult("variables");
+        final GdbMiValue stackListVarsVal = new GdbMiValue(GdbMiValue.Type.List);
+        stackListVarsVal.list.type = GdbMiList.Type.Values;
+        stackListVarsVal.list.values = new ArrayList<GdbMiValue>();
+
+        final Pattern p;
+        if (SystemInfo.isWindows) {//todo
+            p = Pattern.compile("\"([^\"]+)\"");
+        } else {
+            p = Pattern.compile("\\{(?:name=\"([^\"]+)\")(?:,arg=\"([^\"]+)\")?\\}");
+        }
+        final Matcher m = p.matcher(line);
+
+        while (m.find()) {
+            final GdbMiValue varVal = new GdbMiValue(GdbMiValue.Type.Tuple);
+            varVal.tuple = new ArrayList<GdbMiResult>();
+
+            final GdbMiResult varNameVal = new GdbMiResult("name");
+            varNameVal.value.type = GdbMiValue.Type.String;
+            varNameVal.value.string = m.group(1);
+            varVal.tuple.add(varNameVal);
+
+            if ((!SystemInfo.isWindows) && m.group(2) != null) {//todo
+                final GdbMiResult argVal = new GdbMiResult("arg");
+                argVal.value.type = GdbMiValue.Type.String;
+                argVal.value.string = m.group(2);
+                varVal.tuple.add(argVal);
+            }
+
+            stackListVarsVal.list.values.add(varVal);
+        }
+
+        subRes.value = stackListVarsVal;
+        return subRes;
+    }
+
+    @NotNull
+    private static GdbMiResult parseChangelistLine(final @NotNull String line) {
+        final GdbMiResult result = new GdbMiResult("changelist");
+        result.value.type = GdbMiValue.Type.List;
+        result.value.list = new GdbMiList();
+
+        Pattern p = Pattern.compile(
+            "(?:\\{name=\"([^\"]+)\"," +
+                "value=\"(.*?)\"," +
+                "in_scope=\"([^\"]+)\"," +
+                "type_changed=\"([^\"]+)\"," +
+                "has_more=\"([^\"]+)\"\\})+"
+        );
+        Matcher m = p.matcher(line);
+        if (m.find()) {
+            parseChangelistLineReal(line, result, true);
+        }
+
+        p = Pattern.compile(
+            "(?:\\{name=\"([^\"]+)\"," +
+                "in_scope=\"([^\"]+)\"," +
+                "type_changed=\"([^\"]+)\"," +
+                "has_more=\"([^\"]+)\"\\})+"
+        );
+        m = p.matcher(line);
+        if (m.find()) {
+            parseChangelistLineReal(line, result, false);
+        }
+
+        return result;
+    }
+
+    private static void parseChangelistLineReal(final @NotNull String line, final @NotNull GdbMiResult result, final boolean includeValue) {
+        String regex = "(?:\\{name=\"([^\"]+)\",";
+
+        if (includeValue) {
+            regex += "value=\"(.*?)\",";
+        }
+
+        regex += "in_scope=\"([^\"]+?)\"," +
+            "type_changed=\"([^\"].+?)\"," +
+            "(?:new_type=\"([^\"]+?)\")?,?" +
+            "(?:new_num_children=\"([^\"]+?)\")?,?" +
+            "has_more=\"([^\"]+?)\"\\})";
+
+        final Pattern p = Pattern.compile(regex);
+        final Matcher m = p.matcher(line);
+
+        while (m.find()) {
+            Integer matchGroup = 0;
+            final GdbMiValue changeVal = new GdbMiValue(GdbMiValue.Type.Tuple);
+
+            // name: "var5"
+            final GdbMiResult nameVal = new GdbMiResult("name");
+            nameVal.value.type = GdbMiValue.Type.String;
+            nameVal.value.string = m.group(++matchGroup);
+            changeVal.tuple.add(nameVal);
+
+            if (includeValue) {
+                // value: "3,3300000000000001"
+                final GdbMiResult valueVal = new GdbMiResult("value");
+                valueVal.value.type = GdbMiValue.Type.String;
+                valueVal.value.string = m.group(++matchGroup);
+                changeVal.tuple.add(valueVal);
+            }
+
+            // in_scope: "true"
+            final GdbMiResult inScopeVal = new GdbMiResult("in_scope");
+            inScopeVal.value.type = GdbMiValue.Type.String;
+            inScopeVal.value.string = m.group(++matchGroup);
+            changeVal.tuple.add(inScopeVal);
+
+            // type_changed: "false"
+            final GdbMiResult typeChangedVal = new GdbMiResult("type_changed");
+            typeChangedVal.value.type = GdbMiValue.Type.String;
+            typeChangedVal.value.string = m.group(++matchGroup);
+            changeVal.tuple.add(typeChangedVal);
+
+            if (m.group(++matchGroup) != null) {
+                // new_type="error"
+                final GdbMiResult newTypeVal = new GdbMiResult("new_type");
+                newTypeVal.value.type = GdbMiValue.Type.String;
+                newTypeVal.value.string = m.group(matchGroup);
+                changeVal.tuple.add(newTypeVal);
+            }
+
+            if (m.group(++matchGroup) != null) {
+                // new_num_children="2"
+                final GdbMiResult newNumChildrenVal = new GdbMiResult("new_num_children");
+                newNumChildrenVal.value.type = GdbMiValue.Type.String;
+                newNumChildrenVal.value.string = m.group(matchGroup);
+                changeVal.tuple.add(newNumChildrenVal);
+            }
+
+            // has_more: "0"
+            final GdbMiResult hasMoreVal = new GdbMiResult("has_more");
+            hasMoreVal.value.type = GdbMiValue.Type.String;
+            hasMoreVal.value.string = m.group(++matchGroup);
+            changeVal.tuple.add(hasMoreVal);
+
+            if (result.value.list.values == null) {
+                result.value.list.type = GdbMiList.Type.Values;
+                result.value.list.values = new ArrayList<GdbMiValue>();
+            }
+
+            result.value.list.values.add(changeVal);
+        }
+    }
+
+    @NotNull
+    private static GdbMiResult parseMsgLine(final @NotNull String line) {
+        // msg="No frames found."
+        final GdbMiResult result = new GdbMiResult("msg");
+        result.value.type = GdbMiValue.Type.String;
+        result.value.string = line.substring(5, line.length() - 1);
+
+        return result;
+    }
+
+    @NotNull
+    private static GdbMiResult parseRunningThreadId(final @NotNull String line) {
+        final Pattern p = Pattern.compile("(?:thread-id=\"([^\"]+)\")");
+        final Matcher m = p.matcher(line);
+
+        // thread-id="all"
+        final GdbMiResult result = new GdbMiResult("thread-id");
+        result.value.type = GdbMiValue.Type.String;
+
+        if (m.find()) {
+            result.value.string = m.group(1);
+        }
+
+        return result;
+    }
+
+    @NotNull
+    private static GdbMiResult parseNumChildChildsLine(final @NotNull String line) {
+        final GdbMiResult result = new GdbMiResult("children");
+        result.value.type = GdbMiValue.Type.List;
+        result.value.list = new GdbMiList();
+        result.value.list.type = GdbMiList.Type.Results;
+        result.value.list.results = new ArrayList<GdbMiResult>();
+
+        Pattern p = Pattern.compile("thread-id");
+        Matcher m = p.matcher(line);
+        final Boolean hasThreadId = m.find();
+
+        String pattern = "(?:child=\\{" +
+            "(?:name=\"([^\"]+)\")," +
+            "(?:exp=\"([^\"]+)\")," +
+            "(?:numchild=\"(\\d+)\")," +
+            "(?:value=\"(.*?)\")," +
+            "(?:type=\"([^\"]+)\")";
+
+        if (hasThreadId) {
+            pattern += ",(?:thread-id=\"([^\"]+)\")";
+        }
+
+        pattern += "\\})";
+
+        p = Pattern.compile(pattern);
+        m = p.matcher(line);
+
+        final Pattern stringP = Pattern.compile("0x\\w+\\s(?:<(?:[^>].+?)>\\s)?\\\\\"(.*)");
+        Matcher stringM;
+
+        while (m.find()) {
+            final GdbMiResult childVal = new GdbMiResult("child");
+            childVal.value.type = GdbMiValue.Type.Tuple;
+            childVal.value.tuple = new ArrayList<GdbMiResult>();
+
+            final GdbMiResult nameVal = new GdbMiResult("name");
+            nameVal.value.type = GdbMiValue.Type.String;
+            nameVal.value.string = m.group(1);
+            childVal.value.tuple.add(nameVal);
+
+            final GdbMiResult expVal = new GdbMiResult("exp");
+            expVal.value.type = GdbMiValue.Type.String;
+            expVal.value.string = m.group(2);
+            childVal.value.tuple.add(expVal);
+
+            final GdbMiResult numChildVal = new GdbMiResult("numchild");
+            numChildVal.value.type = GdbMiValue.Type.String;
+            numChildVal.value.string = m.group(3);
+            childVal.value.tuple.add(numChildVal);
+
+            final GdbMiResult valueVal = new GdbMiResult("value");
+            valueVal.value.type = GdbMiValue.Type.String;
+            valueVal.value.string = m.group(4);
+            stringM = stringP.matcher(valueVal.value.string);
+            if (stringM.find()) {
+                valueVal.value.string = stringM.group(1).substring(0, stringM.group(1).length() - 2);
+            }
+            childVal.value.tuple.add(valueVal);
+
+            final GdbMiResult typeVal = new GdbMiResult("type");
+            typeVal.value.type = GdbMiValue.Type.String;
+            typeVal.value.string = m.group(5);
+            childVal.value.tuple.add(typeVal);
+
+            final GdbMiResult threadIdVal = new GdbMiResult("thread-id");
+            threadIdVal.value.type = GdbMiValue.Type.String;
+            if (hasThreadId) {
+                threadIdVal.value.string = m.group(6);
+            } else {
+                threadIdVal.value.string = "1";
+            }
+            childVal.value.tuple.add(threadIdVal);
+
+            result.value.list.results.add(childVal);
+        }
+
+        return result;
+    }
+
+    private static GdbMiResult parseBreakpointHitLineFrameLine(@NotNull String line) {
         if (SystemInfo.isWindows) {//todo create some kind of is mago method, becuase thats what I mean
             line = "{" + line + "}";
         }
@@ -64,7 +321,8 @@ public class GdbMiParser2 {
         return result[0];
     }
 
-    private static GdbMiResult parseStackListLine(final String line) {
+    @NotNull
+    private static GdbMiResult parseStackListLine(final @NotNull String line) {
         final GdbMiResult subRes = new GdbMiResult("stack");
         final GdbMiValue stackListVal = new GdbMiValue(GdbMiValue.Type.List);
 
@@ -76,7 +334,8 @@ public class GdbMiParser2 {
         return subRes;
     }
 
-    private static Collection<GdbMiResult> parseFrameLine(final String line) {
+    @NotNull
+    private static Collection<GdbMiResult> parseFrameLine(final @NotNull String line) {
         final Collection<GdbMiResult> result = new ArrayList<GdbMiResult>();
 
         Pattern p = Pattern.compile("args=\\[");
@@ -163,255 +422,8 @@ public class GdbMiParser2 {
         return result;
     }
 
-    private static GdbMiResult parseStackListVariablesLine(final String line) {
-        final GdbMiResult subRes = new GdbMiResult("variables");
-        final GdbMiValue stackListVarsVal = new GdbMiValue(GdbMiValue.Type.List);
-        stackListVarsVal.list.type = GdbMiList.Type.Values;
-        stackListVarsVal.list.values = new ArrayList<GdbMiValue>();
-
-        final Pattern p;
-        if (SystemInfo.isWindows) {//todo
-            p = Pattern.compile("\"([^\"]+)\"");
-        } else {
-            p = Pattern.compile("\\{(?:name=\"([^\"]+)\")(?:,arg=\"([^\"]+)\")?\\}");
-        }
-        final Matcher m = p.matcher(line);
-
-        while (m.find()) {
-            final GdbMiValue varVal = new GdbMiValue(GdbMiValue.Type.Tuple);
-            varVal.tuple = new ArrayList<GdbMiResult>();
-
-            final GdbMiResult varNameVal = new GdbMiResult("name");
-            varNameVal.value.type = GdbMiValue.Type.String;
-            varNameVal.value.string = m.group(1);
-            varVal.tuple.add(varNameVal);
-
-            if ((!SystemInfo.isWindows) && m.group(2) != null) {//todo
-                final GdbMiResult argVal = new GdbMiResult("arg");
-                argVal.value.type = GdbMiValue.Type.String;
-                argVal.value.string = m.group(2);
-                varVal.tuple.add(argVal);
-            }
-
-            stackListVarsVal.list.values.add(varVal);
-        }
-
-        subRes.value = stackListVarsVal;
-        return subRes;
-    }
-
-    private static GdbMiResult parseChangelistLine(final String line) {
-        final GdbMiResult result = new GdbMiResult("changelist");
-        result.value.type = GdbMiValue.Type.List;
-        result.value.list = new GdbMiList();
-
-        Pattern p = Pattern.compile(
-            "(?:\\{name=\"([^\"]+)\"," +
-                "value=\"(.*?)\"," +
-                "in_scope=\"([^\"]+)\"," +
-                "type_changed=\"([^\"]+)\"," +
-                "has_more=\"([^\"]+)\"\\})+"
-        );
-        Matcher m = p.matcher(line);
-        if (m.find()) {
-            parseChangelistLineReal(line, result, true);
-        }
-
-        p = Pattern.compile(
-            "(?:\\{name=\"([^\"]+)\"," +
-                "in_scope=\"([^\"]+)\"," +
-                "type_changed=\"([^\"]+)\"," +
-                "has_more=\"([^\"]+)\"\\})+"
-        );
-        m = p.matcher(line);
-        if (m.find()) {
-            parseChangelistLineReal(line, result, false);
-        }
-
-        return result;
-    }
-
-    private static void parseChangelistLineReal(final String line, final GdbMiResult result, final Boolean includeValue) {
-        String regex = "(?:\\{name=\"([^\"]+)\",";
-
-        if (includeValue) {
-            regex += "value=\"(.*?)\",";
-        }
-
-        regex += "in_scope=\"([^\"]+?)\"," +
-            "type_changed=\"([^\"].+?)\"," +
-            "(?:new_type=\"([^\"]+?)\")?,?" +
-            "(?:new_num_children=\"([^\"]+?)\")?,?" +
-            "has_more=\"([^\"]+?)\"\\})";
-
-        final Pattern p = Pattern.compile(regex);
-        final Matcher m = p.matcher(line);
-
-        while (m.find()) {
-            Integer matchGroup = 0;
-            final GdbMiValue changeVal = new GdbMiValue(GdbMiValue.Type.Tuple);
-
-            // name: "var5"
-            final GdbMiResult nameVal = new GdbMiResult("name");
-            nameVal.value.type = GdbMiValue.Type.String;
-            nameVal.value.string = m.group(++matchGroup);
-            changeVal.tuple.add(nameVal);
-
-            if (includeValue) {
-                // value: "3,3300000000000001"
-                final GdbMiResult valueVal = new GdbMiResult("value");
-                valueVal.value.type = GdbMiValue.Type.String;
-                valueVal.value.string = m.group(++matchGroup);
-                changeVal.tuple.add(valueVal);
-            }
-
-            // in_scope: "true"
-            final GdbMiResult inScopeVal = new GdbMiResult("in_scope");
-            inScopeVal.value.type = GdbMiValue.Type.String;
-            inScopeVal.value.string = m.group(++matchGroup);
-            changeVal.tuple.add(inScopeVal);
-
-            // type_changed: "false"
-            final GdbMiResult typeChangedVal = new GdbMiResult("type_changed");
-            typeChangedVal.value.type = GdbMiValue.Type.String;
-            typeChangedVal.value.string = m.group(++matchGroup);
-            changeVal.tuple.add(typeChangedVal);
-
-            if (m.group(++matchGroup) != null) {
-                // new_type="error"
-                final GdbMiResult newTypeVal = new GdbMiResult("new_type");
-                newTypeVal.value.type = GdbMiValue.Type.String;
-                newTypeVal.value.string = m.group(matchGroup);
-                changeVal.tuple.add(newTypeVal);
-            }
-
-            if (m.group(++matchGroup) != null) {
-                // new_num_children="2"
-                final GdbMiResult newNumChildrenVal = new GdbMiResult("new_num_children");
-                newNumChildrenVal.value.type = GdbMiValue.Type.String;
-                newNumChildrenVal.value.string = m.group(matchGroup);
-                changeVal.tuple.add(newNumChildrenVal);
-            }
-
-            // has_more: "0"
-            final GdbMiResult hasMoreVal = new GdbMiResult("has_more");
-            hasMoreVal.value.type = GdbMiValue.Type.String;
-            hasMoreVal.value.string = m.group(++matchGroup);
-            changeVal.tuple.add(hasMoreVal);
-
-            if (result.value.list.values == null) {
-                result.value.list.type = GdbMiList.Type.Values;
-                result.value.list.values = new ArrayList<GdbMiValue>();
-            }
-
-            result.value.list.values.add(changeVal);
-        }
-    }
-
-    private static GdbMiResult parseMsgLine(final String line) {
-        // msg="No frames found."
-        final GdbMiResult result = new GdbMiResult("msg");
-        result.value.type = GdbMiValue.Type.String;
-        result.value.string = line.substring(5, line.length() - 1);
-
-        return result;
-    }
-
-    private static GdbMiResult parseRunningThreadId(final String line) {
-        final Pattern p = Pattern.compile("(?:thread-id=\"([^\"]+)\")");
-        final Matcher m = p.matcher(line);
-
-        // thread-id="all"
-        final GdbMiResult result = new GdbMiResult("thread-id");
-        result.value.type = GdbMiValue.Type.String;
-
-        if (m.find()) {
-            result.value.string = m.group(1);
-        }
-
-        return result;
-    }
-
-    private static GdbMiResult parseNumChildChildsLine(final String line) {
-        final GdbMiResult result = new GdbMiResult("children");
-        result.value.type = GdbMiValue.Type.List;
-        result.value.list = new GdbMiList();
-        result.value.list.type = GdbMiList.Type.Results;
-        result.value.list.results = new ArrayList<GdbMiResult>();
-
-        Pattern p = Pattern.compile("thread-id");
-        Matcher m = p.matcher(line);
-        final Boolean hasThreadId = m.find();
-
-        String pattern = "(?:child=\\{" +
-            "(?:name=\"([^\"]+)\")," +
-            "(?:exp=\"([^\"]+)\")," +
-            "(?:numchild=\"(\\d+)\")," +
-            "(?:value=\"(.*?)\")," +
-            "(?:type=\"([^\"]+)\")";
-
-        if (hasThreadId) {
-            pattern += ",(?:thread-id=\"([^\"]+)\")";
-        }
-
-        pattern += "\\})";
-
-        p = Pattern.compile(pattern);
-        m = p.matcher(line);
-
-        final Pattern stringP = Pattern.compile("0x\\w+\\s(?:<(?:[^>].+?)>\\s)?\\\\\"(.*)");
-        Matcher stringM;
-
-        while (m.find()) {
-            final GdbMiResult childVal = new GdbMiResult("child");
-            childVal.value.type = GdbMiValue.Type.Tuple;
-            childVal.value.tuple = new ArrayList<GdbMiResult>();
-
-            final GdbMiResult nameVal = new GdbMiResult("name");
-            nameVal.value.type = GdbMiValue.Type.String;
-            nameVal.value.string = m.group(1);
-            childVal.value.tuple.add(nameVal);
-
-            final GdbMiResult expVal = new GdbMiResult("exp");
-            expVal.value.type = GdbMiValue.Type.String;
-            expVal.value.string = m.group(2);
-            childVal.value.tuple.add(expVal);
-
-            final GdbMiResult numChildVal = new GdbMiResult("numchild");
-            numChildVal.value.type = GdbMiValue.Type.String;
-            numChildVal.value.string = m.group(3);
-            childVal.value.tuple.add(numChildVal);
-
-            final GdbMiResult valueVal = new GdbMiResult("value");
-            valueVal.value.type = GdbMiValue.Type.String;
-            valueVal.value.string = m.group(4);
-            stringM = stringP.matcher(valueVal.value.string);
-            if (stringM.find()) {
-                valueVal.value.string = stringM.group(1).substring(0, stringM.group(1).length() - 2);
-            }
-            childVal.value.tuple.add(valueVal);
-
-            final GdbMiResult typeVal = new GdbMiResult("type");
-            typeVal.value.type = GdbMiValue.Type.String;
-            typeVal.value.string = m.group(5);
-            childVal.value.tuple.add(typeVal);
-
-            final GdbMiResult threadIdVal = new GdbMiResult("thread-id");
-            threadIdVal.value.type = GdbMiValue.Type.String;
-            if (hasThreadId) {
-                threadIdVal.value.string = m.group(6);
-            } else {
-                threadIdVal.value.string = "1";
-            }
-            childVal.value.tuple.add(threadIdVal);
-
-            result.value.list.results.add(childVal);
-        }
-
-        return result;
-    }
-
-    private static GdbMiResult parseArgsLine(final String line) {
+    @NotNull
+    private static GdbMiResult parseArgsLine(final @NotNull String line) {
         // args=[{name="i",value="0x0"}]
 
         final GdbMiResult result = new GdbMiResult("args");
@@ -454,6 +466,7 @@ public class GdbMiParser2 {
      *
      * @return A list of unprocessed records.
      */
+    @NotNull
     public List<GdbMiRecord> getRecords() {
         return m_records;
     }
@@ -463,7 +476,7 @@ public class GdbMiParser2 {
      *
      * @param data Data read from the GDB process.
      */
-    public void process(final byte[] data) {
+    public void process(@NotNull final byte[] data) {
         process(data, data.length);
     }
 
@@ -473,11 +486,11 @@ public class GdbMiParser2 {
      * @param data   Data read from the GDB process.
      * @param length Number of bytes from data to process.
      */
-    public void process(final byte[] data, final int length) {
+    public void process(@NotNull final byte[] data, final int length) {
         // Run the data through the lexer first
         final String[] buffer = convertOutput(data);
 
-        for (final String line : buffer) {
+        for (final @NotNull String line : buffer) {
             if (line.isEmpty() ||
                 line.matches("@\u0000*")) {
                 continue;
@@ -492,12 +505,12 @@ public class GdbMiParser2 {
         }
     }
 
-    private String[] convertOutput(final byte[] data) {
+    private String[] convertOutput(@NotNull final byte[] data) {
         final String buff;
 
         try {
             buff = new String(data, "UTF-8");
-        } catch (final UnsupportedEncodingException ignored) {
+        } catch (@NotNull final UnsupportedEncodingException ignored) {
             return new String[]{};
         }
 
@@ -539,7 +552,7 @@ public class GdbMiParser2 {
         return result.toArray(new String[result.size()]);
     }
 
-    private Boolean isGdbMiLine(final String line) {
+    private Boolean isGdbMiLine(final @NotNull String line) {
         if (line.length() == 0)
             return false;
         if (START_TOKENS.contains(line.substring(0, 1))) {
@@ -554,14 +567,14 @@ public class GdbMiParser2 {
 
     }
 
-    private void printUnhandledLine(final String line) {
+    private void printUnhandledLine(final @NotNull String line) {
         if (rawConsole != null) {
             rawConsole.print("[[[ d.gdb.internal ]]] " + line + "\n", ConsoleViewContentType.ERROR_OUTPUT);
         }
     }
 
     @Nullable
-    private GdbMiRecord parseLine(String line) {
+    private GdbMiRecord parseLine(@NotNull String line) {
         if (rawConsole != null) {
             rawConsole.print(line + "\n", ConsoleViewContentType.SYSTEM_OUTPUT);
         }
@@ -644,7 +657,8 @@ public class GdbMiParser2 {
         return result;
     }
 
-    private GdbMiResultRecord parseNotifyLine(String line, final GdbMiResultRecord result) {
+    @NotNull
+    private GdbMiResultRecord parseNotifyLine(@NotNull String line, final @NotNull GdbMiResultRecord result) {
         result.className = line.substring(1, line.indexOf(','));
 
         line = line.substring(line.indexOf(',') + 1);
@@ -665,7 +679,8 @@ public class GdbMiParser2 {
         return result;
     }
 
-    private GdbMiResultRecord parseExecLine(String line, final GdbMiResultRecord result) {
+    @NotNull
+    private GdbMiResultRecord parseExecLine(@NotNull String line, final @NotNull GdbMiResultRecord result) {
         if (line.indexOf(',') < 0) {
             result.className = line.substring(1);
             return result;
@@ -715,7 +730,8 @@ public class GdbMiParser2 {
         return result;
     }
 
-    private GdbMiResultRecord parseImmediateLine(String line, final GdbMiResultRecord result) {
+    @NotNull
+    private GdbMiResultRecord parseImmediateLine(@NotNull String line, final @NotNull GdbMiResultRecord result) {
         if (line.indexOf(',') < 0) {
             result.className = line.substring(line.indexOf('^') + 1);
             return result;
@@ -770,7 +786,8 @@ public class GdbMiParser2 {
         return result;
     }
 
-    private GdbMiResult parseBreakpointLine(final String line) {
+    @NotNull
+    private GdbMiResult parseBreakpointLine(final @NotNull String line) {
 
         Pattern p = Pattern.compile("addr=\"<PENDING>\"");
         Matcher m = p.matcher(line);
@@ -906,7 +923,8 @@ public class GdbMiParser2 {
         return subRes;
     }
 
-    private GdbMiResult parsePendingBreakpoint(final String line) {
+    @NotNull
+    private GdbMiResult parsePendingBreakpoint(final @NotNull String line) {
         final GdbMiResult subRes = new GdbMiResult("bkpt");
         final GdbMiValue bkptVal = new GdbMiValue(GdbMiValue.Type.Tuple);
 
@@ -942,7 +960,7 @@ public class GdbMiParser2 {
             typeVal.value.type = GdbMiValue.Type.String;
             typeVal.value.string = m.group(1);
             bkptVal.tuple.add(typeVal);
-        } catch (final IllegalStateException ignored) {
+        } catch (@NotNull final IllegalStateException ignored) {
             //we do not care whatsoever
         }
 
@@ -1014,7 +1032,8 @@ public class GdbMiParser2 {
         return subRes;
     }
 
-    private GdbMiResult parseMultipleBreakpointLine(String line) {
+    @NotNull
+    private GdbMiResult parseMultipleBreakpointLine(@NotNull String line) {
         final GdbMiResult subRes = new GdbMiResult("bkpt");
         subRes.value.type = GdbMiValue.Type.List;
         subRes.value.list = new GdbMiList();
@@ -1203,7 +1222,8 @@ public class GdbMiParser2 {
         return subRes;
     }
 
-    private Collection<GdbMiResult> parseBreakpointHitLine(final String line) {
+    @NotNull
+    private Collection<GdbMiResult> parseBreakpointHitLine(final @NotNull String line) {
         final Collection<GdbMiResult> result = new ArrayList<GdbMiResult>();
 
         Pattern p = Pattern.compile("(?:core=\"(\\d+)\")");
@@ -1295,7 +1315,8 @@ public class GdbMiParser2 {
         return result;
     }
 
-    private Collection<GdbMiResult> parseVarCreateLine(final String line) {
+    @NotNull
+    private Collection<GdbMiResult> parseVarCreateLine(final @NotNull String line) {
         final Collection<GdbMiResult> result = new ArrayList<GdbMiResult>();
 
         Pattern p = Pattern.compile("(?:thread-id=\"([^\"]+)\"),");
@@ -1377,7 +1398,8 @@ public class GdbMiParser2 {
         return result;
     }
 
-    private Collection<GdbMiResult> parseEndSteppingRangeLine(final String line) {
+    @NotNull
+    private Collection<GdbMiResult> parseEndSteppingRangeLine(final @NotNull String line) {
         final Collection<GdbMiResult> result = new ArrayList<GdbMiResult>();
 
         Pattern p = Pattern.compile("(?:core=\"(\\d+)\")");
@@ -1434,7 +1456,8 @@ public class GdbMiParser2 {
         return result;
     }
 
-    private Collection<GdbMiResult> parseNumChildLine(final String line) {
+    @NotNull
+    private Collection<GdbMiResult> parseNumChildLine(final @NotNull String line) {
         final Collection<GdbMiResult> result = new ArrayList<GdbMiResult>();
 
         final Pattern p = Pattern.compile(
@@ -1466,7 +1489,8 @@ public class GdbMiParser2 {
         return result;
     }
 
-    private Collection<GdbMiResult> parseSignalReceivedLine(final String line) {
+    @NotNull
+    private Collection<GdbMiResult> parseSignalReceivedLine(final @NotNull String line) {
         final Collection<GdbMiResult> result = new ArrayList<GdbMiResult>();
 
         final Pattern p = Pattern.compile(
@@ -1527,15 +1551,18 @@ public class GdbMiParser2 {
         return result;
     }
 
-    private Collection<GdbMiResult> parseFunctionFinishedLine(final String line) {
+    @NotNull
+    private Collection<GdbMiResult> parseFunctionFinishedLine(final @NotNull String line) {
         return parseEndSteppingRangeLine(line);
     }
 
-    private Collection<GdbMiResult> parseLocationReachedLine(final String line) {
+    @NotNull
+    private Collection<GdbMiResult> parseLocationReachedLine(final @NotNull String line) {
         return parseEndSteppingRangeLine(line);
     }
 
-    private Collection<GdbMiResult> parseStoppedFrameLine(final String line) {
+    @NotNull
+    private Collection<GdbMiResult> parseStoppedFrameLine(final @NotNull String line) {
         final Collection<GdbMiResult> result = new ArrayList<GdbMiResult>();
 
         final Pattern p = Pattern.compile(
@@ -1575,7 +1602,8 @@ public class GdbMiParser2 {
         return result;
     }
 
-    private Collection<GdbMiResult> parseStoppedExitedLine(final String line) {
+    @NotNull
+    private Collection<GdbMiResult> parseStoppedExitedLine(final @NotNull String line) {
         final Collection<GdbMiResult> result = new ArrayList<GdbMiResult>();
 
         final Pattern p = Pattern.compile(
@@ -1604,7 +1632,8 @@ public class GdbMiParser2 {
         return result;
     }
 
-    private GdbMiResult parseFeaturesLine(final String line) {
+    @NotNull
+    private GdbMiResult parseFeaturesLine(final @NotNull String line) {
         final GdbMiResult result = new GdbMiResult("features");
         result.value.type = GdbMiValue.Type.List;
         result.value.list = new GdbMiList();
@@ -1624,7 +1653,8 @@ public class GdbMiParser2 {
         return result;
     }
 
-    private Collection<GdbMiResult> parseThreadIdsLine(final String line) {
+    @NotNull
+    private Collection<GdbMiResult> parseThreadIdsLine(final @NotNull String line) {
         //thread-ids={thread-id="4",thread-id="3",thread-id="2",thread-id="1"},current-thread-id="1",number-of-threads="4"
         final Collection<GdbMiResult> result = new ArrayList<GdbMiResult>();
 
@@ -1661,7 +1691,8 @@ public class GdbMiParser2 {
         return result;
     }
 
-    private Collection<GdbMiResult> parseNewThreadIdLine(final String line) {
+    @NotNull
+    private Collection<GdbMiResult> parseNewThreadIdLine(final @NotNull String line) {
         // new-thread-id="4",frame={level="0",addr="0x00007ffff7bc3cd0",func="__GI___nptl_create_event",args=[],file="events.c",fullname="/build/buildd/eglibc-2.17/nptl/events.c",line="25"}
         final Collection<GdbMiResult> result = new ArrayList<GdbMiResult>();
 
@@ -1684,7 +1715,8 @@ public class GdbMiParser2 {
         return result;
     }
 
-    private Collection<GdbMiResult> parseThreadsLine(final String line) {
+    @NotNull
+    private Collection<GdbMiResult> parseThreadsLine(final @NotNull String line) {
         final Collection<GdbMiResult> result = new ArrayList<GdbMiResult>();
 
         if (line.equals("threads=[]")) {

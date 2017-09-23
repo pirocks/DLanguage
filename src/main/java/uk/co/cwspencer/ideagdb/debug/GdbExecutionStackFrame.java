@@ -133,7 +133,7 @@ public class GdbExecutionStackFrame extends XStackFrame {
      *
      * @param component The stack frame visual component.
      */
-    public void customizePresentation(final SimpleColoredComponent component) {
+    public void customizePresentation(@NotNull final SimpleColoredComponent component) {
         if (m_frame.address == null) {
             component.append(XDebuggerBundle.message("invalid.frame"),
                 SimpleTextAttributes.ERROR_ATTRIBUTES);
@@ -202,7 +202,7 @@ public class GdbExecutionStackFrame extends XStackFrame {
      * @param event The event.
      * @param node  The node passed to computeChildren().
      */
-    private void onGdbVariablesReady(final GdbEvent event, final XCompositeNode node) {
+    private void onGdbVariablesReady(final GdbEvent event, @NotNull final XCompositeNode node) {
         if (event instanceof GdbErrorEvent) {
             node.setErrorMessage(((GdbErrorEvent) event).message);
             return;

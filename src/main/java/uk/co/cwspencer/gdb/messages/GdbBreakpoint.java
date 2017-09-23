@@ -24,6 +24,8 @@
 
 package uk.co.cwspencer.gdb.messages;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import uk.co.cwspencer.gdb.gdbmi.GdbMiValue;
 import uk.co.cwspencer.gdb.messages.annotations.GdbMiDoneEvent;
 import uk.co.cwspencer.gdb.messages.annotations.GdbMiEnum;
@@ -188,7 +190,8 @@ public class GdbBreakpoint extends GdbDoneEvent {
     /**
      * Value processor for number.
      */
-    public Integer processNumber(final GdbMiValue value) {
+    @Nullable
+    public Integer processNumber(@NotNull final GdbMiValue value) {
         if (value.type != GdbMiValue.Type.String) {
             return null;
         }
@@ -204,7 +207,8 @@ public class GdbBreakpoint extends GdbDoneEvent {
     /**
      * Value processor for instanceNumber.
      */
-    public Integer processInstanceNumber(final GdbMiValue value) {
+    @Nullable
+    public Integer processInstanceNumber(@NotNull final GdbMiValue value) {
         if (value.type != GdbMiValue.Type.String) {
             return null;
         }
@@ -220,7 +224,8 @@ public class GdbBreakpoint extends GdbDoneEvent {
     /**
      * Value processor for addressAvailability.
      */
-    public AddressAvailability processAddressAvailability(final GdbMiValue value) {
+    @Nullable
+    public AddressAvailability processAddressAvailability(@NotNull final GdbMiValue value) {
         if (value.type != GdbMiValue.Type.String) {
             return null;
         }
@@ -237,7 +242,7 @@ public class GdbBreakpoint extends GdbDoneEvent {
             try {
                 Long.parseLong(value.string.substring(2), 16);
                 return AddressAvailability.Available;
-            } catch (final Throwable ex) {
+            } catch (@NotNull final Throwable ex) {
                 return null;
             }
         }
@@ -248,7 +253,8 @@ public class GdbBreakpoint extends GdbDoneEvent {
     /**
      * Value processor for address.
      */
-    public Long processAddress(final GdbMiValue value) {
+    @Nullable
+    public Long processAddress(@NotNull final GdbMiValue value) {
         if (value.type != GdbMiValue.Type.String || value.string.equals("<PENDING>") ||
             value.string.equals("<MULTIPLE>")) {
             return null;

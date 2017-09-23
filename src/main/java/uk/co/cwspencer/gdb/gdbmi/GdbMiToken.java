@@ -24,6 +24,9 @@
 
 package uk.co.cwspencer.gdb.gdbmi;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 /**
  * Class representing a token read from a GDB/MI stream.
  */
@@ -35,6 +38,7 @@ public class GdbMiToken {
     /**
      * The token value, if any.
      */
+    @Nullable
     public String value = null;
 
     /**
@@ -62,6 +66,7 @@ public class GdbMiToken {
      *
      * @return A string containing the type and, if set, the value.
      */
+    @NotNull
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append(type);

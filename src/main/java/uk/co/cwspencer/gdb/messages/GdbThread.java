@@ -24,6 +24,7 @@
 
 package uk.co.cwspencer.gdb.messages;
 
+import org.jetbrains.annotations.NotNull;
 import uk.co.cwspencer.gdb.gdbmi.GdbMiValue;
 import uk.co.cwspencer.gdb.messages.annotations.GdbMiEnum;
 import uk.co.cwspencer.gdb.messages.annotations.GdbMiField;
@@ -83,6 +84,7 @@ public class GdbThread {
      *
      * @return The formatted thread name.
      */
+    @NotNull
     public String formatName() {
         final StringBuilder sb = new StringBuilder();
         sb.append("[");

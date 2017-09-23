@@ -28,6 +28,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.xdebugger.frame.XExecutionStack;
 import com.intellij.xdebugger.frame.XStackFrame;
 import io.github.intellij.dlanguage.icons.DlangIcons;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import uk.co.cwspencer.gdb.Gdb;
 import uk.co.cwspencer.gdb.messages.*;
@@ -43,6 +44,7 @@ public class GdbExecutionStack extends XExecutionStack {
     private final Gdb m_gdb;
 
     // The thread
+    @NotNull
     private final GdbThread m_thread;
 
     // The top of the stack
@@ -54,7 +56,7 @@ public class GdbExecutionStack extends XExecutionStack {
      * @param gdb    Handle to the GDB instance.
      * @param thread The thread.
      */
-    public GdbExecutionStack(final Gdb gdb, final GdbThread thread) {
+    public GdbExecutionStack(final Gdb gdb, @NotNull final GdbThread thread) {
         super(thread.formatName(), DlangIcons.FILE);
 
         m_gdb = gdb;
@@ -85,7 +87,7 @@ public class GdbExecutionStack extends XExecutionStack {
      * @param container       Container into which the stack frames are inserted.
      */
     @Override
-    public void computeStackFrames(final int firstFrameIndex, final XStackFrameContainer container) {
+    public void computeStackFrames(final int firstFrameIndex, @NotNull final XStackFrameContainer container) {
         // Just get the whole stack
         final String command = "-stack-list-frames";
         m_gdb.sendCommand(command, new Gdb.GdbEventCallback() {
@@ -104,7 +106,7 @@ public class GdbExecutionStack extends XExecutionStack {
      * @param container       The container passed to computeStackFrames().
      */
     private void onGdbStackTraceReady(final GdbEvent event, final int firstFrameIndex,
-                                      final XStackFrameContainer container) {
+                                      @NotNull final XStackFrameContainer container) {
         if (event instanceof GdbErrorEvent) {
             container.errorOccurred(((GdbErrorEvent) event).message);
             return;

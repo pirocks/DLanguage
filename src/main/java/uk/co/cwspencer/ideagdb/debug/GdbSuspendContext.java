@@ -26,6 +26,7 @@ package uk.co.cwspencer.ideagdb.debug;
 
 import com.intellij.xdebugger.frame.XExecutionStack;
 import com.intellij.xdebugger.frame.XSuspendContext;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import uk.co.cwspencer.gdb.Gdb;
 import uk.co.cwspencer.gdb.messages.GdbStoppedEvent;
@@ -50,14 +51,14 @@ public class GdbSuspendContext extends XSuspendContext {
      * @param stopEvent The stop event that caused the suspension.
      * @param threads   Thread information, if available.
      */
-    public GdbSuspendContext(final Gdb gdb, final GdbStoppedEvent stopEvent, final List<GdbThread> threads) {
+    public GdbSuspendContext(final Gdb gdb, @NotNull final GdbStoppedEvent stopEvent, @Nullable final List<GdbThread> threads) {
         // Add all the threads to our list of stacks
         final List<GdbExecutionStack> stacks = new ArrayList<GdbExecutionStack>();
         if (threads != null) {
             // Sort the list of threads by ID
             Collections.sort(threads, new Comparator<GdbThread>() {
                 @Override
-                public int compare(final GdbThread o1, final GdbThread o2) {
+                public int compare(@NotNull final GdbThread o1, @NotNull final GdbThread o2) {
                     return o1.id.compareTo(o2.id);
                 }
             });
@@ -100,6 +101,7 @@ public class GdbSuspendContext extends XSuspendContext {
      *
      * @return The execution stacks.
      */
+    @NotNull
     @Override
     public XExecutionStack[] getExecutionStacks() {
         return m_stacks;

@@ -49,6 +49,7 @@ import com.intellij.xdebugger.frame.XSuspendContext;
 import com.intellij.xdebugger.ui.XDebugTabLayouter;
 import io.github.intellij.dlanguage.settings.ToolKey;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import uk.co.cwspencer.gdb.Gdb;
 import uk.co.cwspencer.gdb.GdbListener;
 import uk.co.cwspencer.gdb.gdbmi.GdbMiResultRecord;
@@ -74,9 +75,11 @@ public class GdbDebugProcess extends XDebugProcess implements GdbListener {
     // The project
     public Project m_project;
     // The GDB instance
+    @Nullable
     public Gdb m_gdb;
     private final GdbDebuggerEditorsProvider m_editorsProvider = new GdbDebuggerEditorsProvider();
     // The breakpoint handler
+    @Nullable
     private GdbBreakpointHandler m_breakpointHandler;
 
     // Time formatter
@@ -87,7 +90,7 @@ public class GdbDebugProcess extends XDebugProcess implements GdbListener {
     /**
      * Constructor; launches GDB.
      */
-    public GdbDebugProcess(final Project project, final XDebugSession session, final ExecutionResult result) {
+    public GdbDebugProcess(final Project project, @NotNull final XDebugSession session, @NotNull final ExecutionResult result) {
         super(session);
         m_console = (ConsoleView) result.getExecutionConsole();
         init(session);
@@ -99,7 +102,7 @@ public class GdbDebugProcess extends XDebugProcess implements GdbListener {
      * @param hash
      * @return
      */
-    private static String bytesToHex(final byte[] hash) {
+    private static String bytesToHex(@NotNull final byte[] hash) {
         final StringBuilder hexString = new StringBuilder();
         for (final byte aHashByte : hash) {
             final String hex = Integer.toHexString(0xff & aHashByte);
@@ -109,7 +112,7 @@ public class GdbDebugProcess extends XDebugProcess implements GdbListener {
         return hexString.toString();
     }
 
-    private void init(final XDebugSession session) {
+    private void init(@NotNull final XDebugSession session) {
         final Project project = session.getProject();
         m_project = project;
         debugSession = session;
@@ -163,21 +166,21 @@ public class GdbDebugProcess extends XDebugProcess implements GdbListener {
                 }
                 return extractMago(inputStreamExe1, tempPathName);
             }
-        } catch (final IOException | NoSuchAlgorithmException e) {
+        } catch (@NotNull final IOException | NoSuchAlgorithmException e) {
             Logger.getInstance(this.getClass()).error(e);
             e.printStackTrace();
             return null;
         }
     }
 
-    private boolean fileIsSame(final MessageDigest digest, final String tempPathName, final String expectedHash) throws IOException {
+    private boolean fileIsSame(@NotNull final MessageDigest digest, @NotNull final String tempPathName, final String expectedHash) throws IOException {
         final FileInputStream inputStream = new FileInputStream(new File(tempPathName));
         final Boolean toReturn = bytesToHex(calcHash(digest, inputStream)).equals(expectedHash);
         inputStream.close();
         return toReturn;
     }
 
-    private byte[] calcHash(final MessageDigest digest, final InputStream inputStreamExe) throws IOException {
+    private byte[] calcHash(@NotNull final MessageDigest digest, @NotNull final InputStream inputStreamExe) throws IOException {
         final byte[] b = new byte[4096];
         int length;
 
@@ -188,7 +191,7 @@ public class GdbDebugProcess extends XDebugProcess implements GdbListener {
     }
 
     @NotNull
-    private String extractMago(final InputStream magoExeInputStream, final String filePath) throws IOException {
+    private String extractMago(@NotNull final InputStream magoExeInputStream, @NotNull final String filePath) throws IOException {
         final String gdbDebuggerPath;
         final File tempFile = new File(filePath);
         if (!tempFile.createNewFile()) {
@@ -368,7 +371,7 @@ public class GdbDebugProcess extends XDebugProcess implements GdbListener {
      *
      * @param event The event
      */
-    private void onGdbStoppedEvent(final GdbStoppedEvent event) {
+    private void onGdbStoppedEvent(@NotNull final GdbStoppedEvent event) {
         if (m_gdb.hasCapability("thread-info")) {
             // Get information about the threads
             m_gdb.sendCommand("-thread-info", new Gdb.GdbEventCallback() {
@@ -389,7 +392,7 @@ public class GdbDebugProcess extends XDebugProcess implements GdbListener {
      * @param record The record.
      */
     @Override
-    public void onStreamRecordReceived(final GdbMiStreamRecord record) {
+    public void onStreamRecordReceived(@NotNull final GdbMiStreamRecord record) {
         // Log the record
         switch (record.type) {
             case Console:
@@ -461,7 +464,7 @@ public class GdbDebugProcess extends XDebugProcess implements GdbListener {
      * @param threadInfoEvent The event.
      * @param stoppedEvent    The 'target stopped' event that caused us to make the request.
      */
-    private void onGdbThreadInfoReady(final GdbEvent threadInfoEvent, final GdbStoppedEvent stoppedEvent) {
+    private void onGdbThreadInfoReady(final GdbEvent threadInfoEvent, @NotNull final GdbStoppedEvent stoppedEvent) {
         List<GdbThread> threads = null;
 
         if (threadInfoEvent instanceof GdbErrorEvent) {
@@ -484,7 +487,7 @@ public class GdbDebugProcess extends XDebugProcess implements GdbListener {
      * @param stoppedEvent The event.
      * @param threads      Thread information, if available.
      */
-    private void handleTargetStopped(final GdbStoppedEvent stoppedEvent, final List<GdbThread> threads) {
+    private void handleTargetStopped(@NotNull final GdbStoppedEvent stoppedEvent, final List<GdbThread> threads) {
         final GdbSuspendContext suspendContext = new GdbSuspendContext(m_gdb, stoppedEvent, threads);
 
         // Find the breakpoint if necessary

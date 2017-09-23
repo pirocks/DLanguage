@@ -24,6 +24,8 @@
 
 package uk.co.cwspencer.gdb.gdbmi;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 /**
@@ -33,6 +35,7 @@ public class GdbMiList {
     /**
      * The type of list.
      */
+    @NotNull
     public Type type = Type.Empty;
     /**
      * List of results. This will be null if type is not Results.
@@ -48,6 +51,7 @@ public class GdbMiList {
      *
      * @return A string containing the contents of the list.
      */
+    @NotNull
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append("[");

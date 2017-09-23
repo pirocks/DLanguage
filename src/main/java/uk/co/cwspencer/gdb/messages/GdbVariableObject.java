@@ -24,6 +24,7 @@
 
 package uk.co.cwspencer.gdb.messages;
 
+import org.jetbrains.annotations.Nullable;
 import uk.co.cwspencer.gdb.gdbmi.GdbMiValue;
 import uk.co.cwspencer.gdb.messages.annotations.GdbMiDoneEvent;
 import uk.co.cwspencer.gdb.messages.annotations.GdbMiEnum;
@@ -57,6 +58,7 @@ public class GdbVariableObject extends GdbDoneEvent {
      * The scalar value of the variable. This should not be relied upon for aggregate types
      * (structs, etc.) or for dynamic variable objects.
      */
+    @Nullable
     @GdbMiField(name = "value", valueType = GdbMiValue.Type.String)
     public String value;
     /**
