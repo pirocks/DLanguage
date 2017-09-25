@@ -129,7 +129,11 @@ public class GdbDebugProcess extends XDebugProcess implements GdbListener {
         }
 
         // Prepare GDB
-        m_gdb = new Gdb(gdbDebuggerPath, project.getBasePath(), this);
+        if (SystemInfo.isWindows) {//todo I really mean if is mago
+            m_gdb = new MagoMi(gdbDebuggerPath, project.getBasePath(), this);
+        } else {
+            m_gdb = new Gdb(gdbDebuggerPath, project.getBasePath(), this);
+        }
 
         // Create the GDB console
         m_gdbConsole = new GdbConsoleView(m_gdb, session.getProject());

@@ -26,6 +26,7 @@ package uk.co.cwspencer.gdb;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.SystemInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import uk.co.cwspencer.gdb.gdbmi.GdbMiRecord;
@@ -33,6 +34,7 @@ import uk.co.cwspencer.gdb.gdbmi.GdbMiResultRecord;
 import uk.co.cwspencer.gdb.gdbmi.GdbMiStreamRecord;
 import uk.co.cwspencer.gdb.gdbmi.GdbMiUtil;
 import uk.co.cwspencer.gdb.gdbmi.parser.GdbMiParser2;
+import uk.co.cwspencer.gdb.gdbmi.parser.MagoMiParser2;
 import uk.co.cwspencer.gdb.messages.*;
 import uk.co.cwspencer.ideagdb.debug.GdbDebugProcess;
 
@@ -46,7 +48,7 @@ import java.util.*;
  * Class for interacting with GDB.
  */
 public class Gdb {
-    private static final Logger m_log = Logger.getInstance("#uk.co.cwspencer.gdb.Gdb");
+    protected static final Logger m_log = Logger.getInstance("#uk.co.cwspencer.gdb.Gdb");
 
     // Size in KB for the buffer
     private static final Integer BUFFER_SIZE = 256 * 1024;
@@ -55,7 +57,7 @@ public class Gdb {
     // Commands that have been sent to GDB and are awaiting a response
     private final Map<Long, CommandData> m_pendingCommands = new HashMap<Long, CommandData>();
     // GDB variable objects
-    private final Map<String, GdbVariableObject> m_variableObjectsByExpression =
+    protected final Map<String, GdbVariableObject> m_variableObjectsByExpression =
         new HashMap<String, GdbVariableObject>();
     private final Map<String, GdbVariableObject> m_variableObjectsByName =
         new HashMap<String, GdbVariableObject>();
@@ -100,7 +102,7 @@ public class Gdb {
         });
     }
 
-    private static String formatVarName(String varName) {
+    protected static String formatVarName(String varName) {
         varName = GdbMiUtil.formatGdbString(varName, false);
 
         if (varName.substring(0, 1).equals("&")) {
@@ -325,7 +327,12 @@ public class Gdb {
 
             // Start listening for data
             //GdbMiParser parser = new GdbMiParser();
-            final GdbMiParser2 parser = new GdbMiParser2(((GdbDebugProcess) m_listener).m_gdbRawConsole);
+            final GdbMiParser2 parser;
+            if (SystemInfo.isWindows) {//todo you could use gdb on windows ...
+                parser = new MagoMiParser2(((GdbDebugProcess) m_listener).m_gdbRawConsole);
+            } else {
+                parser = new GdbMiParser2(((GdbDebugProcess) m_listener).m_gdbRawConsole);
+            }
             byte[] buffer = new byte[BUFFER_SIZE];
             int bytes;
             while ((bytes = stream.read(buffer)) != -1) {
@@ -493,8 +500,8 @@ public class Gdb {
      * @param frame    The frame number.
      * @param callback The user-provided callback function.
      */
-    private void onGdbVariablesReady(final GdbEvent event, final int thread, final int frame,
-                                     @NotNull final GdbEventCallback callback) {
+    protected void onGdbVariablesReady(final GdbEvent event, final int thread, final int frame,
+                                       @NotNull final GdbEventCallback callback) {
         if (event instanceof GdbErrorEvent) {
             callback.onGdbCommandCompleted(event);
             return;
@@ -542,8 +549,8 @@ public class Gdb {
      * @param expression The expression used to create the variable object.
      * @param callback   The user-provided callback function.
      */
-    private void onGdbNewVariableObjectReady(final GdbEvent event, final String expression,
-                                             @NotNull final GdbEventCallback callback) {
+    protected void onGdbNewVariableObjectReady(final GdbEvent event, final String expression,
+                                               @NotNull final GdbEventCallback callback) {
         if (event instanceof GdbErrorEvent) {
             callback.onGdbCommandCompleted(event);
             return;
@@ -575,8 +582,8 @@ public class Gdb {
      * @param variables The variables the user requested.
      * @param callback  The user-provided callback function.
      */
-    private void onGdbVariableObjectsUpdated(final GdbEvent event, @NotNull final Set<String> variables,
-                                             @NotNull final GdbEventCallback callback) {
+    protected void onGdbVariableObjectsUpdated(final GdbEvent event, @NotNull final Set<String> variables,
+                                               @NotNull final GdbEventCallback callback) {
         if (event instanceof GdbErrorEvent) {
             callback.onGdbCommandCompleted(event);
             return;

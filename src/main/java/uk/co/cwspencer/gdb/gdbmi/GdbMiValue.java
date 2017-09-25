@@ -52,7 +52,7 @@ public class GdbMiValue {
     /**
      * List. Will be null if type is not List.
      */
-    public @Nullable
+    public @NotNull
     GdbMiList list;
 
     /**
