@@ -32,6 +32,8 @@ import uk.co.cwspencer.gdb.messages.GdbEvent;
 import uk.co.cwspencer.gdb.messages.GdbVariableObject;
 import uk.co.cwspencer.gdb.messages.GdbVariables;
 
+import java.util.HashSet;
+
 /**
  * Created by francis on 9/24/2017.
  */
@@ -77,6 +79,37 @@ public class MagoMi extends Gdb {
                 });
             }
         }
+
+    }
+
+    @Override
+    public void evaluateExpression(final int thread, final int frame, final String expression, @NotNull final GdbEventCallback callback) {
+        // TODO: Make this more efficient
+
+        // Create a new variable object if necessary
+        final GdbVariableObject variableObject = m_variableObjectsByExpression.get(expression);
+        if (variableObject == null) {
+            final String command = "-var-create --thread " + thread + " --frame " + frame + " - @ " +
+                formatVarName(expression);
+            sendCommand(command, new GdbEventCallback() {
+                @Override
+                public void onGdbCommandCompleted(final GdbEvent event) {
+                    onGdbNewVariableObjectReady(event, expression, callback);
+                    sendCommand("-var-update --thread " + thread + " --frame " + frame + " - " + ((GdbVariableObject) event).name,
+                        new GdbEventCallback() {
+                            @Override
+                            public void onGdbCommandCompleted(final GdbEvent event) {
+                                final HashSet<String> expressions = new HashSet<String>();
+                                expressions.add(expression);
+                                onGdbVariableObjectsUpdated(event, expressions, callback);
+                            }
+                        });
+                }
+            });
+        }
+
+        // Update existing variable objects
+
 
     }
 

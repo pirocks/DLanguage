@@ -52,7 +52,7 @@ public class GdbExecutionStackFrame extends XStackFrame {
         Logger.getInstance("#uk.co.cwspencer.ideagdb.debug.GdbExecutionStackFrame");
 
     // The GDB instance
-    private final Gdb m_gdb;
+    protected final Gdb m_gdb;
 
     // The thread the frame is in
     private final int m_thread;
@@ -202,16 +202,8 @@ public class GdbExecutionStackFrame extends XStackFrame {
      * @param event The event.
      * @param node  The node passed to computeChildren().
      */
-    private void onGdbVariablesReady(final GdbEvent event, @NotNull final XCompositeNode node) {
-        if (event instanceof GdbErrorEvent) {
-            node.setErrorMessage(((GdbErrorEvent) event).message);
-            return;
-        }
-        if (!(event instanceof GdbVariableObjects)) {
-            node.setErrorMessage("Unexpected data received from GDB");
-            m_log.warn("Unexpected event " + event + " received from variable objects request");
-            return;
-        }
+    protected void onGdbVariablesReady(final GdbEvent event, @NotNull final XCompositeNode node) {
+        if (gdbVariablesReadyParamsCheck(event, node)) return;
 
         // Inspect the data
         final GdbVariableObjects variables = (GdbVariableObjects) event;
@@ -226,5 +218,18 @@ public class GdbExecutionStackFrame extends XStackFrame {
             children.add(variable.expression, new GdbValue(m_gdb, variable));
         }
         node.addChildren(children, true);
+    }
+
+    protected boolean gdbVariablesReadyParamsCheck(final GdbEvent event, @NotNull final XCompositeNode node) {
+        if (event instanceof GdbErrorEvent) {
+            node.setErrorMessage(((GdbErrorEvent) event).message);
+            return true;
+        }
+        if (!(event instanceof GdbVariableObjects)) {
+            node.setErrorMessage("Unexpected data received from GDB");
+            m_log.warn("Unexpected event " + event + " received from variable objects request");
+            return true;
+        }
+        return false;
     }
 }

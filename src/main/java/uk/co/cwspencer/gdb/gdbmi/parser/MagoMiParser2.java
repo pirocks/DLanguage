@@ -205,4 +205,98 @@ public class MagoMiParser2 extends GdbMiParser2 {
 
         return result;
     }
+
+    @NotNull
+    @Override
+    protected GdbMiResult parseChangelistLine(@NotNull final String line) {
+        //in real gdb the changelist might be for more than one var but this won't happen with mago.
+        final GdbMiResult result = new GdbMiResult("changelist");
+        result.value.type = GdbMiValue.Type.List;
+        result.value.list = new GdbMiList();
+        final GdbMiValue changeVal = new GdbMiValue(GdbMiValue.Type.Tuple);
+
+        final Pattern namePattern = Pattern.compile("\\{name=\"([^\"]+)\",");
+        final Matcher nameMatcher = namePattern.matcher(line);
+        final boolean hasNamePattern = nameMatcher.find();
+        final String nameValue;
+        if (hasNamePattern) {
+            nameValue = nameMatcher.group(1);
+            final GdbMiResult res = new GdbMiResult("name");
+            res.value.type = GdbMiValue.Type.String;
+            res.value.string = nameValue;
+            changeVal.tuple.add(res);
+        }
+        final Pattern typePattern = Pattern.compile("type=\"([^\"])+\"");
+        final Matcher typeMatcher = typePattern.matcher(line);
+        final boolean hasTypePattern = typeMatcher.find();
+        final String typeValue;
+        if (hasTypePattern) {
+            typeValue = typeMatcher.group(1);
+            final GdbMiResult res = new GdbMiResult("type");
+            res.value.type = GdbMiValue.Type.String;
+            res.value.string = typeValue;
+            changeVal.tuple.add(res);
+        }
+        final Pattern valuePattern = Pattern.compile("value=\"(.*?)\",");
+        final Matcher valueMatcher = valuePattern.matcher(line);
+        final boolean hasValuePattern = valueMatcher.find();
+        final String valueValue;
+        if (hasValuePattern) {
+            valueValue = valueMatcher.group(1);
+            final GdbMiResult res = new GdbMiResult("value");
+            res.value.type = GdbMiValue.Type.String;
+            res.value.string = valueValue;
+            changeVal.tuple.add(res);
+        }
+        final Pattern childPattern = Pattern.compile("numchild=\"([0-9]+)\"");
+        final Matcher childMatcher = childPattern.matcher(line);
+        final boolean hasChildPattern = childMatcher.find();
+        final String childValue;
+        if (hasChildPattern) {
+            childValue = childMatcher.group(1);
+            final GdbMiResult res = new GdbMiResult("numchild");
+            res.value.type = GdbMiValue.Type.String;
+            res.value.string = childValue;
+            changeVal.tuple.add(res);
+        }
+        final Pattern scopePattern = Pattern.compile("in_scope=\"([^\"]+)\",");
+        final Matcher scopeMatcher = scopePattern.matcher(line);
+        final boolean hasScopePattern = scopeMatcher.find();
+        final String scopeValue;
+        if (hasScopePattern) {
+            scopeValue = scopeMatcher.group(1);
+            final GdbMiResult res = new GdbMiResult("in_scope");
+            res.value.type = GdbMiValue.Type.String;
+            res.value.string = scopeValue;
+            changeVal.tuple.add(res);
+        }
+        final Pattern typeChangedPattern = Pattern.compile("type_changed=\"([^\"]+)\",");
+        final Matcher typeChangedMatcher = typeChangedPattern.matcher(line);
+        final boolean hasTypeChangedPattern = typeChangedMatcher.find();
+        final String typeChangedValue;
+        if (hasTypeChangedPattern) {
+            typeChangedValue = typeChangedMatcher.group(1);
+            final GdbMiResult res = new GdbMiResult("type_changed");
+            res.value.type = GdbMiValue.Type.String;
+            res.value.string = typeChangedValue;
+            changeVal.tuple.add(res);
+        }
+        final Pattern hasMorePattern = Pattern.compile("has_more=\"([^\"]+)\"");
+        final Matcher hasMoreMatcher = hasMorePattern.matcher(line);
+        final boolean hasHasMorePattern = hasMoreMatcher.find();
+        final String hasMoreValue;
+        if (hasHasMorePattern) {
+            hasMoreValue = hasMoreMatcher.group(1);
+            final GdbMiResult res = new GdbMiResult("has_more");
+            res.value.type = GdbMiValue.Type.String;
+            res.value.string = hasMoreValue;
+            changeVal.tuple.add(res);
+        }
+        if (result.value.list.values == null) {
+            result.value.list.type = GdbMiList.Type.Values;
+            result.value.list.values = new ArrayList<>();
+        }
+        result.value.list.values.add(changeVal);
+        return result;
+    }
 }

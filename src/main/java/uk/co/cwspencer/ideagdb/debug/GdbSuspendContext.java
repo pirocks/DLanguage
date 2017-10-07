@@ -24,6 +24,7 @@
 
 package uk.co.cwspencer.ideagdb.debug;
 
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.xdebugger.frame.XExecutionStack;
 import com.intellij.xdebugger.frame.XSuspendContext;
 import org.jetbrains.annotations.NotNull;
@@ -64,7 +65,11 @@ public class GdbSuspendContext extends XSuspendContext {
             });
 
             for (final GdbThread thread : threads) {
-                final GdbExecutionStack stack = new GdbExecutionStack(gdb, thread);
+                final GdbExecutionStack stack;
+                if (SystemInfo.isWindows) {
+                    stack = new MagoMiExecutionStack(gdb, thread);
+                } else
+                    stack = new GdbExecutionStack(gdb, thread);
                 stacks.add(stack);
                 if (thread.id.equals(stopEvent.threadId)) {
                     m_stack = stack;
@@ -77,7 +82,11 @@ public class GdbSuspendContext extends XSuspendContext {
             final GdbThread thread = new GdbThread();
             thread.id = stopEvent.threadId;
             thread.frame = stopEvent.frame;
-            m_stack = new GdbExecutionStack(gdb, thread);
+            if (!SystemInfo.isWindows) {
+                m_stack = new GdbExecutionStack(gdb, thread);
+            } else {
+                m_stack = new MagoMiExecutionStack(gdb, thread);
+            }
             stacks.add(0, m_stack);
         }
 

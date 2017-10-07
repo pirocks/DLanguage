@@ -259,7 +259,6 @@ public class Gdb {
         }
 
         // Update existing variable objects
-        //todo switch to loop over existing objects
         sendCommand("-var-update --thread " + thread + " --frame " + frame + " --all-values *",
             new GdbEventCallback() {
                 @Override
@@ -625,9 +624,15 @@ public class Gdb {
                         variableObject.value = null;
                 }
 
+                if (SystemInfo.isWindows) {
+                    variableObject.value = change.value;
+                }
+
                 // Set the new type
-                if (change.typeChanged && change.newType != null) {
-                    variableObject.type = change.newType;
+                if (change.typeChanged != null) {
+                    if (change.typeChanged && change.newType != null) {
+                        variableObject.type = change.newType;
+                    }
                 }
             }
         }
