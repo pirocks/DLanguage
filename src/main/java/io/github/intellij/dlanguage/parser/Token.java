@@ -15,6 +15,7 @@ public class Token {
         this.type = type;
     }
 
+
     static class IdType {
         final IElementType type;
 
