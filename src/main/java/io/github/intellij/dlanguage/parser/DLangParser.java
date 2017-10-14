@@ -393,6 +393,31 @@ class DLangParser {
         }
     }
 
+    public Token getTokenAtPosition(final int lookUpIndex) {
+        final int startIndex = index;
+        if (lookUpIndex < startIndex) {
+            return new Token(new Token.IdType(builder.rawLookup(lookUpIndex - startIndex)));
+        } else if (lookUpIndex == startIndex) {
+            return current();
+        } else {
+            final Bookmark b = setBookmark();
+            while (true) {
+                //todo a lookAhead call would be even faster at the cost of not providing the text
+                if (builder.eof()) {
+                    abandonBookmark(b);
+                    return null;
+                }
+                advance();
+                if (index == lookUpIndex) {
+                    final Token res = current();
+                    goToBookmark(b);
+                    assert (startIndex == index);
+                    return res;
+                }
+            }
+        }
+    }
+
     private Token.IdType tok(final String tok) {
         if (tokenTypeIndex.get(tok) != null) {
             return tokenTypeIndex.get(tok);
@@ -409,10 +434,6 @@ class DLangParser {
         final Token.IdType result = new Token.IdType(matchingTypes[0]);
         tokenTypeIndex.put(tok, result);
         return result;
-    }
-
-    private Tokens getTokens() {
-        return new Tokens();
     }
 
     /**
@@ -8014,12 +8035,12 @@ class DLangParser {
         advance();
         int depth = 1;
         while (moreTokens()) {
-            if (getTokens().get(index).type.equals(c)) {
+            if (getTokenAtPosition(index).type.equals(c)) {
                 advance();
                 depth--;
                 if (depth <= 0)
                     return;
-            } else if (getTokens().get(index).type.equals(o)) {
+            } else if (getTokenAtPosition(index).type.equals(o)) {
                 depth++;
                 advance();
             } else {
@@ -8362,7 +8383,7 @@ class DLangParser {
     }
 
     Token peek() {
-        return getTokens().get(index + 1);
+        return getTokenAtPosition(index + 1);
     }
 
     void skipBraces() {
@@ -8384,11 +8405,11 @@ class DLangParser {
         int depth = 1;
         int i = index;
         ++i;
-        while (getTokens().get(i) != null) {
-            if (getTokens().get(i).type.equals(o)) {
+        while (getTokenAtPosition(i) != null) {
+            if (getTokenAtPosition(i).type.equals(o)) {
                 ++depth;
                 ++i;
-            } else if (getTokens().get(i).type.equals(c)) {
+            } else if (getTokenAtPosition(i).type.equals(c)) {
                 --depth;
                 ++i;
                 if (depth <= 0)
@@ -8396,11 +8417,11 @@ class DLangParser {
             } else
                 ++i;
         }
-        return getTokens().get(i) != null ? null : depth == 0 ? getTokens().get(i) : null;
+        return getTokenAtPosition(i) != null ? null : depth == 0 ? getTokenAtPosition(i) : null;
     }
 
     private boolean peekIs(final Token.IdType t) {
-        return getTokens().get(index + 1) != null && getTokens().get(index + 1).type.equals(t);
+        return getTokenAtPosition(index + 1) != null && getTokenAtPosition(index + 1).type.equals(t);
     }
 
     private Token peekPastParens() {
@@ -8416,8 +8437,8 @@ class DLangParser {
     }
 
     private boolean peekIsOneOf(final Token.IdType... types) {
-        if (getTokens().get(index + 1) == null) return false;
-        final Token.IdType needle = getTokens().get(index + 1).type;
+        if (getTokenAtPosition(index + 1) == null) return false;
+        final Token.IdType needle = getTokenAtPosition(index + 1).type;
         for (final Token.IdType type : types) {
             if (type.equals(needle)) {
                 return true;
@@ -8433,9 +8454,9 @@ class DLangParser {
      * calls the error function and returns null. Advances the lexer by one token.
      */
     private Token expect(final Token.IdType type) {
-        if ((!builder.eof()) && getTokens().get(index).type.equals(type)) {
+        if ((!builder.eof()) && getTokenAtPosition(index).type.equals(type)) {
 //            assert (builder.getTokenType().equals(tokens[index].type.type));
-            if (!builder.getTokenType().equals(getTokens().get(index).type.type)) {
+            if (!builder.getTokenType().equals(getTokenAtPosition(index).type.type)) {
                 throw new AssertionError();
             }
             Marker m = null;
@@ -8447,11 +8468,11 @@ class DLangParser {
             if (m != null) {
                 exit_section_(builder, m, IDENTIFIER, true);
             }
-            return getTokens().get(index - 1);
+            return getTokenAtPosition(index - 1);
         } else {
             final String tokenString = type.toString();
-            final boolean shouldNotAdvance = (!builder.eof()) && (getTokens().get(index).type.equals(tok(")")) || getTokens().get(index).type.equals(tok(";")) || getTokens().get(index).type.equals(tok("}")));
-            final String token = ((!builder.eof()) ? (getTokens().get(index).text == null ? str(getTokens().get(index).type) : getTokens().get(index).text) : "EOF");
+            final boolean shouldNotAdvance = (!builder.eof()) && (getTokenAtPosition(index).type.equals(tok(")")) || getTokenAtPosition(index).type.equals(tok(";")) || getTokenAtPosition(index).type.equals(tok("}")));
+            final String token = ((!builder.eof()) ? (getTokenAtPosition(index).text == null ? str(getTokenAtPosition(index).type) : getTokenAtPosition(index).text) : "EOF");
             error("Expected " + tokenString + " instead of " + token/*,!shouldNotAdvance*/);
             return null;
         }
@@ -8461,7 +8482,7 @@ class DLangParser {
      * Returns: the _current token
      */
     private Token current() {
-        return getTokens().get(index);
+        return new Token(new Token.IdType(builder.getTokenType()), builder.getTokenText());
     }
 
     public String str(final Object o) {
@@ -8472,16 +8493,13 @@ class DLangParser {
      * Returns: the _previous token
      */
     Token previous() {
-        return getTokens().get(index - 1);
+        return getTokenAtPosition(index - 1);
     }
 
     /**
      * Advances to the next token and returns the current token
      */
     private Token advance() {
-        if (!builder.getTokenType().equals(getTokens().get(index).type.type)) {
-            throw new AssertionError();
-        }
         Marker identifierMarker = null;
         Marker tokenStringMarker = null;
         if (currentIs(tok("identifier"))) {
@@ -8506,14 +8524,14 @@ class DLangParser {
             exit_section_(builder, tokenStringMarker, STRING_LIT, true);
             //todo this is not necessary in expect but may be necessary in the future.
         }
-        return getTokens().get(index - 1);
+        return getTokenAtPosition(index - 1);
     }
 
     /**
      * Returns: true if the current token has the given type
      */
     private boolean currentIs(final Token.IdType type) {
-        return getTokens().get(index) != null && getTokens().get(index).type.equals(type);
+        return getTokenAtPosition(index) != null && getTokenAtPosition(index).type.equals(type);
     }
 
     /**
@@ -8533,35 +8551,13 @@ class DLangParser {
     }
 
     private boolean startsWith(final Token.IdType... types) {
-        if (getTokens().get(index + types.length) == null)
+        if (getTokenAtPosition(index + types.length) == null)
             return false;
-        for (int i = 0; (i < types.length) && (getTokens().get(index + 1) != null); ++i) {
-            if (!getTokens().get(index + i).type.equals(types[i]))
+        for (int i = 0; (i < types.length) && (getTokenAtPosition(index + 1) != null); ++i) {
+            if (!getTokenAtPosition(index + i).type.equals(types[i]))
                 return false;
         }
         return true;
-    }
-
-    class Tokens {
-        public Token get(final int lookUpIndex) {
-            final int startIndex = index;
-            final Bookmark b = setBookmark();
-            if (lookUpIndex < startIndex) {
-                return new Token(new Token.IdType(builder.rawLookup(lookUpIndex - startIndex)));
-            } else while (true) {
-                //todo a lookAhead call would be even faster at the cost of not providing the text
-                if (builder.eof()) {
-                    return null;
-                }
-                advance();
-                if (index == lookUpIndex) {
-                    final Token res = current();
-                    goToBookmark(b);
-                    assert (startIndex == index);
-                    return res;
-                }
-            }
-        }
     }
 
     private Bookmark setBookmark() {

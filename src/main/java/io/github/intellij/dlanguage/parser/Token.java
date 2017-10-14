@@ -15,6 +15,11 @@ public class Token {
         this.type = type;
     }
 
+    public Token(final IdType idType, final String tokenText) {
+        text = tokenText;
+        this.type = idType;
+    }
+
 
     static class IdType {
         final IElementType type;
