@@ -4,9 +4,8 @@ import com.google.common.collect.Sets;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilder.Marker;
 import com.intellij.psi.tree.IElementType;
+import io.github.intellij.dlanguage.psi.DlangTokenType;
 import kotlin.jvm.internal.Ref;
-import io.github.intellij.dlanguage.psi.DlangTokenType;
-import io.github.intellij.dlanguage.psi.DlangTokenType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -100,10 +99,7 @@ class DLangParser {
      * Current warning count
      */
     private int warningCount;
-    /**
-     * Tokens to parse
-     */
-    private Token[] tokens;
+    private List<Token> tokens;
     private int suppressedErrorCount;
     private int suppressMessages;
     private int index;
@@ -111,7 +107,7 @@ class DLangParser {
     DLangParser(@NotNull final PsiBuilder builder) {
         this.errorCount = 0;
         this.warningCount = 0;
-        this.tokens = getTokens(builder);
+        this.setTokens(getTokens(builder));
         this.suppressedErrorCount = 0;
         this.suppressMessages = 0;
         this.index = 0;
@@ -416,7 +412,7 @@ class DLangParser {
         return result;
     }
 
-    private Token[] getTokens(final PsiBuilder builder) {
+    private List<Token> getTokens(final PsiBuilder builder) {
         final Marker tokenRollBackMark = builder.mark();
         final ArrayList<IElementType> tokens = new ArrayList<>();
         while (true) {
@@ -427,10 +423,10 @@ class DLangParser {
             builder.advanceLexer();
         }
         tokenRollBackMark.rollbackTo();
-        final Token[] tokenArray = new Token[tokens.size()];
+        final List<Token> tokenArray = new ArrayList<>();
         int i = 0;
         for (final IElementType token : tokens) {
-            tokenArray[i] = new Token(new Token.IdType(token));
+            tokenArray.add(i, new Token(new Token.IdType(token)));
             i++;
         }
 
@@ -8023,15 +8019,31 @@ class DLangParser {
         return b;
     }
 
-    void setTokens(final Token[] tokens) {
-        this.tokens = tokens;
-    }
-
     /**
      * Returns: true if there are more tokens
      */
     boolean moreTokens() {
-        return index < tokens.length;
+        return index < getTokens().size();
+    }
+
+    private void skip(final Token.IdType o, final Token.IdType c)//(alias O, alias C)
+    {
+        assert (currentIs(o));
+        advance();
+        int depth = 1;
+        while (moreTokens()) {
+            if (getTokens().get(index).type.equals(c)) {
+                advance();
+                depth--;
+                if (depth <= 0)
+                    return;
+            } else if (getTokens().get(index).type.equals(o)) {
+                depth++;
+                advance();
+            } else {
+                advance();
+            }
+        }
     }
 
     boolean isCastQualifier() {
@@ -8367,24 +8379,8 @@ class DLangParser {
         }
     }
 
-    private void skip(final Token.IdType o, final Token.IdType c)//(alias O, alias C)
-    {
-        assert (currentIs(o));
-        advance();
-        int depth = 1;
-        while (moreTokens()) {
-            if (tokens[index].type.equals(c)) {
-                advance();
-                depth--;
-                if (depth <= 0)
-                    return;
-            } else if (tokens[index].type.equals(o)) {
-                depth++;
-                advance();
-            } else {
-                advance();
-            }
-        }
+    Token peek() {
+        return index + 1 < getTokens().size() ? getTokens().get(index + 1) : null;
     }
 
     void skipBraces() {
@@ -8399,22 +8395,18 @@ class DLangParser {
         skip(tok("["), tok("]"));
     }
 
-    Token peek() {
-        return index + 1 < tokens.length ? tokens[index + 1] : null;
-    }
-
     private Token peekPast(final Token.IdType o, final Token.IdType c)//(alias O, alias C)
     {
-        if (index >= tokens.length)
+        if (index >= getTokens().size())
             return null;
         int depth = 1;
         int i = index;
         ++i;
-        while (i < tokens.length) {
-            if (tokens[i].type.equals(o)) {
+        while (i < getTokens().size()) {
+            if (getTokens().get(i).type.equals(o)) {
                 ++depth;
                 ++i;
-            } else if (tokens[i].type.equals(c)) {
+            } else if (getTokens().get(i).type.equals(c)) {
                 --depth;
                 ++i;
                 if (depth <= 0)
@@ -8422,7 +8414,11 @@ class DLangParser {
             } else
                 ++i;
         }
-        return i >= tokens.length ? null : depth == 0 ? tokens[i] : null;
+        return i >= getTokens().size() ? null : depth == 0 ? getTokens().get(i) : null;
+    }
+
+    private boolean peekIs(final Token.IdType t) {
+        return index + 1 < getTokens().size() && getTokens().get(index + 1).type.equals(t);
     }
 
     private Token peekPastParens() {
@@ -8437,13 +8433,9 @@ class DLangParser {
         return peekPast(tok("{"), tok("}"));
     }
 
-    private boolean peekIs(final Token.IdType t) {
-        return index + 1 < tokens.length && tokens[index + 1].type.equals(t);
-    }
-
     private boolean peekIsOneOf(final Token.IdType... types) {
-        if (index + 1 >= tokens.length) return false;
-        final Token.IdType needle = tokens[index + 1].type;
+        if (index + 1 >= getTokens().size()) return false;
+        final Token.IdType needle = getTokens().get(index + 1).type;
         for (final Token.IdType type : types) {
             if (type.equals(needle)) {
                 return true;
@@ -8459,9 +8451,9 @@ class DLangParser {
      * calls the error function and returns null. Advances the lexer by one token.
      */
     private Token expect(final Token.IdType type) {
-        if (index < tokens.length && tokens[index].type.equals(type)) {
+        if (index < getTokens().size() && getTokens().get(index).type.equals(type)) {
 //            assert (builder.getTokenType().equals(tokens[index].type.type));
-            if (!builder.getTokenType().equals(tokens[index].type.type)) {
+            if (!builder.getTokenType().equals(getTokens().get(index).type.type)) {
                 throw new AssertionError();
             }
             Marker m = null;
@@ -8473,14 +8465,21 @@ class DLangParser {
             if (m != null) {
                 exit_section_(builder, m, IDENTIFIER, true);
             }
-            return tokens[index - 1];
+            return getTokens().get(index - 1);
         } else {
             final String tokenString = type.toString();
-            final boolean shouldNotAdvance = index < tokens.length && (tokens[index].type.equals(tok(")")) || tokens[index].type.equals(tok(";")) || tokens[index].type.equals(tok("}")));
-            final String token = (index < tokens.length ? (tokens[index].text == null ? str(tokens[index].type) : tokens[index].text) : "EOF");
+            final boolean shouldNotAdvance = index < getTokens().size() && (getTokens().get(index).type.equals(tok(")")) || getTokens().get(index).type.equals(tok(";")) || getTokens().get(index).type.equals(tok("}")));
+            final String token = (index < getTokens().size() ? (getTokens().get(index).text == null ? str(getTokens().get(index).type) : getTokens().get(index).text) : "EOF");
             error("Expected " + tokenString + " instead of " + token/*,!shouldNotAdvance*/);
             return null;
         }
+    }
+
+    /**
+     * Returns: the _current token
+     */
+    private Token current() {
+        return getTokens().get(index);
     }
 
     public String str(final Object o) {
@@ -8488,24 +8487,17 @@ class DLangParser {
     }
 
     /**
-     * Returns: the _current token
-     */
-    private Token current() {
-        return tokens[index];
-    }
-
-    /**
      * Returns: the _previous token
      */
     Token previous() {
-        return tokens[index - 1];
+        return getTokens().get(index - 1);
     }
 
     /**
      * Advances to the next token and returns the current token
      */
     private Token advance() {
-        if (!builder.getTokenType().equals(tokens[index].type.type)) {
+        if (!builder.getTokenType().equals(getTokens().get(index).type.type)) {
             throw new AssertionError();
         }
         Marker identifierMarker = null;
@@ -8532,21 +8524,21 @@ class DLangParser {
             exit_section_(builder, tokenStringMarker, STRING_LIT, true);
             //todo this is not necessary in expect but may be necessary in the future.
         }
-        return tokens[index - 1];
+        return getTokens().get(index - 1);
     }
 
     /**
      * Returns: true if the current token has the given type
      */
     private boolean currentIs(final Token.IdType type) {
-        return index < tokens.length && tokens[index].type.equals(type);
+        return index < getTokens().size() && getTokens().get(index).type.equals(type);
     }
 
     /**
      * Returns: true if the current token is one of the given types
      */
     private boolean currentIsOneOf(final Token.IdType... types) {
-        if (index >= tokens.length)
+        if (index >= getTokens().size())
             return false;
         for (final Token.IdType type : types) {
             if (type.equals(current().type)) {
@@ -8559,13 +8551,20 @@ class DLangParser {
     }
 
     private boolean startsWith(final Token.IdType... types) {
-        if (index + types.length >= tokens.length)
+        if (index + types.length >= getTokens().size())
             return false;
-        for (int i = 0; (i < types.length) && ((index + i) < tokens.length); ++i) {
-            if (!tokens[index + i].type.equals(types[i]))
+        for (int i = 0; (i < types.length) && ((index + i) < getTokens().size()); ++i) {
+            if (!getTokens().get(index + i).type.equals(types[i]))
                 return false;
         }
         return true;
+    }
+
+    /**
+     * Tokens to parse
+     */
+    public List<Token> getTokens() {
+        return tokens;
     }
 
     private Bookmark setBookmark() {
@@ -9098,6 +9097,10 @@ class DLangParser {
 
     private boolean parseExpressionStatement() {
         return parseExpressionStatement(true);
+    }
+
+    void setTokens(final List<Token> tokens) {
+        this.tokens = tokens;
     }
 
     enum DecType {
