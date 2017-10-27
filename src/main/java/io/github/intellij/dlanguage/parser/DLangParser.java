@@ -400,9 +400,10 @@ class DLangParser {
         } else if (lookUpIndex == startIndex) {
             return current();
         } else {
+//            return new Token(new Token.IdType(builder.rawLookup(lookUpIndex - startIndex)));
             final Bookmark b = setBookmark();
             while (true) {
-                //todo a lookAhead call would be even faster at the cost of not providing the text
+//                todo a lookAhead call would be even faster at the cost of not providing the text
                 if (builder.eof()) {
                     abandonBookmark(b);
                     return null;
@@ -8482,7 +8483,7 @@ class DLangParser {
      * Returns: the _current token
      */
     private Token current() {
-        return new Token(new Token.IdType(builder.getTokenType()), builder.getTokenText());
+        return new Token(new Token.IdType(builder.getTokenType())/*, builder.getTokenText()*/);
     }
 
     public String str(final Object o) {
