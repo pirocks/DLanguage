@@ -24,8 +24,11 @@
 
 package uk.co.cwspencer.gdb.gdbmi;
 
+import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -36,15 +39,39 @@ public class GdbMiList {
      * The type of list.
      */
     @NotNull
-    public Type type = Type.Empty;
+    public final Type type;
     /**
      * List of results. This will be null if type is not Results.
      */
-    public List<GdbMiResult> results;
+    public @NotNull List<GdbMiResult> results = new ArrayList<>();
     /**
      * List of values. This will be null if type is not Values.
      */
-    public List<GdbMiValue> values;
+    public @NotNull List<GdbMiValue> values = new ArrayList<>();
+
+    public GdbMiList() {
+        this.type = Type.Empty;
+    }
+
+    public GdbMiList(@NotNull final GdbMiValue... values) {
+        this.type = Type.Values;
+        this.values = Lists.newArrayList();
+    }
+
+    public GdbMiList(@NotNull final GdbMiResult... results) {
+        this.type = Type.Results;
+        this.results = Lists.newArrayList(results);
+    }
+
+    public GdbMiList(@NotNull final Type type) {
+        this.type = type;
+        if(type.equals(Type.Values)){
+            values = new ArrayList<>();
+        }
+        else if(type.equals(Type.Results)){
+            results = new ArrayList<>();
+        }
+    }
 
     /**
      * Converts the list to a string.

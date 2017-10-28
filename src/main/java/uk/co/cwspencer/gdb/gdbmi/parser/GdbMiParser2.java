@@ -62,10 +62,7 @@ public class GdbMiParser2 {
 
     @NotNull
     protected GdbMiResult parseStackListVariablesLine(final @NotNull String line) {
-        final GdbMiResult subRes = new GdbMiResult("variables");
-        final GdbMiValue stackListVarsVal = new GdbMiValue(GdbMiValue.Type.List);
-        stackListVarsVal.list.type = GdbMiList.Type.Values;
-        stackListVarsVal.list.values = new ArrayList<GdbMiValue>();
+        final GdbMiValue stackListVarsVal = new GdbMiValue(new GdbMiList(GdbMiList.Type.Values));
 
         final Pattern p = Pattern.compile("\\{(?:name=\"([^\"]+)\")(?:,arg=\"([^\"]+)\")?\\}");
         final Matcher m = p.matcher(line);
@@ -74,30 +71,23 @@ public class GdbMiParser2 {
             final GdbMiValue varVal = new GdbMiValue(GdbMiValue.Type.Tuple);
             varVal.tuple = new ArrayList<GdbMiResult>();
 
-            final GdbMiResult varNameVal = new GdbMiResult("name");
-            varNameVal.value.type = GdbMiValue.Type.String;
-            varNameVal.value.string = m.group(1);
+            final GdbMiResult varNameVal = new GdbMiResult("name", new GdbMiValue(m.group(1)));
             varVal.tuple.add(varNameVal);
 
             if (m.group(2) != null) {
-                final GdbMiResult argVal = new GdbMiResult("arg");
-                argVal.value.type = GdbMiValue.Type.String;
-                argVal.value.string = m.group(2);
+                final GdbMiResult argVal = new GdbMiResult("arg",new GdbMiValue(m.group(2)));
                 varVal.tuple.add(argVal);
             }
 
             stackListVarsVal.list.values.add(varVal);
         }
 
-        subRes.value = stackListVarsVal;
-        return subRes;
+        return new GdbMiResult("variables",stackListVarsVal);
     }
 
     @NotNull
     protected GdbMiResult parseChangelistLine(final @NotNull String line) {
-        final GdbMiResult result = new GdbMiResult("changelist");
-        result.value.type = GdbMiValue.Type.List;
-        result.value.list = new GdbMiList();
+        final GdbMiResult result = new GdbMiResult("changelist",new GdbMiValue(new GdbMiList()));
 
         Pattern p = Pattern.compile(
             "(?:\\{name=\"([^\"]+)\"," +

@@ -69,6 +69,23 @@ public class GdbExecutionStack extends XExecutionStack {
     }
 
     /**
+     * @param gdb
+     * @param thread
+     */
+    protected GdbExecutionStack(final Gdb gdb, @NotNull final GdbThread thread, final @NotNull String formatName) {
+        super(formatName, DlangIcons.FILE);
+
+        m_gdb = gdb;
+        m_thread = thread;
+
+        // Get the top of the stack
+        if (thread.frame != null) {
+            m_topFrame = new MagoMiExecutionStackFrame(gdb, m_thread.id, thread.frame);
+        }
+    }
+
+
+    /**
      * Returns the frame at the top of the stack.
      *
      * @return The stack frame.

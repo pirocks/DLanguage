@@ -33,22 +33,16 @@ public class GdbMiResult {
     /**
      * Name of the variable.
      */
-    public @NotNull
-    String variable;
+    public @NotNull final String variable;
 
     /**
      * Value of the variable.
      */
-    public @NotNull
-    GdbMiValue value = new GdbMiValue();
+    public @NotNull final GdbMiValue value;
 
-    /**
-     * Constructor.
-     *
-     * @param variable The name of the variable.
-     */
-    public GdbMiResult(@NotNull final String variable) {
-        this.variable = variable;
+    public GdbMiResult(@NotNull final String variableName, @NotNull final GdbMiValue value) {
+        this.variable = variableName;
+        this.value = value;
     }
 
     /**

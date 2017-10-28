@@ -24,6 +24,7 @@
 
 package uk.co.cwspencer.gdb.gdbmi;
 
+import cucumber.api.java.hu.De;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,29 +43,35 @@ public class GdbMiValue {
     /**
      * String. Will be null if type is not String.
      */
-    public @Nullable
+    public @NotNull
     String string;
     /**
      * Tuple. Will be null if type is not Tuple.
      */
-    public @Nullable
-    List<GdbMiResult> tuple;
+    public @NotNull
+    List<GdbMiResult> tuple = new ArrayList<>();
     /**
      * List. Will be null if type is not List.
      */
     public @NotNull
     GdbMiList list;
 
-    /**
-     * Default constructor.
-     */
-    public GdbMiValue() {
+    public GdbMiValue(@NotNull final String string) {
+        type = Type.String;
+        this.string = string;
     }
-
+    public GdbMiValue(@NotNull final List<GdbMiResult> tuple) {
+        type = Type.Tuple;
+        this.tuple = tuple;
+    }
+    public GdbMiValue(@NotNull final GdbMiList list) {
+        type = Type.Tuple;
+        this.list = list;
+    }
     /**
      * Constructor; sets the type only.
      */
-    public GdbMiValue(@NotNull final Type type) {
+    public @Deprecated GdbMiValue(@NotNull final Type type) {
         this.type = type;
 
         if (type == Type.String) {
