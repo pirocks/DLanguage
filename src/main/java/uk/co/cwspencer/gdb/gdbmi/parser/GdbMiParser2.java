@@ -35,6 +35,9 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static uk.co.cwspencer.gdb.gdbmi.GdbMiList.Type.Results;
+import static uk.co.cwspencer.gdb.gdbmi.GdbMiList.Type.Values;
+
 //import com.intellij.openapi.util.SystemInfo;
 
 /**
@@ -136,57 +139,43 @@ public class GdbMiParser2 {
             final GdbMiValue changeVal = new GdbMiValue(GdbMiValue.Type.Tuple);
 
             // name: "var5"
-            final GdbMiResult nameVal = new GdbMiResult("name");
-            nameVal.value.type = GdbMiValue.Type.String;
-            nameVal.value.string = m.group(++matchGroup);
+            final GdbMiResult nameVal = new GdbMiResult("name",new GdbMiValue(m.group(++matchGroup)));
             changeVal.tuple.add(nameVal);
 
             if (includeValue) {
                 // value: "3,3300000000000001"
-                final GdbMiResult valueVal = new GdbMiResult("value");
-                valueVal.value.type = GdbMiValue.Type.String;
-                valueVal.value.string = m.group(++matchGroup);
+                final GdbMiResult valueVal = new GdbMiResult("value",new GdbMiValue(m.group(++matchGroup)));
                 changeVal.tuple.add(valueVal);
             }
 
             // in_scope: "true"
-            final GdbMiResult inScopeVal = new GdbMiResult("in_scope");
-            inScopeVal.value.type = GdbMiValue.Type.String;
-            inScopeVal.value.string = m.group(++matchGroup);
+            final GdbMiResult inScopeVal = new GdbMiResult("in_scope",new GdbMiValue(m.group(++matchGroup)));
             changeVal.tuple.add(inScopeVal);
 
             // type_changed: "false"
-            final GdbMiResult typeChangedVal = new GdbMiResult("type_changed");
-            typeChangedVal.value.type = GdbMiValue.Type.String;
-            typeChangedVal.value.string = m.group(++matchGroup);
+            final GdbMiResult typeChangedVal = new GdbMiResult("type_changed",new GdbMiValue(m.group(++matchGroup)));
             changeVal.tuple.add(typeChangedVal);
 
             if (m.group(++matchGroup) != null) {
                 // new_type="error"
-                final GdbMiResult newTypeVal = new GdbMiResult("new_type");
-                newTypeVal.value.type = GdbMiValue.Type.String;
-                newTypeVal.value.string = m.group(matchGroup);
+                final GdbMiResult newTypeVal = new GdbMiResult("new_type",new GdbMiValue(m.group(matchGroup)));
                 changeVal.tuple.add(newTypeVal);
             }
 
             if (m.group(++matchGroup) != null) {
                 // new_num_children="2"
-                final GdbMiResult newNumChildrenVal = new GdbMiResult("new_num_children");
-                newNumChildrenVal.value.type = GdbMiValue.Type.String;
-                newNumChildrenVal.value.string = m.group(matchGroup);
+                final GdbMiResult newNumChildrenVal = new GdbMiResult("new_num_children",new GdbMiValue(m.group(matchGroup)));
                 changeVal.tuple.add(newNumChildrenVal);
             }
 
             // has_more: "0"
-            final GdbMiResult hasMoreVal = new GdbMiResult("has_more");
-            hasMoreVal.value.type = GdbMiValue.Type.String;
-            hasMoreVal.value.string = m.group(++matchGroup);
+            final GdbMiResult hasMoreVal = new GdbMiResult("has_more",new GdbMiValue(m.group(++matchGroup)));
             changeVal.tuple.add(hasMoreVal);
 
-            if (result.value.list.values == null) {
-                result.value.list.type = GdbMiList.Type.Values;
-                result.value.list.values = new ArrayList<GdbMiValue>();
-            }
+//            if (result.value.list.values == null) {
+//                result.value.list.type = GdbMiList.Type.Values;
+//                result.value.list.values = new ArrayList<GdbMiValue>();
+//            }
 
             result.value.list.values.add(changeVal);
         }
@@ -195,11 +184,8 @@ public class GdbMiParser2 {
     @NotNull
     protected GdbMiResult parseMsgLine(final @NotNull String line) {
         // msg="No frames found."
-        final GdbMiResult result = new GdbMiResult("msg");
-        result.value.type = GdbMiValue.Type.String;
-        result.value.string = line.substring(5, line.length() - 1);
 
-        return result;
+        return new GdbMiResult("msg",new GdbMiValue(line.substring(5, line.length() - 1)));
     }
 
     @NotNull
@@ -208,23 +194,19 @@ public class GdbMiParser2 {
         final Matcher m = p.matcher(line);
 
         // thread-id="all"
-        final GdbMiResult result = new GdbMiResult("thread-id");
-        result.value.type = GdbMiValue.Type.String;
-
+        String threadId = null;
         if (m.find()) {
-            result.value.string = m.group(1);
+            threadId = m.group(1);
         }
-
-        return result;
+        if (threadId == null) {
+            throw new IllegalStateException("");
+        }
+        return new GdbMiResult("thread-id",new GdbMiValue(threadId));
     }
 
     @NotNull
     protected GdbMiResult parseNumChildChildsLine(final @NotNull String line) {
-        final GdbMiResult result = new GdbMiResult("children");
-        result.value.type = GdbMiValue.Type.List;
-        result.value.list = new GdbMiList();
-        result.value.list.type = GdbMiList.Type.Results;
-        result.value.list.results = new ArrayList<GdbMiResult>();
+        final GdbMiResult result = new GdbMiResult("children", new GdbMiValue(new GdbMiList(Results)));
 
         Pattern p = Pattern.compile("thread-id");
         Matcher m = p.matcher(line);
@@ -250,46 +232,30 @@ public class GdbMiParser2 {
         Matcher stringM;
 
         while (m.find()) {
-            final GdbMiResult childVal = new GdbMiResult("child");
-            childVal.value.type = GdbMiValue.Type.Tuple;
-            childVal.value.tuple = new ArrayList<GdbMiResult>();
+            final GdbMiResult childVal = new GdbMiResult("child",new GdbMiValue(new ArrayList<>()));
 
-            final GdbMiResult nameVal = new GdbMiResult("name");
-            nameVal.value.type = GdbMiValue.Type.String;
-            nameVal.value.string = m.group(1);
+            final GdbMiResult nameVal = new GdbMiResult("name",new GdbMiValue(m.group(1)));
             childVal.value.tuple.add(nameVal);
 
-            final GdbMiResult expVal = new GdbMiResult("exp");
-            expVal.value.type = GdbMiValue.Type.String;
-            expVal.value.string = m.group(2);
+            final GdbMiResult expVal = new GdbMiResult("exp", new GdbMiValue(m.group(2)));
             childVal.value.tuple.add(expVal);
 
-            final GdbMiResult numChildVal = new GdbMiResult("numchild");
+            final GdbMiResult numChildVal = new GdbMiResult("numchild",new GdbMiValue(m.group(3)));
             numChildVal.value.type = GdbMiValue.Type.String;
             numChildVal.value.string = m.group(3);
             childVal.value.tuple.add(numChildVal);
 
-            final GdbMiResult valueVal = new GdbMiResult("value");
-            valueVal.value.type = GdbMiValue.Type.String;
-            valueVal.value.string = m.group(4);
+            final GdbMiResult valueVal = new GdbMiResult("value", new GdbMiValue(m.group(4)));
             stringM = stringP.matcher(valueVal.value.string);
             if (stringM.find()) {
                 valueVal.value.string = stringM.group(1).substring(0, stringM.group(1).length() - 2);
             }
             childVal.value.tuple.add(valueVal);
 
-            final GdbMiResult typeVal = new GdbMiResult("type");
-            typeVal.value.type = GdbMiValue.Type.String;
-            typeVal.value.string = m.group(5);
+            final GdbMiResult typeVal = new GdbMiResult("type",new GdbMiValue(m.group(5)));
             childVal.value.tuple.add(typeVal);
 
-            final GdbMiResult threadIdVal = new GdbMiResult("thread-id");
-            threadIdVal.value.type = GdbMiValue.Type.String;
-            if (hasThreadId) {
-                threadIdVal.value.string = m.group(6);
-            } else {
-                threadIdVal.value.string = "1";
-            }
+            final GdbMiResult threadIdVal = new GdbMiResult("thread-id",new GdbMiValue(hasThreadId ? m.group(6): "1"));
             childVal.value.tuple.add(threadIdVal);
 
             result.value.list.results.add(childVal);
@@ -309,14 +275,9 @@ public class GdbMiParser2 {
 
     @NotNull
     protected GdbMiResult parseStackListLine(final @NotNull String line) {
-        final GdbMiResult subRes = new GdbMiResult("stack");
-        final GdbMiValue stackListVal = new GdbMiValue(GdbMiValue.Type.List);
-
-        stackListVal.list.results = new ArrayList<GdbMiResult>();
-        stackListVal.list.type = GdbMiList.Type.Results;
+        final GdbMiValue stackListVal = new GdbMiValue(new GdbMiList(Results));
         stackListVal.list.results.addAll(parseFrameLine(line));
-
-        subRes.value = stackListVal;
+        final @NotNull GdbMiResult subRes = new GdbMiResult("stack",stackListVal);
         return subRes;
     }
 
@@ -348,30 +309,23 @@ public class GdbMiParser2 {
 
         while (m.find()) {
             Integer matchGroup = 0;
-            final GdbMiResult subRes = new GdbMiResult("frame");
             final GdbMiValue frameVal = new GdbMiValue(GdbMiValue.Type.Tuple);
 
             // level="0"
             if (m.group(++matchGroup) != null) {
-                final GdbMiResult levelVal = new GdbMiResult("level");
-                levelVal.value.type = GdbMiValue.Type.String;
-                levelVal.value.string = m.group(matchGroup);
+                final GdbMiResult levelVal = new GdbMiResult("level",new GdbMiValue(m.group(matchGroup)));
                 frameVal.tuple.add(levelVal);
             }
 
             // addr="0x0000000000400c57"
             if (m.group(++matchGroup) != null) {
-                final GdbMiResult addrVal = new GdbMiResult("addr");
-                addrVal.value.type = GdbMiValue.Type.String;
-                addrVal.value.string = m.group(matchGroup);
+                final GdbMiResult addrVal = new GdbMiResult("addr",new GdbMiValue(m.group(matchGroup)));
                 frameVal.tuple.add(addrVal);
             }
 
             // func="main.main"
             if (m.group(++matchGroup) != null) {
-                final GdbMiResult funcVal = new GdbMiResult("func");
-                funcVal.value.type = GdbMiValue.Type.String;
-                funcVal.value.string = m.group(matchGroup);
+                final GdbMiResult funcVal = new GdbMiResult("func",new GdbMiValue(m.group(matchGroup)));
                 frameVal.tuple.add(funcVal);
             }
 
@@ -380,28 +334,21 @@ public class GdbMiParser2 {
             }
 
             if (m.group(++matchGroup) != null) {
-                final GdbMiResult fileVal = new GdbMiResult("file");
-                fileVal.value.type = GdbMiValue.Type.String;
-                fileVal.value.string = m.group(matchGroup);
+                final GdbMiResult fileVal = new GdbMiResult("file",new GdbMiValue(m.group(matchGroup)));
                 frameVal.tuple.add(fileVal);
             }
 
             if (m.group(++matchGroup) != null) {
-                final GdbMiResult fullnameVal = new GdbMiResult("fullname");
-                fullnameVal.value.type = GdbMiValue.Type.String;
-                fullnameVal.value.string = m.group(matchGroup);
+                final GdbMiResult fullnameVal = new GdbMiResult("fullname",new GdbMiValue(m.group(matchGroup)));
                 frameVal.tuple.add(fullnameVal);
             }
 
             // line="17"
             if (m.group(++matchGroup) != null) {
-                final GdbMiResult lineVal = new GdbMiResult("line");
-                lineVal.value.type = GdbMiValue.Type.String;
-                lineVal.value.string = m.group(matchGroup);
+                final GdbMiResult lineVal = new GdbMiResult("line",new GdbMiValue(m.group(matchGroup)));
                 frameVal.tuple.add(lineVal);
             }
-
-            subRes.value = frameVal;
+            final GdbMiResult subRes = new GdbMiResult("frame",frameVal);
             result.add(subRes);
         }
 
@@ -412,12 +359,7 @@ public class GdbMiParser2 {
     protected GdbMiResult parseArgsLine(final @NotNull String line) {
         // args=[{name="i",value="0x0"}]
 
-        final GdbMiResult result = new GdbMiResult("args");
-        result.value.type = GdbMiValue.Type.List;
-        result.value.list = new GdbMiList();
-        result.value.list.type = GdbMiList.Type.Values;
-        result.value.list.values = new ArrayList<GdbMiValue>();
-
+        final GdbMiResult result = new GdbMiResult("args",new GdbMiValue(new GdbMiList(Values)));
         final Pattern p = Pattern.compile(
             "(?:\\{(?:name=\"([^\"]+)\")," +
                 "(?:value=\"(.*?)\")" +
@@ -429,15 +371,11 @@ public class GdbMiParser2 {
             final GdbMiValue varVal = new GdbMiValue(GdbMiValue.Type.Tuple);
             varVal.tuple = new ArrayList<GdbMiResult>();
 
-            final GdbMiResult varNameVal = new GdbMiResult("name");
-            varNameVal.value.type = GdbMiValue.Type.String;
-            varNameVal.value.string = m.group(1);
+            final GdbMiResult varNameVal = new GdbMiResult("name",new GdbMiValue(m.group(1)));
             varVal.tuple.add(varNameVal);
 
 
-            final GdbMiResult valueVal = new GdbMiResult("value");
-            valueVal.value.type = GdbMiValue.Type.String;
-            valueVal.value.string = m.group(2);
+            final GdbMiResult valueVal = new GdbMiResult("value",new GdbMiValue(m.group(2)));
             varVal.tuple.add(valueVal);
 
             result.value.list.values.add(varVal);
@@ -1022,7 +960,7 @@ public class GdbMiParser2 {
         final GdbMiResult subRes = new GdbMiResult("bkpt");
         subRes.value.type = GdbMiValue.Type.List;
         subRes.value.list = new GdbMiList();
-        subRes.value.list.type = GdbMiList.Type.Results;
+        subRes.value.list.type = Results;
         subRes.value.list.results = new ArrayList<GdbMiResult>();
 
         String pattern = "(?:number=\"(\\d+)\")," +
@@ -1727,7 +1665,7 @@ public class GdbMiParser2 {
         final GdbMiResult threads = new GdbMiResult("threads");
         threads.value.type = GdbMiValue.Type.List;
         threads.value.list = new GdbMiList();
-        threads.value.list.type = GdbMiList.Type.Results;
+        threads.value.list.type = Results;
         threads.value.list.results = new ArrayList<GdbMiResult>();
 
         m.reset();
