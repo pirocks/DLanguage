@@ -30,11 +30,11 @@ public class DLanguageFunctionDeclarationImpl extends DNamedStubbedPsiElementBas
         super(node);
     }
 
-    public void accept(@NotNull DlangVisitor visitor) {
+    public void accept(@NotNull final DlangVisitor visitor) {
         visitor.visitFunctionDeclaration(this);
     }
 
-    public void accept(@NotNull PsiElementVisitor visitor) {
+    public void accept(@NotNull final PsiElementVisitor visitor) {
         if (visitor instanceof DlangVisitor) {
             accept((DlangVisitor) visitor);
         } else {

@@ -12,6 +12,9 @@ import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
@@ -66,6 +69,14 @@ public class DScanner {
         }
     }
 
+    private String getPathArgs(final Project project) {
+        final StringBuilder importPaths = new StringBuilder();
+        for (final Module module : ModuleManager.getInstance(project).getModules()) {
+            importPaths.append("-I ").append(module.getModuleFilePath());
+        }
+        return importPaths.toString();
+    }
+
     private List<Problem> processFile(final PsiFile file, final String dscannerPath) {
         final String filePath = file.getVirtualFile().getCanonicalPath();
         final String workingDirectory = file.getProject().getBasePath();
@@ -77,6 +88,8 @@ public class DScanner {
         final ParametersList args = cmd.getParametersList();
         args.addParametersString("-S");
         args.addParametersString(filePath);
+
+        args.addParametersString(getPathArgs(file.getProject()));
 
         final List<Problem> problems = new ArrayList<>();
 
