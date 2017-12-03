@@ -32,26 +32,14 @@ public class RunUtil {
     @Nullable
     static RunContentDescriptor startDebugger(DefaultProgramRunner buildRunner, RunProfileState state, ExecutionEnvironment env, Project project, Executor executor, String execName) throws ExecutionException {
         final ExecutionResult result = state.execute(executor, buildRunner);
-        if (result == null) {
-            return null;
-        }
-
-//        GdbRunConfiguration configuration = ((GdbExecutionResult) result).m_configuration;
-
-        // check if path to debugger is defined
-        if (ToolKey.GDB_KEY.getPath() == null){
-            Notifications.Bus.notify(
-                new Notification(NOTIFICATION_GROUPID, NOTIFICATION_TITLE,
-                    "GDB executable path is empty" +
-                        "<br/><a href='configureDLanguageTools'>Configure</a>",
-                    NotificationType.ERROR, new DToolsNotificationListener(project)), project);
-
-            return null;
-        }
+        if (preStartChecks(project, result)) return null;
 
         if (SdkUtil.isHostOsWindows()) {
             execName = execName.concat(".exe");
+
+
         }
+
 
         final XDebugSession debugSession = XDebuggerManager.getInstance(project).startSession(env,
             new XDebugProcessStarter() {
@@ -85,10 +73,33 @@ public class RunUtil {
             }
         }
 
-//        if (configuration.autoStartGdb) {
         gdbProcess.sendCommand("run");
-//        }
 
         return debugSession.getRunContentDescriptor();
+    }
+
+    private static boolean preStartChecks(Project project, ExecutionResult result) {
+        if (result == null) {
+            return true;
+        }
+
+        // check if path to debugger is defined
+        if (ToolKey.GDB_KEY.getPath() == null) {
+            Notifications.Bus.notify(
+                new Notification(NOTIFICATION_GROUPID, NOTIFICATION_TITLE,
+                    "GDB executable path is empty" +
+                        "<br/><a href='configureDLanguageTools'>Configure</a>",
+                    NotificationType.ERROR, new DToolsNotificationListener(project)), project);
+
+            return true;
+        }
+
+        if (SdkUtil.isHostOsWindows()) {
+            Notifications.Bus.notify(new Notification(
+                NOTIFICATION_GROUPID, "Debugger Warning",
+                "Windows debugging is not currently supported. Things may go horribly wrong."
+                , NotificationType.WARNING, new DToolsNotificationListener(project)), project);
+        }
+        return false;
     }
 }
