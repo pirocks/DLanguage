@@ -13,6 +13,7 @@ import io.github.intellij.dlanguage.psi.DlangFile
 import io.github.intellij.dlanguage.psi.interfaces.DNamedElement
 import io.github.intellij.dlanguage.resolve.DResolveUtil
 import io.github.intellij.dlanguage.resolve.processors.basic.BasicResolve
+import io.github.intellij.dlanguage.settings.ToolKey
 import io.github.intellij.dlanguage.stubs.index.DTopLevelDeclarationsByModule
 import io.github.intellij.dlanguage.utils.*
 import java.util.*
@@ -101,7 +102,9 @@ class DReference(element: PsiNamedElement, textRange: TextRange) : PsiReferenceB
         //            variants.add(namedElement.getName());
         //        }
         //        return variants.toArray();
-
+        if (dcdIsConfigured()) {
+            return emptyArray()
+        }
 
 //        val startProcessors = System.currentTimeMillis()
         val project = myElement.project
@@ -118,6 +121,10 @@ class DReference(element: PsiNamedElement, textRange: TextRange) : PsiReferenceB
         }
         addKeywords(result)
         return result.toTypedArray()
+    }
+
+    private fun dcdIsConfigured(): Boolean {
+        return (ToolKey.DCD_CLIENT_KEY.path != null) && ToolKey.DCD_SERVER_KEY.path != null
     }
 
     private fun addModuleVariants(result: MutableList<String>, element: PsiNamedElement) {

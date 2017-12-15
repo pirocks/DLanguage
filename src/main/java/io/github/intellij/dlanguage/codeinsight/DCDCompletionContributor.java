@@ -14,7 +14,6 @@ import com.intellij.util.Function;
 import com.intellij.util.ProcessingContext;
 import io.github.intellij.dlanguage.DLanguage;
 import io.github.intellij.dlanguage.codeinsight.dcd.DCDCompletionClient;
-import io.github.intellij.dlanguage.codeinsight.dcd.DCDCompletionServer;
 import io.github.intellij.dlanguage.codeinsight.dcd.completions.Completion;
 import io.github.intellij.dlanguage.icons.DlangIcons;
 import java.util.List;
@@ -37,14 +36,11 @@ public class DCDCompletionContributor extends CompletionContributor {
                         final PsiFile file = parameters.getOriginalFile();
 
                         List<Completion> completions = null;
-                        try {
-                            completions = dcdCompletionClient.autoComplete(position, file);
+                        completions = dcdCompletionClient.autoComplete(position, file);
 
-                            for (final Completion completion : completions) {
-                                result.addElement(createLookupElement(completion.completionText(),"",completion.completionType()));
-                            }
-                        } catch (final DCDCompletionServer.DCDError dcdError) {
-                            dcdError.printStackTrace();
+                        for (final Completion completion : completions) {
+                            result.addElement(createLookupElement(completion.completionText(), "",
+                                completion.completionType()));
                         }
                     }
                 }
