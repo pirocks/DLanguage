@@ -1,6 +1,10 @@
 package io.github.intellij.dlanguage.codeinsight;
 
-import com.intellij.codeInsight.completion.*;
+import com.intellij.codeInsight.completion.CompletionContributor;
+import com.intellij.codeInsight.completion.CompletionParameters;
+import com.intellij.codeInsight.completion.CompletionProvider;
+import com.intellij.codeInsight.completion.CompletionResultSet;
+import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.editor.Editor;
@@ -9,20 +13,19 @@ import com.intellij.psi.PsiFile;
 import com.intellij.util.Function;
 import com.intellij.util.ProcessingContext;
 import io.github.intellij.dlanguage.DLanguage;
-import io.github.intellij.dlanguage.icons.DlangIcons;
 import io.github.intellij.dlanguage.codeinsight.dcd.DCDCompletionClient;
 import io.github.intellij.dlanguage.codeinsight.dcd.DCDCompletionServer;
 import io.github.intellij.dlanguage.codeinsight.dcd.completions.Completion;
+import io.github.intellij.dlanguage.icons.DlangIcons;
+import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-
-public class DCompletionContributor extends CompletionContributor {
+public class DCDCompletionContributor extends CompletionContributor {
 
     private final DCDCompletionClient dcdCompletionClient = new DCDCompletionClient();
 
-    public DCompletionContributor() {
+    public DCDCompletionContributor() {
         extend(CompletionType.BASIC,
                 PlatformPatterns.psiElement().withLanguage(DLanguage.INSTANCE),
                 new CompletionProvider<CompletionParameters>() {

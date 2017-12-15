@@ -6,18 +6,17 @@ import com.intellij.execution.configurations.ParametersList;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.PsiFile;
+import io.github.intellij.dlanguage.codeinsight.dcd.completions.Completion;
 import io.github.intellij.dlanguage.codeinsight.dcd.completions.TextCompletion;
 import io.github.intellij.dlanguage.settings.ToolKey;
 import io.github.intellij.dlanguage.utils.DUtil;
 import io.github.intellij.dlanguage.utils.ExecUtil;
-import io.github.intellij.dlanguage.codeinsight.dcd.completions.Completion;
-import org.jetbrains.annotations.Nullable;
-
 import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.jetbrains.annotations.Nullable;
 
 public class DCDCompletionClient {
 
@@ -28,7 +27,7 @@ public class DCDCompletionClient {
     @Nullable
     private BufferedWriter output;
 
-    public List<Completion> autoComplete(final int position, final PsiFile file) throws DCDCompletionServer.DCDError {
+    public List<Completion> autoComplete(final int position, final PsiFile file) {
         final Module module = ModuleUtilCore.findModuleForPsiElement(file);
 
         completions.clear();
@@ -93,7 +92,6 @@ public class DCDCompletionClient {
                         System.out.println(tokens);
                     }
                 }
-//                kill();
             }
         }
 

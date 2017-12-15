@@ -137,7 +137,7 @@
         <lang.commenter language="D" implementationClass="io.github.intellij.dlanguage.features.DCommenter"/>
 
         <completion.contributor language="D"
-                                implementationClass="io.github.intellij.dlanguage.codeinsight.DCompletionContributor"/>
+            implementationClass="io.github.intellij.dlanguage.codeinsight.DCDCompletionContributor"/>
 
         <!-- folding -->
         <lang.foldingBuilder language="D" implementationClass="io.github.intellij.dlanguage.folding.DFoldingBuilder"/>
@@ -145,7 +145,7 @@
         <applicationService serviceInterface="io.github.intellij.dlanguage.folding.DCodeFoldingSettings"
                             serviceImplementation="io.github.intellij.dlanguage.folding.impl.DCodeFoldingSettingsImpl"/>
         <!--  <completion.contributor language="D"
-                                  implementationClass="io.github.intellij.dlanguage.codeinsight.DCompletionContributorImports"/>-->
+                                  implementationClass="io.github.intellij.dlanguage.codeinsight.DCDCompletionContributorImportsts"/>-->
 
 
         <!--formatter-->
