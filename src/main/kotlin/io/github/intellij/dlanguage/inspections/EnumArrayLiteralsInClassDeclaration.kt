@@ -9,19 +9,20 @@ import io.github.intellij.dlanguage.psi.impl.named.DlangInterfaceOrClassImpl
 import io.github.intellij.dlanguage.psi.impl.named.DlangStructDeclarationImpl
 import io.github.intellij.dlanguage.psi.impl.named.DlangUnionDeclarationImpl
 import io.github.intellij.dlanguage.psi.interfaces.DNamedElement
+import io.github.intellij.dlanguage.quickfix.MakeStaticImmutable
 import io.github.intellij.dlanguage.utils.AutoDeclarationPart
 
 /**
  * Created by francis on 1/5/2018.
  */
 class EnumArrayLiteralsInClassDeclaration : LocalInspectionTool() {
-    override fun getDescriptionFileName(): String = "FunctionShouldBeConst.html"
-    override fun getDisplayName(): String = "Function Should be Const"
+    override fun getDescriptionFileName(): String = "EnumArrayLiteralsInClassDeclaration.html"
+    override fun getDisplayName(): String = "EnumArrayLiteralsInClassDeclaration"
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): DlangVisitor = EnumArrayLiteralsInClassDeclarationVisitor(holder)
     override fun getGroupDisplayName(): String = DlangBundle.message("d.inspections.groupname")
 }
 
-class EnumArrayLiteralsInClassDeclarationVisitor(holder: ProblemsHolder) : DlangVisitor() {
+class EnumArrayLiteralsInClassDeclarationVisitor(val holder: ProblemsHolder) : DlangVisitor() {
     override fun visitInterfaceOrClass(o: DlangInterfaceOrClassImpl) {
         checkForEnumLiterals(o)
     }
@@ -36,7 +37,16 @@ class EnumArrayLiteralsInClassDeclarationVisitor(holder: ProblemsHolder) : Dlang
 
     fun checkForEnumLiterals(o: DNamedElement) {
         for (decl in PsiTreeUtil.findChildrenOfType(o, AutoDeclarationPart::class.java)) {
-            TODO()
+            if (decl.isEnum) {
+                if (decl.initializer == null)
+                    continue
+                if (decl.initializer?.nonVoidInitializer == null)
+                    continue
+                if (decl.initializer?.nonVoidInitializer?.arrayInitializer == null)
+                    continue
+                holder.registerProblem(decl, "This enum may lead to unnecessary allocation at run-time. Use \"static immutable instead\"", MakeStaticImmutable(decl))
+                // TODO when type deduction beomes a thing use that instead of checking initializers
+            }
         }
     }
 }
