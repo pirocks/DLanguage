@@ -46,6 +46,9 @@ public class ExecUtil {
             LOG.info("No open projects so cannot find a valid path. Using '.'.");
             workDir = defaultWorkDir;
         } else {
+            if(projects[0].getBaseDir() == null){
+                workDir = defaultWorkDir;//getBaseDir returns null for default project
+            }else
             workDir = projects[0].getBaseDir().getCanonicalPath();
         }
         return exec(workDir == null ? defaultWorkDir : workDir, command);
