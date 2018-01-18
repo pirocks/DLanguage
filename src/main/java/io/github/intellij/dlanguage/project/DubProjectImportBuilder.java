@@ -18,8 +18,11 @@ import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.packaging.artifacts.ModifiableArtifactModel;
 import com.intellij.projectImport.ProjectImportBuilder;
+import com.intellij.psi.PsiFile;
 import io.github.intellij.dlanguage.module.DlangDubModuleBuilder;
 import io.github.intellij.dlanguage.DlangSdkType;
 import io.github.intellij.dlanguage.icons.DlangIcons;
@@ -70,7 +73,7 @@ public class DubProjectImportBuilder extends ProjectImportBuilder<DubPackage> {
     }
 
     @Override
-    public void setList(final List<DubPackage> list) throws ConfigurationException {
+    public void setList(final List<DubPackage> list) {
         getParameters().packages = list;
     }
 
@@ -100,8 +103,40 @@ public class DubProjectImportBuilder extends ProjectImportBuilder<DubPackage> {
         ApplicationManager.getApplication().runWriteAction(() -> {
             commitSdk(project);
             modules.addAll(buildModules(project, model));
+            for (final Module module : modules) {
+                addProcessDLibsListener(findDubConfigFile(module), project, module);
+
+            }
+
         });
+
         return modules;
+    }
+
+    private void addProcessDLibsListener(final VirtualFile dubConfigFile, final Project project,
+        final Module module) {
+        if (dubConfigFile == null) {
+            return;
+        }
+        VirtualFileManager.getInstance()
+            .addVirtualFileListener(new DubConfigFileListener(dubConfigFile, project, module));
+
+    }
+
+    private VirtualFile findDubConfigFile(final Module module) {
+        for (final VirtualFile file : module.getProject().getBaseDir().getChildren()) {
+            if (file.isValid() &&
+                (file.getName().equalsIgnoreCase("dub.json") ||
+                    file.getName().equalsIgnoreCase("dub.sdl"))) {
+                return file;
+            }
+        }
+        Notifications.Bus.notify(
+            new Notification("Dub Import", "Dub Import",
+                "Dub project does not seem to contain dub.json or dub.sdl.",
+                NotificationType.WARNING, new DToolsNotificationListener(module.getProject())),
+            module.getProject());
+        return null;
     }
 
     private List<Module> buildModules(final Project project,
