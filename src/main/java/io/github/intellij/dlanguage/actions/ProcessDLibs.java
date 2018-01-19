@@ -44,6 +44,7 @@ import java.util.Collection;
 import java.util.List;
 import javax.swing.JList;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class ProcessDLibs extends AnAction implements DumbAware {
 
@@ -77,7 +78,14 @@ public class ProcessDLibs extends AnAction implements DumbAware {
         return () -> processDLibs(getEventProject(event), (Module) list.getSelectedValue());
     }
 
+    private static boolean dubPathAlreadWarned = false;
+
     public static void processDLibs(final Project project, @NotNull final Module module) {
+        processDLibs(project, module, false, false);
+    }
+
+    public static void processDLibs(final Project project,
+        @NotNull final Module module, final boolean mostlySilentMode, final boolean buildBefore) {
         final String prefix = "Unable to process D libraries - ";
         if (project == null) {
             displayError(project, prefix + "No active project.");
@@ -86,22 +94,26 @@ public class ProcessDLibs extends AnAction implements DumbAware {
         //todo needs build/fetch before adding libs, also needs to keep track of libs
 
         // remove all existing libs
-//        removeDLibs(module, project);//this is not necissary since intellij filters out duplicate libraries.
+//        removeDLibs(module, project);//this is not necessary since intellij filters out duplicate libraries.
 
         // ask dub for required libs
         final String dubPath = ToolKey.DUB_KEY.getPath();
 
         //final String groupId = e.getPresentation().getText();
         if (dubPath == null) {
-            Notifications.Bus.notify(
-                new Notification(NOTIFICATION_GROUPID, "Process D Libraries",
-                    "DUB executable path is empty<br/><a href='configureDLanguageTools'>Configure</a>",
-                    NotificationType.WARNING, new DToolsNotificationListener(project)),
-                project);
+            if (!dubPathAlreadWarned) {
+                Notifications.Bus.notify(
+                    new Notification(NOTIFICATION_GROUPID, "Process D Libraries",
+                        "DUB executable path is empty<br/><a href='configureDLanguageTools'>Configure</a>",
+                        NotificationType.WARNING, new DToolsNotificationListener(project)),
+                    project);
+                dubPathAlreadWarned = true;
+            }
             return;
         }
 
-        final DubConfigurationParser dubParser = new DubConfigurationParser(project, dubPath);
+        final DubConfigurationParser dubParser = new DubConfigurationParser(project, dubPath,
+            false);
         if (dubParser.canUseDub()) {
             final List<DubPackage> dependencies = dubParser.getDubPackageDependencies();
             for (final DubPackage pkg : dependencies) {
@@ -112,11 +124,13 @@ public class ProcessDLibs extends AnAction implements DumbAware {
             LOG.info("not possible to run 'dub describe'");
         }
 
-        Notifications.Bus.notify(
-            new Notification(NOTIFICATION_GROUPID, "Process D Libraries",
-                "Added your dub dependency libraries",
-                NotificationType.INFORMATION, new DToolsNotificationListener(project)),
-            project);
+        if (!mostlySilentMode) {
+            Notifications.Bus.notify(
+                new Notification(NOTIFICATION_GROUPID, "Process D Libraries",
+                    "Added your dub dependency libraries",
+                    NotificationType.INFORMATION, new DToolsNotificationListener(project)),
+                project);
+        }
     }
 
     private static void createLibraryDependency(final Module module, final Project project,
@@ -137,7 +151,8 @@ public class ProcessDLibs extends AnAction implements DumbAware {
                 .invokeAndWait(() -> ApplicationManager.getApplication().runWriteAction(() -> {
                     libraryModel.commit();
                     projectLibraryModel.commit();
-                    for (Module projectModule : ModuleManager.getInstance(project).getModules()) {
+                    for (final Module projectModule : ModuleManager.getInstance(project)
+                        .getModules()) {
                         ModuleRootModificationUtil.addDependency(projectModule, library);
                     }
 
@@ -257,7 +272,8 @@ public class ProcessDLibs extends AnAction implements DumbAware {
         displayError(getEventProject(e), message);
     }
 
-    private static void displayError(final Project project, @NotNull final String message) {
+    private static void displayError(final @Nullable Project project,
+        @NotNull final String message) {
         //final String groupId = e.getPresentation().getText();
         Notifications.Bus.notify(
             new Notification(NOTIFICATION_GROUPID, "Process D libs", message,

@@ -22,7 +22,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.packaging.artifacts.ModifiableArtifactModel;
 import com.intellij.projectImport.ProjectImportBuilder;
-import com.intellij.psi.PsiFile;
 import io.github.intellij.dlanguage.module.DlangDubModuleBuilder;
 import io.github.intellij.dlanguage.DlangSdkType;
 import io.github.intellij.dlanguage.icons.DlangIcons;
@@ -103,10 +102,6 @@ public class DubProjectImportBuilder extends ProjectImportBuilder<DubPackage> {
         ApplicationManager.getApplication().runWriteAction(() -> {
             commitSdk(project);
             modules.addAll(buildModules(project, model));
-            for (final Module module : modules) {
-                addProcessDLibsListener(findDubConfigFile(module), project, module);
-
-            }
 
         });
 
@@ -150,7 +145,9 @@ public class DubProjectImportBuilder extends ProjectImportBuilder<DubPackage> {
                     NotificationType.WARNING, new DToolsNotificationListener(project)),
                 project);
         }
-        final DubConfigurationParser dubConfigurationParser = new DubConfigurationParser(project, getParameters().dubBinary);
+        final DubConfigurationParser dubConfigurationParser = new DubConfigurationParser(project,
+            getParameters().dubBinary,
+            false);
 
         final Optional<DubPackage> dubPackage = dubConfigurationParser.getDubPackage();
 
@@ -163,6 +160,7 @@ public class DubProjectImportBuilder extends ProjectImportBuilder<DubPackage> {
 
             try {
                 final Module module = builder.createModule(moduleModel);
+                addProcessDLibsListener(findDubConfigFile(module), project, module);
                 builder.commit(project);
                 moduleList.add(module);
             } catch (InvalidDataException | IOException | JDOMException | ModuleWithNameAlreadyExists | ConfigurationException e) {

@@ -31,12 +31,6 @@ public class DubConfigFileListener implements VirtualFileListener {
     private final VirtualFile dubConfigFile;
     private final Project project;
     private final Module module;
-    private final Runnable processDLibsRunnable = new Runnable() {
-        @Override
-        public void run() {
-            ProcessDLibs.processDLibs(project, module);
-        }
-    };
 
     public DubConfigFileListener(final VirtualFile dubConfigFile, final Project project,
         final Module module) {
@@ -61,7 +55,7 @@ public class DubConfigFileListener implements VirtualFileListener {
                         "Updating Dub Libraries") {
                         @Override
                         public void run(@NotNull final ProgressIndicator indicator) {
-                            processDLibsRunnable.run();
+                            ProcessDLibs.processDLibs(project, module);
                         }
                     };
                     ProgressManager.getInstance().runProcessWithProgressAsynchronously(
