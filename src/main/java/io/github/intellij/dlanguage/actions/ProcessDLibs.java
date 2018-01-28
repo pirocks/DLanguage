@@ -136,7 +136,7 @@ public class ProcessDLibs extends AnAction implements DumbAware {
         }
 
         final DubConfigurationParser dubParser = new DubConfigurationParser(project, dubPath,
-            false);
+            mostlySilentMode);
         if (dubParser.canUseDub()) {
             final List<DubPackage> dependencies = dubParser.getDubPackageDependencies();
             for (final DubPackage pkg : dependencies) {
