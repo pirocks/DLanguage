@@ -146,8 +146,8 @@ public class DubProjectImportBuilder extends ProjectImportBuilder<DubPackage> {
 
             try {
                 final Module module = builder.createModule(moduleModel);
-                DubConfigFileListener
-                    .addProcessDLibsListener(findDubConfigFile(module), project, module);
+//                DubConfigFileListener
+//                    .addProcessDLibsListener(findDubConfigFile(module), project, module);
                 builder.commit(project);
                 moduleList.add(module);
             } catch (InvalidDataException | IOException | JDOMException | ModuleWithNameAlreadyExists | ConfigurationException e) {
