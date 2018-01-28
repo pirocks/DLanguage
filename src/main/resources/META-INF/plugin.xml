@@ -199,7 +199,6 @@
             language="D" level="WARNING"
             shortName="BuiltinPropertyName"/>
 
-
         <!--debugger-->
         <!--<configurationType implementation="uk.co.cwspencer.ideagdb.run.GoGdbRunConfigurationType"/>-->
         <!--<programRunner implementation="uk.co.cwspencer.ideagdb.run.GdbRunner"/>-->
@@ -210,6 +209,12 @@
     </extensions>
 
     <application-components>
+        <component>
+            <implementation-class>io.github.intellij.dlanguage.project.DubListenerComponent
+            </implementation-class>
+            <interface-class>io.github.intellij.dlanguage.project.DubListenerComponent
+            </interface-class>
+        </component>
         <!-- Add your application components here -->
     </application-components>
 
@@ -251,11 +256,11 @@
             <implementation-class>io.github.intellij.dlanguage.codeinsight.dcd.DCDCompletionServer</implementation-class>
             <interface-class>io.github.intellij.dlanguage.codeinsight.dcd.DCDCompletionServer</interface-class>
         </component>
+
     </module-components>
 
     <project-components>
         <!-- Add your project components here -->
-
     </project-components>
 
 
