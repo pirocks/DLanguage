@@ -4,7 +4,7 @@ import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCa
 import com.intellij.util.containers.ContainerUtil
 import junit.framework.TestCase
 
-abstract class DInspectionTestBase : LightPlatformCodeInsightFixtureTestCase() {
+abstract class DInspectionAndQuickFixTestBase : LightPlatformCodeInsightFixtureTestCase() {
 
     protected fun doTest(quickFixName: String, checkHighlighting: Boolean = false) {
         val testName = getTestName(true)
