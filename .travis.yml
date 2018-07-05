@@ -17,6 +17,7 @@ before_install:
   - wget -qO - https://dlang.org/d-keyring.gpg | sudo apt-key add -
   - sudo apt-get update -qq
   - sudo apt-get install -qq --force-yes dmd-bin dub
+  - sudo apt-get install gdb
 
 env:
   global:
