@@ -9,6 +9,7 @@ import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessOutput;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.projectRoots.*;
+import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.SystemInfo;
@@ -27,6 +28,7 @@ import javax.swing.*;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.file.Paths;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -69,8 +71,9 @@ public class DlangSdkType extends SdkType {
         } else if (SystemInfo.isMac) {
             DEFAULT_DMD_PATHS = new File[] {
                 new File("/usr/local/opt/dmd"),
-                new File("/usr/local/bin")
-            };
+                new File("/usr/local/bin"),
+                new File("/opt/local/bin")
+                };
             DEFAULT_DOCUMENTATION_PATHS = new File[]{};
             DEFAULT_PHOBOS_PATHS = new File[] {
                 new File("/Library/D/dmd/src/phobos")
@@ -133,12 +136,18 @@ public class DlangSdkType extends SdkType {
     @Nullable
     @Override
     public String suggestHomePath() {
-        for (File f : DEFAULT_DMD_PATHS) {
+        File found = null;
+        for (final File f : DEFAULT_DMD_PATHS) {
             if (f.exists()) {
-                return f.getAbsolutePath();
-            }
+                if (isValidSdkHome(f.getPath())) {
+                  found = f;
+                  break;
+                } else if (found == null) {
+                  found = f;
+                }
+            } 
         }
-        return null;
+        return found == null ? null : found.getAbsolutePath();
     }
 
     /* When user set up DMD SDK path this method checks if specified path contains DMD compiler executable. */
@@ -463,6 +472,21 @@ public class DlangSdkType extends SdkType {
 //        final File dmdCompilerFile = new File(sdkHome, executableName);
 //        return dmdCompilerFile.getAbsolutePath();
 //    }
+
+    public static Sdk findOrCreateSdk() {
+        final DlangSdkType sdkType = DlangSdkType.getInstance();
+
+        final Comparator<Sdk> sdkComparator = (sdk1, sdk2) -> {
+            if (sdk1.getSdkType() == sdkType) {
+                return -1;
+            } else if (sdk2.getSdkType() == sdkType) {
+                return 1;
+            } else {
+                return 0;
+            }
+        };
+        return SdkConfigurationUtil.findOrCreateSdk(sdkComparator, sdkType);
+    }
 }
 
 
