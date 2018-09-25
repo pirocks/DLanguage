@@ -14,15 +14,17 @@ import com.intellij.xdebugger.XDebugProcessStarter
 import com.intellij.xdebugger.XDebugSession
 import com.intellij.xdebugger.XDebuggerManager
 import io.github.intellij.dlanguage.run.RunUtil
+import org.junit.Test
 import uk.co.cwspencer.gdb.Gdb
 import uk.co.cwspencer.gdb.messages.GdbEvent
 import uk.co.cwspencer.ideagdb.debug.GdbDebugProcess
 
 class DebuggerTest : LightPlatformTestCase(){
     override fun setUp() {
+        super.setUp()
         val project = getProject()!!;
 
-        val executableFilePath = "";//todo
+        val executableFilePath = "/usr/bin/gdb";//todo
         val env:ExecutionEnvironment = ExecutionEnvironment();
         val result: ExecutionResult = DefaultExecutionResult();
         val debugSession = XDebuggerManager.getInstance(project).startSession(env,
@@ -41,15 +43,21 @@ class DebuggerTest : LightPlatformTestCase(){
         gdbProcess.sendCommand("-list-features") { event -> gdbProcess.onGdbCapabilitiesReady(event) }
 
         // Send startup commands
-        val commandsArray = arrayOfNulls<String>(0)//configuration.STARTUP_COMMANDS.split("\\r?\\n");
+        val commandsArray = mutableListOf<String>()//configuration.STARTUP_COMMANDS.split("\\r?\\n");
         for (command in commandsArray) {
-            command = command.trim { it <= ' ' }
+            val trimmedCommand = command.trim { it <= ' ' }
             if (!command.isEmpty()) {
                 gdbProcess.sendCommand(command)
             }
         }
-
-//        if (configuration.autoStartGdb) {
         gdbProcess.sendCommand("-exec-run")
     }
+
+
+    @Test
+    fun test(){
+
+    }
+
+
 }
