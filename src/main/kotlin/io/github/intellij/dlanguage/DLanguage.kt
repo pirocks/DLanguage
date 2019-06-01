@@ -22,7 +22,7 @@ import com.intellij.psi.TokenType
 import com.intellij.psi.search.GlobalSearchScope.*
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.tree.TokenSet.create
-import io.github.intellij.dlanguage.dlanguage.DlangLexer
+import io.github.intellij.dlanguage.DlangLexer
 import io.github.intellij.dlanguage.index.DModuleIndex.getFilesByModuleName
 import io.github.intellij.dlanguage.parser.ParserWrapper
 import io.github.intellij.dlanguage.psi.DlangFile

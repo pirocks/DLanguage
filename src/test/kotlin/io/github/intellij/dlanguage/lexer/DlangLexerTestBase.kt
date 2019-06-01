@@ -11,6 +11,7 @@ import com.intellij.testFramework.LexerTestCase
 import com.intellij.testFramework.TestDataFile
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.VfsTestUtil
+import io.github.intellij.dlanguage.DlangLexer
 import junit.framework.TestCase
 import org.jetbrains.annotations.NonNls
 import java.io.File
@@ -42,7 +43,7 @@ abstract class DlangLexerTestBase(expectPath: String) : LexerTestCase() {
         super.setUp()
     }
 
-    override fun createLexer(): Lexer = FlexAdapter(io.github.intellij.dlanguage.dlanguage.DlangLexer(null))
+    override fun createLexer(): Lexer = FlexAdapter(DlangLexer(null))
 
     override fun getDirPath(): String = "gold"
 
